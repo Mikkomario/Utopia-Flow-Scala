@@ -78,10 +78,15 @@ class TreeNode[T](var content: T) extends Node[T]
     }
     
     /**
-     * Removes a node from the direct children under this node
-     * @param child The node that is removed from under this node
+     * Removes a node from this tree. If it appears in multiple locations, all occurrences will be 
+     * removed
+     * @param node The node that is removed from under this node
      */
-    def -=(child: TreeNode[T]) = _children = _children.filterNot { existingChild => existingChild == child }
+    def -=(node: TreeNode[T]): Unit = 
+    {
+        removeChild(node)
+        children.foreach { child => child -= node }
+    }
     
     
     // OTHER METHODS    ------------
@@ -98,4 +103,11 @@ class TreeNode[T](var content: T) extends Node[T]
      * Clears the node, removing any nodes below it
      */
     def clear() = _children = Vector[TreeNode[T]]()
+    
+    /**
+     * Removes a node from the direct children under this node
+     * @param child The node that is removed from under this node
+     */
+    def removeChild(child: TreeNode[T]) = _children = _children.filterNot { 
+            existingChild => existingChild == child }
 }

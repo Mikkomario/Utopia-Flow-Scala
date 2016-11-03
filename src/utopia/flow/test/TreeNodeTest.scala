@@ -20,8 +20,11 @@ object TreeNodeTest
         assert(root.size == 5)
         assert(root.depth == 3)
         
-        root -= secondChild
+        root.removeChild(secondChild)
         assert(root.children.size == 1)
+        
+        root -= bottomNode
+        assert(root.depth == 2)
         
         root.clear()
         assert(root.isEmpty)
