@@ -1,7 +1,7 @@
 package utopia.flow.datastructure.mutable
 
 import scala.Vector
-import utopia.flow.datastructure.Node
+import utopia.flow.datastructure.template.Node
 
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
@@ -11,40 +11,16 @@ import utopia.flow.datastructure.Node
  * @author Mikko Hilpinen
  * @since 1.11.2016
  */
-class TreeNode[T](var content: T) extends Node[T]
+class TreeNode[T](var content: T) extends utopia.flow.datastructure.template.TreeNode[T, TreeNode[T]]
 {
     // ATTRIBUTES    -----------------
     
     private var _children = Vector[TreeNode[T]]()
     
-    /**
-     * The child nodes directly under this node
-     */
+    
+    // IMPLEMENTED PROPERTIES    -----
+    
     def children = _children
-    
-    
-    // COMPUTED PROPERTIES    --------
-    
-    /**
-     * All nodes below this node, in no specific order
-     */
-    def nodesBelow: Vector[TreeNode[T]] = children ++ children.flatMap { child => child.nodesBelow }
-    
-    /**
-     * The size of this tree. In other words, the number of nodes below this node
-     */
-    def size: Int = children.foldLeft(children.size)((size, child) => size + child.size)
-    
-    /**
-     * Whether this tree is empty and doesn't contain a single node below it
-     */
-    def isEmpty = children.isEmpty
-    
-    /**
-     * The depth of this tree. A tree with no children has depth of 0, a tree with only direct 
-     * children has depth of 1, a tree with grand children has depth of 2 and so on.
-     */
-    def depth: Int = children.foldLeft(0)((maxDepth, child) => math.max(maxDepth, 1 + child.depth))
     
     
     // CONSTRUCTOR OVERLOAD    -------
@@ -93,22 +69,6 @@ class TreeNode[T](var content: T) extends Node[T]
     
     
     // OTHER METHODS    ------------
-    
-    def find(filter: TreeNode[T] => Boolean): Option[TreeNode[T]] =
-    {
-        children.foldLeft(children.find(filter))({(found, child) => 
-            if (found.isDefined) {found}
-            else {child.find(filter)}
-        })
-    }
-    
-    /**
-     * Checks whether a node exists below this node
-     * @param node A node that may exist below this node
-     * @return Whether the provided node exists below this node
-     */
-    def contains(node: TreeNode[_]): Boolean = { children.contains(node) || 
-            children.find({ child => child.contains(node) }).isDefined }
     
     /**
      * Clears the node, removing any nodes below it
