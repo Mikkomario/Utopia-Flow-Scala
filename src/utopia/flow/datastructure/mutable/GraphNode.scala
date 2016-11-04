@@ -1,9 +1,11 @@
-package utopia.flow.datastructure
+package utopia.flow.datastructure.mutable
 
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.mutable.Stack
 import scala.collection.immutable.List
 import scala.collection.immutable.HashSet
+import scala.Vector
+import utopia.flow.datastructure.immutable.GraphEdge
+import utopia.flow.datastructure.Node
 
 /**
  * Graph nodes contain content and are connected to other graph nodes via edges

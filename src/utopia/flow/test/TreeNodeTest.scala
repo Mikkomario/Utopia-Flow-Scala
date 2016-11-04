@@ -1,6 +1,6 @@
 package utopia.flow.test
 
-import utopia.flow.datastructure.TreeNode
+import utopia.flow.datastructure.mutable.TreeNode
 
 object TreeNodeTest
 {

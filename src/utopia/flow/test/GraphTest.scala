@@ -1,6 +1,6 @@
 package utopia.flow.test
 
-import utopia.flow.datastructure.GraphNode
+import utopia.flow.datastructure.mutable.GraphNode
 
 /**
  * This test tests the features implemented in graph, graphNode and graphEdge

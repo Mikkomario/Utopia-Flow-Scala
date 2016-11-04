@@ -1,4 +1,7 @@
-package utopia.flow.datastructure
+package utopia.flow.datastructure.mutable
+
+import scala.Vector
+import utopia.flow.datastructure.Node
 
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
@@ -90,6 +93,14 @@ class TreeNode[T](var content: T) extends Node[T]
     
     
     // OTHER METHODS    ------------
+    
+    def find(filter: TreeNode[T] => Boolean): Option[TreeNode[T]] =
+    {
+        children.foldLeft(children.find(filter))({(found, child) => 
+            if (found.isDefined) {found}
+            else {child.find(filter)}
+        })
+    }
     
     /**
      * Checks whether a node exists below this node
