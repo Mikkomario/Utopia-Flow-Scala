@@ -16,7 +16,7 @@ object TreeNodeTest
         basicCheck(root)
         
         // Creates an immutable copy of the tree
-        val copy = immutable.Tree.copy[Int, Tree[Int]](root)
+        val copy = root.immutableCopy
         assert(copy != root)
         basicCheck(copy)
         

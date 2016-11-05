@@ -2,6 +2,7 @@ package utopia.flow.datastructure.mutable
 
 import scala.Vector
 import utopia.flow.datastructure.template
+import utopia.flow.datastructure.immutable
 
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
@@ -81,4 +82,10 @@ class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
      */
     def removeChild(child: Tree[T]) = _children = _children.filterNot { 
             existingChild => existingChild == child }
+    
+    /**
+     * Creates an immutable copy of this tree
+     * @return An immutable copy of this tree
+     */
+    def immutableCopy = immutable.Tree.copy[T, Tree[T]](this)
 }
