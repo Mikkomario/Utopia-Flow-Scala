@@ -1,7 +1,7 @@
 package utopia.flow.datastructure.mutable
 
 import scala.Vector
-import utopia.flow.datastructure.template.Node
+import utopia.flow.datastructure.template
 
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
@@ -11,11 +11,11 @@ import utopia.flow.datastructure.template.Node
  * @author Mikko Hilpinen
  * @since 1.11.2016
  */
-class TreeNode[T](var content: T) extends utopia.flow.datastructure.template.TreeNode[T, TreeNode[T]]
+class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
 {
     // ATTRIBUTES    -----------------
     
-    private var _children = Vector[TreeNode[T]]()
+    private var _children = Vector[Tree[T]]()
     
     
     // IMPLEMENTED PROPERTIES    -----
@@ -30,7 +30,7 @@ class TreeNode[T](var content: T) extends utopia.flow.datastructure.template.Tre
      * @param content The content assigned to this node
      * @param children The children directly under this node
      */
-    def this(content: T, children: TreeNode[T]*) = {this(content); _children ++= children}
+    def this(content: T, children: Tree[T]*) = {this(content); _children ++= children}
     
     
     // OPERATORS    -----------------
@@ -41,7 +41,7 @@ class TreeNode[T](var content: T) extends utopia.flow.datastructure.template.Tre
      * @param child The node that is added under this node
      * @return Whether the node was successfully added under this node
      */
-    def +=(child: TreeNode[T]) =
+    def +=(child: Tree[T]) =
     {   
         // Makes sure the child doesn't already exist in the direct children
         // And that this node won't end up under a child node
@@ -61,7 +61,7 @@ class TreeNode[T](var content: T) extends utopia.flow.datastructure.template.Tre
      * removed
      * @param node The node that is removed from under this node
      */
-    def -=(node: TreeNode[T]): Unit = 
+    def -=(node: Tree[T]): Unit = 
     {
         removeChild(node)
         children.foreach { child => child -= node }
@@ -73,12 +73,12 @@ class TreeNode[T](var content: T) extends utopia.flow.datastructure.template.Tre
     /**
      * Clears the node, removing any nodes below it
      */
-    def clear() = _children = Vector[TreeNode[T]]()
+    def clear() = _children = Vector[Tree[T]]()
     
     /**
      * Removes a node from the direct children under this node
      * @param child The node that is removed from under this node
      */
-    def removeChild(child: TreeNode[T]) = _children = _children.filterNot { 
+    def removeChild(child: Tree[T]) = _children = _children.filterNot { 
             existingChild => existingChild == child }
 }

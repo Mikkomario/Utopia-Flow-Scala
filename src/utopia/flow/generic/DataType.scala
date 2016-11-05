@@ -1,7 +1,7 @@
 package utopia.flow.generic
 
 import scala.collection.immutable.HashSet
-import utopia.flow.datastructure.mutable.TreeNode
+import utopia.flow.datastructure.mutable.Tree
 
 
 /**
@@ -29,7 +29,7 @@ object DataType
  */
 class DataType(val name: String, val superType: Option[DataType])
 {
-    private val tree = new TreeNode(this)
+    private val tree = new Tree(this)
     
     // INITIAL CODE    -----------
     
