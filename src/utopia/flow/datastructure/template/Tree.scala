@@ -42,6 +42,17 @@ trait Tree[T, ChildType <: Tree[T, ChildType]] extends Node[T]
     def depth: Int = children.foldLeft(0)((maxDepth, child) => math.max(maxDepth, 1 + child.depth))
     
     
+    // OPERATORS    ----------------
+    
+    /**
+     * Finds a child directly under this node that has the provided content
+     * @param content The searched content of the child
+     * @returns The first child with the provided content or None if there is no direct child with
+     * such content
+     */
+    def apply(content: T) = children.find { _.content == content }
+    
+    
     // OTHER METHODS    ------------
     
     def find(filter: ChildType => Boolean): Option[ChildType] =
