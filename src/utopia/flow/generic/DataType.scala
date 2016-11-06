@@ -8,12 +8,12 @@ import utopia.flow.datastructure.mutable.Tree
  * Any type is the superType for all other types
  * @see Any
  */
-object AnyType extends DataType("Any", None)
+object AnyType extends DataType("Any", classOf[Any], None)
 /**
  * String type stands for strings which are below Any
  * @see String
  */
-object StringType extends DataType("String")
+object StringType extends DataType("String", classOf[String])
 
 
 object DataType
@@ -46,7 +46,7 @@ object DataType
  * Any, which is the highest data type. The value defaults to Any but in some cases you want to 
  * specify a different type like Number, for example.
  */
-class DataType(val name: String, val superType: Option[DataType] = Some(AnyType))
+class DataType(val name: String, val supportedClass: Class[_], val superType: Option[DataType] = Some(AnyType))
 {
     private val tree = new Tree(this)
     
@@ -75,4 +75,11 @@ class DataType(val name: String, val superType: Option[DataType] = Some(AnyType)
      * Finds out whether this data type is a subType of another data type
      */
     def isOfType(other: DataType): Boolean = {superType.contains(other) || superType.forall { _.isOfType(other) }}
+    
+    /**
+     * Checks whether this data type supports an instance
+     * @param instance An instance that may or may not be of the supported type
+     * @return Whether the provided value is an instance of this data type
+     */
+    def isInstance(instance: Any) = supportedClass.isInstance(instance)
 }

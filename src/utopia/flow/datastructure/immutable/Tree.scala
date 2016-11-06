@@ -1,6 +1,7 @@
 package utopia.flow.datastructure.immutable
 
 import utopia.flow.datastructure.template
+import utopia.flow.util.Equatable
 
 object Tree
 {   
@@ -15,23 +16,11 @@ object Tree
  * @author Mikko Hilpinen
  * @since 4.11.2016
  */
-class Tree[T](val content: T, val children: Vector[Tree[T]]) extends template.Tree[T, Tree[T]] with Equals
+class Tree[T](val content: T, val children: Vector[Tree[T]]) extends template.Tree[T, Tree[T]] with Equatable
 {
-    // IMPLEMENTED METHODS    ------
+    // COMP. PROPERTIES    ---------
     
-    override def canEqual(a: Any) = a.isInstanceOf[Tree[T]]
-    
-    override def equals(a: Any) = canEqual(a) && hashCode() == a.hashCode()
-    
-    override def hashCode() = 
-    {
-        val prime = 31
-        var result = 1
-        result = prime * result + content.hashCode()
-        result = prime * result + children.hashCode()
-        
-        result
-    }
+    override def properties = children :+ content
     
     
     // OPERATORS    ----------------
