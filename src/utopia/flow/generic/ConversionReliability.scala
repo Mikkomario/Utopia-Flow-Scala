@@ -4,6 +4,7 @@ package utopia.flow.generic
  * A conversion reliability defines how costly a conversion between two data types is
  * @author Mikko Hilpinen
  * @since 7.11.2016
+ * @param cost The cost of this conversion (in some arbitrary relative units)
  */
 sealed abstract class ConversionReliability(val cost: Int)
 {
