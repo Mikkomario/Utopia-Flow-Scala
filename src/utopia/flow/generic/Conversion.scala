@@ -1,7 +1,5 @@
 package utopia.flow.generic
 
-import utopia.flow.util.Equatable
-
 /**
  * A conversion contains information about a conversion between two data types, including the 
  * reliability of the conversion
@@ -11,12 +9,11 @@ import utopia.flow.util.Equatable
  * @param target The target data type
  * @param reliability The reliability of the conversion
  */
-class Conversion(val source: DataType, val target: DataType, val reliability: ConversionReliability) 
-        extends Equatable
+case class Conversion(val source: DataType, val target: DataType, val reliability: ConversionReliability)
 {
     // COMP. PROPERTIES    -------
     
-    override def properties = Vector(source, target, reliability)
+    //override def properties = Vector(source, target, reliability)
     
     /**
      * The cost of this conversion in an arbitrary relative unit
