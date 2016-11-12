@@ -13,10 +13,13 @@ case class Conversion(val source: DataType, val target: DataType, val reliabilit
 {
     // COMP. PROPERTIES    -------
     
-    //override def properties = Vector(source, target, reliability)
-    
     /**
      * The cost of this conversion in an arbitrary relative unit
      */
     def cost = reliability.cost
+    
+    
+    // IMPLEMENTED METHODS    ----
+    
+    override def toString = s"conversion from $source to $target ($reliability)"
 }

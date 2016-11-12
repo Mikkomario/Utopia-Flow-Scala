@@ -71,4 +71,23 @@ object ConversionReliability
 	 * of conversion conversion ("Jones" -> ).
 	 */
     case object DANGEROUS extends ConversionReliability(154)
+    
+    
+    // OTHER METHODS    -------------
+    
+    /**
+     * Finds the smaller of the two reliabilities
+     * @param first The first reliability
+     * @param second The second reliability
+     * @return The smallest / weakest of the two reliabilities
+     */
+    def min(first: ConversionReliability, second: ConversionReliability) = if (first <= second) first else second
+    
+    /**
+     * Finds the stronger of the two reliabilities
+     * @param first The first reliability
+     * @param second The second reliability
+     * @return The largest / strongest of the two reliabilities
+     */
+    def max(first: ConversionReliability, second: ConversionReliability) = if (first >= second) first else second
 }
