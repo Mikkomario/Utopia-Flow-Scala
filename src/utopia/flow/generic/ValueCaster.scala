@@ -11,7 +11,7 @@ trait ValueCaster
     /**
      * These are all possible conversions that can be made using this caster instance
      */
-    def conversions: Set[Conversion]
+    val conversions: Set[Conversion]
     
      /**
      * Casts a value to a different data type entirely. This method should never be called when 

@@ -7,6 +7,7 @@ import scala.Vector
 import utopia.flow.datastructure.immutable.GraphEdge
 import utopia.flow.datastructure.template.Node
 
+// TODO: Get rid of the defaultEdgeContent parameter
 /**
  * Graph nodes contain content and are connected to other graph nodes via edges
  * @author Mikko Hilpinen
