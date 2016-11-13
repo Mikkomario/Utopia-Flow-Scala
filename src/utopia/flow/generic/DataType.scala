@@ -10,10 +10,30 @@ import utopia.flow.datastructure.mutable.Tree
  */
 object AnyType extends DataType("Any", classOf[Any], None)
 /**
- * String type stands for strings which are below Any
+ * String type stands for strings
  * @see String
  */
 object StringType extends DataType("String", classOf[String])
+/**
+ * Int type stands for all integer numbers
+ */
+object IntType extends DataType("Int", classOf[Int])
+/**
+ * Double type stands for Double numbers
+ */
+object DoubleType extends DataType("Double", classOf[Double])
+/**
+ * Float type stands for floating point numbers
+ */
+object FloatType extends DataType("Float", classOf[Float])
+/**
+ * Long type stands for large long numbers
+ */
+object LongType extends DataType("Long", classOf[Long])
+/**
+ * Boolean type stands for boolean values
+ */
+object BooleanType extends DataType("Boolean", classOf[Boolean])
 
 
 object DataType
@@ -29,7 +49,7 @@ object DataType
     
     // INITIAL CODE    --------
     
-    introduceTypes(AnyType, StringType)
+    introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, BooleanType)
     
     
     // OTHER METHODS    -------
