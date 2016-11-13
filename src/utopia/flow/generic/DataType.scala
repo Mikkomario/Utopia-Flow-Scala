@@ -20,11 +20,16 @@ object DataType
 {
     // ATTRIBUTES    ----------
     
-    private var _values = HashSet(AnyType, StringType)
+    private var _values = HashSet[DataType]()
     /**
      * Each data type ever created
      */
     def values = _values
+    
+    
+    // INITIAL CODE    --------
+    
+    introduceTypes(AnyType, StringType)
     
     
     // OTHER METHODS    -------
@@ -33,7 +38,12 @@ object DataType
      * Introduces a number of new data types to the data type interface. Each data type created
      * outside the Flow project should be introduced this way.
      */
-    def introduceTypes(types: DataType*) = _values ++= types
+    def introduceTypes(types: DataType*) = 
+    {
+        _values ++= types
+        // Also introduces super type handling
+        ConversionHandler.addCaster(new SuperTypeCaster(types.toSet))
+    }
 }
 
 /**
@@ -62,6 +72,11 @@ class DataType(val name: String, val supportedClass: Class[_], val superType: Op
      * are below that
      */
     def typeHierarchy = tree.immutableCopy
+    
+    /**
+     * All types deriving from this data type
+     */
+    def subTypes = typeHierarchy.nodesBelow.map { _.content }
     
     
     // IMPLEMENTED METHODS    ----

@@ -7,13 +7,12 @@ import scala.Vector
 import utopia.flow.datastructure.immutable.GraphEdge
 import utopia.flow.datastructure.template.Node
 
-// TODO: Get rid of the defaultEdgeContent parameter
 /**
  * Graph nodes contain content and are connected to other graph nodes via edges
  * @author Mikko Hilpinen
  * @since 28.10.2016
  */
-class GraphNode[NodeContent, EdgeContent](var content: NodeContent, val defaultEdgeContent: EdgeContent) 
+class GraphNode[NodeContent, EdgeContent](var content: NodeContent) 
         extends Node[NodeContent]
 {
     // TYPES    --------------------
@@ -51,7 +50,7 @@ class GraphNode[NodeContent, EdgeContent](var content: NodeContent, val defaultE
      */
     def this(other: GraphNode[NodeContent, EdgeContent]) =
     {
-        this(other.content, other.defaultEdgeContent)
+        this(other.content)
         leavingEdges ++= other.leavingEdges
     }
     
@@ -65,8 +64,21 @@ class GraphNode[NodeContent, EdgeContent](var content: NodeContent, val defaultE
      * @param edgeContent The contents for the edge that is generated (optional, default value
      * (provided in node constructor) is used by default)
      */
-    def connect(node: Node, edgeContent: EdgeContent = defaultEdgeContent) = leavingEdges += 
-            new GraphEdge(edgeContent, node)
+    def connect(node: Node, edgeContent: EdgeContent) = leavingEdges += new GraphEdge(edgeContent, node)
+    
+    /**
+     * Replaces any existing connections to a certain node with a new edge
+     * @param node The node this node will be connected to
+     * @param edgeContent The content of the edge connecting the nodes
+     */
+    def setConnection(node: Node, edgeContent: EdgeContent) = 
+    {
+        if (edgeTo(node).isDefined)
+        {
+            disconnect(node)
+        }
+        connect(node, edgeContent)
+    }
     
     /**
      * Removes any connection(s) to the provided node from this node. The provided node may still 

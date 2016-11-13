@@ -9,17 +9,19 @@ object GraphTest
 {
     def main(args: Array[String]): Unit = 
 	{
+        type IntNode = GraphNode[Int, Int]
+        
         // Creates a test graph first
-        val node1 = new GraphNode(1, 1)
-        val node2 = new GraphNode(2, 1)
-        val node3 = new GraphNode(3, 1)
-        val node4 = new GraphNode(4, 1)
-        val node5 = new GraphNode(5, 1)
+        val node1 = new IntNode(1)
+        val node2 = new IntNode(2)
+        val node3 = new IntNode(3)
+        val node4 = new IntNode(4)
+        val node5 = new IntNode(5)
         
         // Connects the nodes (1 -> 2 -> 3 -> 5, 1 -> 4 -> 5) using weighted edges
-        node1.connect(node2)
-        node2.connect(node3)
-        node3.connect(node5)
+        node1.connect(node2, 1)
+        node2.connect(node3, 1)
+        node3.connect(node5, 1)
         
         node1.connect(node4, 3)
         node4.connect(node5, 3)

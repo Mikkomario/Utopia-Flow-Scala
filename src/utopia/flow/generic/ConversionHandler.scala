@@ -19,27 +19,96 @@ object ConversionHandler
     
     // ATTRIBUTES    -------------------
     
-    private var _conversionGraph = HashMap[DataType, ConversionNode]()
-    private def conversionGraph = _conversionGraph
-    private def conversionGraph_=(graph: HashMap[DataType, ConversionNode]) = 
-    {
-        // Optimal routes are reset every time conversion graph updates
-        optimalRoutes.clear()
-        _conversionGraph = graph
-    }
+    private var conversionGraph = HashMap[DataType, ConversionNode]()
     
     private val optimalRoutes = mutable.HashMap[Tuple2[DataType, DataType], Option[ConversionRoute]]()
     
     
     // OTHER METHODS    ----------------
     
+    /**
+     * Introduces a new value caster to be used by the conversion handler
+     * @param caster The new caster that is introduced
+     */
+    def addCaster(caster: ValueCaster) = caster.conversions.foreach { addConversion(_, caster) }
+    
+    /**
+     * Casts a value to the desired data type (or any of the target type's sub types)
+     * @param value The source value that is being casted
+     * @param toType The desired target data type
+     * @return The value casted to the target data type or any of the sub types of the target data
+     * type
+     * @throws ValueCastException if there was no way to convert the value to the desired data type
+     * or if the conversion failed at some point
+     */
+    @throws(classOf[ValueCastException])
+    def cast(value: Value, toType: DataType) = 
+    {
+        // If value is already of desired type, doesn't need to cast
+        if (value.dataType isOfType toType)
+        {
+            value
+        }
+        else
+        {
+            // Finds the possible ways to cast the value to the target type or any target sub type
+            val targetTypes = toType.subTypes :+ toType
+            val routes = targetTypes.flatMap { optimalRouteTo(value.dataType, _) }
+            
+            // Only works if at least a single conversion was found
+            if (routes.isEmpty)
+            {
+                throw new ValueCastException(value, toType)
+            }
+            else
+            {
+                try
+                {
+                    // Casts the value using the optimal route / target type
+                    routes.reduceLeft { 
+                        (route1, route2) => if (route2.cost < route1.cost) route2 else route1 }(value)
+                }
+                catch 
+                {
+                    case e: ValueCastException => throw new ValueCastException(value, toType, e)
+                }
+            }
+        }
+    }
+    
     private def addConversion(conversion: Conversion, caster: ValueCaster) =
     {
         // Optimal routes are deprecated when new connections are introduced
         optimalRoutes.clear()
         
+        // Makes sure both nodes exist
+        val sourceNode = nodeForType(conversion.source)
+        val targetNode = nodeForType(conversion.target)
         
+        // Creates a new connection if one doesn't exist yet
+        val existingConnection = sourceNode.edgeTo(targetNode)
+        if (!existingConnection.isDefined)
+        {
+            sourceNode.connect(targetNode, ConversionStep(caster, conversion))
+        }
+        // Otherwise overwrites an existing connection if the new one is better or equally good
+        else if (conversion.reliability >= existingConnection.get.content.reliability)
+        {
+            sourceNode.setConnection(targetNode, ConversionStep(caster, conversion))
+        }
     }
+    
+    private def nodeForType(dataType: DataType) = conversionGraph.getOrElse(dataType, {
+            val node = new ConversionNode(dataType)
+            conversionGraph = conversionGraph.updated(dataType, node)
+            node
+        });
+    
+    private def optimalRouteTo(sourceType: DataType, targetType: DataType) = 
+        optimalRoutes.getOrElseUpdate(Tuple2(sourceType, targetType), {
+            val route = nodeForType(sourceType).cheapestRouteTo(nodeForType(targetType), { _.content.cost } )
+            if (route.isDefined) Some(ConversionRoute(route.get.map( { _.content } ))) else None
+        });
     
     
     // NESTED CLASSES    ---------------
@@ -78,15 +147,5 @@ object ConversionHandler
                 throw DataTypeException(s"Input of $value in conversion $conversion")
             caster.cast(value, conversion.target)
         }
-    }
-    
-    private class SuperTypeCaster extends ValueCaster
-    {
-        // Allows conversion to any supertype
-        override lazy val conversions = DataType.values.flatMap { dataType => dataType.superType.map { 
-            superType => Conversion(dataType, superType, NO_CONVERSION) } }
-        
-        // No conversion is required since the value already represents an instance of the supertype
-        override def cast(value: Value, toType: DataType) = value
     }
 }
