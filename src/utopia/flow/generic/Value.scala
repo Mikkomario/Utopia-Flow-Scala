@@ -8,7 +8,27 @@ object Value
     /**
      * Wraps a string into a value
      */
-    def ofString(s: String) = new Value(s, StringType)
+    def of(s: String) = new Value(s, StringType)
+    /**
+     * Wraps an integer into a value
+     */
+    def of(i: Int) = new Value(i, IntType)
+    /**
+     * Wraps a double into a value
+     */
+    def of(d: Double) = new Value(d, DoubleType)
+    /**
+     * Wraps a floating point number into a value
+     */
+    def of(f: Float) = new Value(f, FloatType)
+    /**
+     * Wraps a long number into a value
+     */
+    def of(l: Long) = new Value(l, LongType)
+    /**
+     * Wraps a boolean into a value
+     */
+    def of(b: Boolean) = new Value(b, BooleanType)
 }
 
 /**

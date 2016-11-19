@@ -76,7 +76,8 @@ object DataType
  * Any, which is the highest data type. The value defaults to Any but in some cases you want to 
  * specify a different type like Number, for example.
  */
-class DataType(val name: String, val supportedClass: Class[_], val superType: Option[DataType] = Some(AnyType))
+case class DataType(val name: String, val supportedClass: Class[_], 
+        val superType: Option[DataType] = Some(AnyType))
 {
     private val tree = new Tree(this)
     
@@ -109,7 +110,8 @@ class DataType(val name: String, val supportedClass: Class[_], val superType: Op
     /**
      * Finds out whether this data type is a subType of another data type
      */
-    def isOfType(other: DataType): Boolean = {superType.contains(other) || superType.forall { _.isOfType(other) }}
+    def isOfType(other: DataType): Boolean = {superType.contains(other) || superType.forall { 
+        _.isOfType(other) }}
     
     /**
      * Checks whether this data type supports an instance
