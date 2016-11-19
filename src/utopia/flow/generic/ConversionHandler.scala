@@ -12,6 +12,11 @@ import scala.collection.mutable
  */
 object ConversionHandler
 {
+    // INTIAL CODE    ------------------
+    
+    addCaster(BasicValueCaster)
+    
+    
     // TYPES    ------------------------
     
     private type ConversionNode = GraphNode[DataType, ConversionStep]
