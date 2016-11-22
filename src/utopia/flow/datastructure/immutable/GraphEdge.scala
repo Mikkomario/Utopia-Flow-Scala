@@ -1,4 +1,7 @@
-package utopia.flow.datastructure
+package utopia.flow.datastructure.immutable
+
+import utopia.flow.datastructure.mutable.GraphNode
+import utopia.flow.datastructure.template.Node
 
 /**
  * Graph edges are used for connecting two nodes and storing data. Edges are immutable.

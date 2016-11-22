@@ -1,4 +1,4 @@
-package utopia.flow.datastructure
+package utopia.flow.datastructure.template
 
 object Node
 {

@@ -1,4 +1,8 @@
-package utopia.flow.datastructure
+package utopia.flow.datastructure.mutable
+
+import scala.Vector
+import utopia.flow.datastructure.template
+import utopia.flow.datastructure.immutable
 
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
@@ -8,40 +12,16 @@ package utopia.flow.datastructure
  * @author Mikko Hilpinen
  * @since 1.11.2016
  */
-class TreeNode[T](var content: T) extends Node[T]
+class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
 {
     // ATTRIBUTES    -----------------
     
-    private var _children = Vector[TreeNode[T]]()
+    private var _children = Vector[Tree[T]]()
     
-    /**
-     * The child nodes directly under this node
-     */
+    
+    // IMPLEMENTED PROPERTIES    -----
+    
     def children = _children
-    
-    
-    // COMPUTED PROPERTIES    --------
-    
-    /**
-     * All nodes below this node, in no specific order
-     */
-    def nodesBelow: Vector[TreeNode[T]] = children ++ children.flatMap { child => child.nodesBelow }
-    
-    /**
-     * The size of this tree. In other words, the number of nodes below this node
-     */
-    def size: Int = children.foldLeft(children.size)((size, child) => size + child.size)
-    
-    /**
-     * Whether this tree is empty and doesn't contain a single node below it
-     */
-    def isEmpty = children.isEmpty
-    
-    /**
-     * The depth of this tree. A tree with no children has depth of 0, a tree with only direct 
-     * children has depth of 1, a tree with grand children has depth of 2 and so on.
-     */
-    def depth: Int = children.foldLeft(0)((maxDepth, child) => math.max(maxDepth, 1 + child.depth))
     
     
     // CONSTRUCTOR OVERLOAD    -------
@@ -51,7 +31,7 @@ class TreeNode[T](var content: T) extends Node[T]
      * @param content The content assigned to this node
      * @param children The children directly under this node
      */
-    def this(content: T, children: TreeNode[T]*) = {this(content); _children ++= children}
+    def this(content: T, children: Tree[T]*) = {this(content); _children ++= children}
     
     
     // OPERATORS    -----------------
@@ -62,7 +42,7 @@ class TreeNode[T](var content: T) extends Node[T]
      * @param child The node that is added under this node
      * @return Whether the node was successfully added under this node
      */
-    def +=(child: TreeNode[T]) =
+    def +=(child: Tree[T]) =
     {   
         // Makes sure the child doesn't already exist in the direct children
         // And that this node won't end up under a child node
@@ -82,7 +62,7 @@ class TreeNode[T](var content: T) extends Node[T]
      * removed
      * @param node The node that is removed from under this node
      */
-    def -=(node: TreeNode[T]): Unit = 
+    def -=(node: Tree[T]): Unit = 
     {
         removeChild(node)
         children.foreach { child => child -= node }
@@ -92,22 +72,20 @@ class TreeNode[T](var content: T) extends Node[T]
     // OTHER METHODS    ------------
     
     /**
-     * Checks whether a node exists below this node
-     * @param node A node that may exist below this node
-     * @return Whether the provided node exists below this node
-     */
-    def contains(node: TreeNode[_]): Boolean = { children.contains(node) || 
-            children.find({ child => child.contains(node) }).isDefined }
-    
-    /**
      * Clears the node, removing any nodes below it
      */
-    def clear() = _children = Vector[TreeNode[T]]()
+    def clear() = _children = Vector[Tree[T]]()
     
     /**
      * Removes a node from the direct children under this node
      * @param child The node that is removed from under this node
      */
-    def removeChild(child: TreeNode[T]) = _children = _children.filterNot { 
+    def removeChild(child: Tree[T]) = _children = _children.filterNot { 
             existingChild => existingChild == child }
+    
+    /**
+     * Creates an immutable copy of this tree
+     * @return An immutable copy of this tree
+     */
+    def immutableCopy = immutable.Tree.copy[T, Tree[T]](this)
 }
