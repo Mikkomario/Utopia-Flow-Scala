@@ -12,11 +12,6 @@ import scala.collection.mutable
  */
 object ConversionHandler
 {
-    // INTIAL CODE    ------------------
-    
-    addCaster(BasicValueCaster)
-    
-    
     // TYPES    ------------------------
     
     private type ConversionNode = GraphNode[DataType, ConversionStep]
@@ -81,6 +76,9 @@ object ConversionHandler
         }
     }
     
+    //def routeString(from: DataType, to: DataType) = optimalRouteTo(from, to).fold("No route")(_.toString())
+    //def costOfRoute(from: DataType, to: DataType) = optimalRouteTo(from, to).fold(9999)(_.cost)
+    
     private def addConversion(conversion: Conversion, caster: ValueCaster) =
     {
         // Optimal routes are deprecated when new connections are introduced
@@ -128,6 +126,12 @@ object ConversionHandler
                 (minReliability, step) => ConversionReliability.min(minReliability, step.reliability));
         
         
+        // IMPLEMENTED METHODS    -----
+        
+        override def toString = if (steps.isEmpty) "Empty route" else steps.tail.foldLeft(
+                steps.head.conversion.toString())((str, step) => str + " => " + step.conversion.toString())
+        
+        
         // OPERATORS    ---------------
         
         @throws(classOf[DataTypeException])
@@ -148,7 +152,7 @@ object ConversionHandler
         @throws(classOf[DataTypeException])
         def apply(value: Value) =
         {
-            if (value.dataType != conversion.source)
+            if (!value.dataType.isOfType(conversion.source))
                 throw DataTypeException(s"Input of $value in conversion $conversion")
             caster.cast(value, conversion.target)
         }

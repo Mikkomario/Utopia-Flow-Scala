@@ -20,11 +20,11 @@ object GraphTest
         
         // Connects the nodes (1 -> 2 -> 3 -> 5, 1 -> 4 -> 5) using weighted edges
         node1.connect(node2, 1)
-        node2.connect(node3, 1)
+        node2.connect(node3, 5)
         node3.connect(node5, 1)
         
-        node1.connect(node4, 3)
-        node4.connect(node5, 3)
+        node1.connect(node4, 4)
+        node4.connect(node5, 4)
         
         // Makes sure there are correct number of edges in nodes
         assert(node1.leavingEdges.size == 2)
@@ -37,7 +37,8 @@ object GraphTest
         // The shortest route should be 1 -> 4 -> 5
         assert(node1.shortestRouteTo(node5).get.toVector.size == 2)
         // The cheapest route (weights considered) should be 1 -> 2 -> 3 -> 5
-        assert(node1.cheapestRouteTo(node5, edge => edge.content).get.toVector.size == 3)
+        val cheapestRoute = node1.cheapestRouteTo(node5, edge => edge.content)
+        assert(cheapestRoute.get.toVector.size == 3)
         
         // After disconnecting node 5 from node 4. Only one route should remain
         node4.disconnect(node5)

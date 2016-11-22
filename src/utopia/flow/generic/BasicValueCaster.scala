@@ -17,7 +17,7 @@ object BasicValueCaster extends ValueCaster
     // ATTRIBUTES    --------------
     
     override lazy val conversions = HashSet(
-            Conversion(AnyType, StringType, PERFECT), 
+            Conversion(AnyType, StringType, DATA_LOSS), 
             Conversion(DoubleType, IntType, DATA_LOSS), 
             Conversion(LongType, IntType, DATA_LOSS), 
             Conversion(FloatType, IntType, DATA_LOSS), 
@@ -31,11 +31,11 @@ object BasicValueCaster extends ValueCaster
             Conversion(DoubleType, FloatType, DATA_LOSS), 
             Conversion(LongType, FloatType, DATA_LOSS), 
             Conversion(StringType, FloatType, DANGEROUS), 
-            Conversion(IntType, LongType, DATA_LOSS), 
+            Conversion(IntType, LongType, PERFECT), 
             Conversion(DoubleType, LongType, DATA_LOSS), 
             Conversion(FloatType, LongType, DATA_LOSS), 
             Conversion(StringType, LongType, DANGEROUS), 
-            Conversion(IntType, BooleanType, MEANING_LOSS), 
+            Conversion(IntType, BooleanType, MEANING_LOSS),  
             Conversion(StringType, BooleanType, MEANING_LOSS))
     
     

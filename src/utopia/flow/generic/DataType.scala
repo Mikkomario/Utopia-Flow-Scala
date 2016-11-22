@@ -17,23 +17,23 @@ object StringType extends DataType("String", classOf[String])
 /**
  * Int type stands for all integer numbers
  */
-object IntType extends DataType("Int", classOf[Int])
+object IntType extends DataType("Int", classOf[java.lang.Integer])
 /**
  * Double type stands for Double numbers
  */
-object DoubleType extends DataType("Double", classOf[Double])
+object DoubleType extends DataType("Double", classOf[java.lang.Double])
 /**
  * Float type stands for floating point numbers
  */
-object FloatType extends DataType("Float", classOf[Float])
+object FloatType extends DataType("Float", classOf[java.lang.Float])
 /**
  * Long type stands for large long numbers
  */
-object LongType extends DataType("Long", classOf[Long])
+object LongType extends DataType("Long", classOf[java.lang.Long])
 /**
  * Boolean type stands for boolean values
  */
-object BooleanType extends DataType("Boolean", classOf[Boolean])
+object BooleanType extends DataType("Boolean", classOf[java.lang.Boolean])
 
 
 object DataType
@@ -50,6 +50,7 @@ object DataType
     // INITIAL CODE    --------
     
     introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, BooleanType)
+    ConversionHandler.addCaster(BasicValueCaster)
     
     
     // OTHER METHODS    -------
@@ -110,13 +111,24 @@ case class DataType(val name: String, val supportedClass: Class[_],
     /**
      * Finds out whether this data type is a subType of another data type
      */
-    def isOfType(other: DataType): Boolean = {superType.contains(other) || superType.forall { 
-        _.isOfType(other) }}
+    def isOfType(other: DataType): Boolean = {this == other || superType.contains(other) || 
+            (superType.isDefined && superType.get.isOfType(other))}
     
     /**
      * Checks whether this data type supports an instance
      * @param instance An instance that may or may not be of the supported type
      * @return Whether the provided value is an instance of this data type
      */
+    // TODO: Only works on reference types. Use classtags with value types
     def isInstance(instance: Any) = supportedClass.isInstance(instance)
+    
+    /*
+    def isInstance(instance: Any) = 
+    {
+        val B = ClassTag(supportedClass)
+    			ClassTag(element.getClass) match {
+    				case B => true
+    				case _ => false
+    	}
+    }*/
 }
