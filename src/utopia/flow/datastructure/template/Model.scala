@@ -43,23 +43,33 @@ trait Model[Attribute <: Property]
      * Gets the value of a single attribute in this model
      * @param attName The name of the attribute from which the value is taken
      * @return The value of the attribute with the provided name
-     * @throws NoSuchElementException if no such attribute was present and one couldn't be generated 
+     * @throws NoSuchAttributeException if no such attribute was present and one couldn't be generated 
      * either
      */
-    @throws(classOf[NoSuchElementException])
-    def apply(attName: String) = valueOf(attName).get
+    @throws(classOf[NoSuchAttributeException])
+    def apply(attName: String) = valueOf(attName).getOrElse(
+            throw new NoSuchAttributeException(s"This model doesn't contain attribute named $attName"))
     
     
     // OTHER METHODS    -----------
     
     /**
-     * Finds an attribute from this model
+     * Finds an attribute from this model. Generating one if necessary.
      * @param attName The name of the attribute
      * @return The attribute, if this model contains such an attribute
      */
     def find(attName: String) = 
         attributes.find { _.name.equalsIgnoreCase(attName) } orElse generateAttribute(attName)
     
+    /**
+     * Gets the attribute from this model, generating one if necessary
+     * @param attName the name of the attribute
+     * @return The attribute from this model with the provided name
+     * @throws NoSuchAttributeException If the model didn't contain such an attribute
+     */
+    def get(attName: String) = find(attName).getOrElse(
+            throw new NoSuchAttributeException(s"This model doesn't contain attribute named $attName"))
+        
     /**
      * Finds the contents of a single attribute
      * @param attName The name of the attribute
