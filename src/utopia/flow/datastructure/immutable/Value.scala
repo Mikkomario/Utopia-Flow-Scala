@@ -1,7 +1,17 @@
-package utopia.flow.generic
+package utopia.flow.datastructure.immutable
 
 import utopia.flow.datastructure.template.Node
 import utopia.flow.util.Equatable
+import scala.Vector
+import utopia.flow.generic.BooleanType
+import utopia.flow.generic.ConversionHandler
+import utopia.flow.generic.DataType
+import utopia.flow.generic.DoubleType
+import utopia.flow.generic.FloatType
+import utopia.flow.generic.IntType
+import utopia.flow.generic.LongType
+import utopia.flow.generic.StringType
+import utopia.flow.generic.ValueCastException
 
 object Value
 {
@@ -64,13 +74,20 @@ class Value(val content: Any, val dataType: DataType) extends Node[Any] with Equ
     // OTHER METHODS    ---------
     
     /**
+     * Casts this value to a new data type
+     * @param dataType The target data type for the new value
+     * @return This value casted to a new data type
+     */
+    def withType(dataType: DataType) = ConversionHandler.cast(this, dataType)
+    
+    /**
      * Returns the contents of this value, casted to the desired type range
      * @param ofType The targeted data type
      * @return The value's contents as an instance of the provided type
      * @throws ValueCastException If the value content's couldn't be cast to the desired type
      */
     @throws(classOf[ValueCastException])
-    def toObject(ofType: DataType) = ConversionHandler.cast(this, ofType).content
+    def toObject(ofType: DataType) = withType(ofType).content
     
     /**
      * The contents of this value casted to an integer

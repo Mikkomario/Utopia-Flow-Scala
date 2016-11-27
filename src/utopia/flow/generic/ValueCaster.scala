@@ -1,5 +1,7 @@
 package utopia.flow.generic
 
+import utopia.flow.datastructure.immutable.Value
+
 /**
  * Instances implementing this trait are able to perform certain data type conversions, casting 
  * values to different data types

@@ -1,5 +1,7 @@
 package utopia.flow.generic
 
+import utopia.flow.datastructure.immutable.Value
+
 /**
  * These exceptions are thrown when value casting fails
  * @author Mikko Hilpinen

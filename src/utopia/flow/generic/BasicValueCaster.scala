@@ -6,6 +6,7 @@ import utopia.flow.generic.ConversionReliability.PERFECT
 import utopia.flow.generic.ConversionReliability.DATA_LOSS
 import utopia.flow.generic.ConversionReliability.DANGEROUS
 import utopia.flow.generic.ConversionReliability.MEANING_LOSS
+import utopia.flow.datastructure.immutable.Value
 
 /**
  * This value caster handles the basic data types

@@ -4,6 +4,7 @@ import utopia.flow.datastructure.mutable.GraphNode
 import utopia.flow.generic.ConversionReliability.NO_CONVERSION
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
+import utopia.flow.datastructure.immutable.Value
 
 /**
  * This object oversees all value conversion operations

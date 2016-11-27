@@ -1,6 +1,6 @@
 package utopia.flow.datastructure.template
 
-import utopia.flow.generic.Value
+import utopia.flow.datastructure.immutable.Value
 import java.util.NoSuchElementException
 
 /**
