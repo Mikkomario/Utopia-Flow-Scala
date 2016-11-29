@@ -47,9 +47,14 @@ class Model[Attribute <: Variable](val attributeFactory: (String, Option[Value])
      */
     def +=(attribute: Attribute) = 
     {
-        find(attribute.name).foreach { _attributes -= _ }
-        _attributes += attribute
+        _attributes = attributes.filterNot { _.name.equalsIgnoreCase(attribute.name) } + attribute
     }
+    
+    /**
+     * Adds a number of attributes to this model
+     * @param attributes The attributes added to this model
+     */
+    def ++=(attributes: Traversable[Attribute]) = attributes.foreach { this += _ }
     
     /**
      * Removes an attribute from this model
