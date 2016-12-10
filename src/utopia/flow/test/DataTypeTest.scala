@@ -10,6 +10,7 @@ import utopia.flow.generic.BooleanType
 
 object DataTypeTest extends App
 {
+    DataType.setup()
     DataType.values.foreach { println(_) }
     
     assert(StringType isOfType StringType)

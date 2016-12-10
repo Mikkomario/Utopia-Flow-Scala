@@ -40,6 +40,7 @@ object DataType
 {
     // ATTRIBUTES    ----------
     
+    private var isSetup = false
     private var _values = HashSet[DataType]()
     /**
      * Each data type ever created
@@ -47,13 +48,17 @@ object DataType
     def values = _values
     
     
-    // INITIAL CODE    --------
-    
-    introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, BooleanType)
-    ConversionHandler.addCaster(BasicValueCaster)
-    
-    
     // OTHER METHODS    -------
+    
+    def setup() = 
+    {
+        if (!isSetup)
+        {
+            isSetup = true
+            introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, BooleanType)
+            ConversionHandler.addCaster(BasicValueCaster)
+        }
+    }
     
     /**
      * Introduces a number of new data types to the data type interface. Each data type created
@@ -84,6 +89,12 @@ case class DataType(val name: String, val supportedClass: Class[_],
     
     // INITIAL CODE    -----------
     
+    // The datatype interface must be set up at this point
+    if (!DataType.isSetup)
+        throw new EnvironmentNotSetupException(
+                "DataType.setup() must be called before instantiating any DataType instances")
+    
+    // The super type should be aware of a new child
     superType.foreach { _.tree += this.tree }
     
     
