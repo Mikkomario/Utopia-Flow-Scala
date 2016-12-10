@@ -19,6 +19,15 @@ class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
     private var _children = Vector[Tree[T]]()
     
     
+    // COMP. PROPERTIES    -----------
+    
+    /**
+     * Creates an immutable copy of this tree
+     * @return An immutable copy of this tree
+     */
+    def immutableCopy = immutable.Tree.copy[T, Tree[T]](this)
+    
+    
     // IMPLEMENTED PROPERTIES    -----
     
     def children = _children
@@ -82,10 +91,4 @@ class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
      */
     def removeChild(child: Tree[T]) = _children = _children.filterNot { 
             existingChild => existingChild == child }
-    
-    /**
-     * Creates an immutable copy of this tree
-     * @return An immutable copy of this tree
-     */
-    def immutableCopy = immutable.Tree.copy[T, Tree[T]](this)
 }

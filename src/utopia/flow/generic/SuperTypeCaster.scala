@@ -13,6 +13,8 @@ import utopia.flow.datastructure.immutable.Value
 class SuperTypeCaster(val types: Set[DataType]) extends ValueCaster
 {
     // Allows conversion to any supertype
+    // FIXME: Throws a nullpointer, probably a double reference between conversion system and 
+    // datatypes again
     override lazy val conversions = types.flatMap { dataType => dataType.superType.map { 
         superType => Conversion(dataType, superType, NO_CONVERSION) } }
     

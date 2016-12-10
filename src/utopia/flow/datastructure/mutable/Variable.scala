@@ -2,6 +2,7 @@ package utopia.flow.datastructure.mutable
 
 import utopia.flow.datastructure.template.Property
 import utopia.flow.datastructure.immutable.Value
+import utopia.flow.datastructure.immutable.Constant
 
 /**
  * A variable is a property whose value can be changed
@@ -23,4 +24,9 @@ class Variable(val name: String, initialContent: Value) extends Property
     // COMP. PROPERTIES    -----------
     
     override def dataType = content.dataType
+    
+    /**
+     * This variable as a constant copy
+     */
+    def toConstant = new Constant(name, content)
 }
