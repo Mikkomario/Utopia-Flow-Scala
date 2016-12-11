@@ -26,6 +26,8 @@ trait Property extends Node[Value]
     
     // COMP. PROPERTIES    -----
     
+    override def toString = s"$name = $content"
+    
     /**
      * The value of this property as a string
      */

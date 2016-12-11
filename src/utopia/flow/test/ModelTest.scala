@@ -68,6 +68,7 @@ object ModelTest extends App
     
     assert(model5 != model3)
     assert(model5("nonexisting").content == 0)
+    assert(model5.attributes.size == constants.size)
     
     println("Success")
 }
