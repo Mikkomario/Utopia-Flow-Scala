@@ -77,8 +77,17 @@ class Value(val content: Any, val dataType: DataType) extends Node[Any] with Equ
      * Casts this value to a new data type
      * @param dataType The target data type for the new value
      * @return This value casted to a new data type
+     * @throws ValueCastException if the cast failed
      */
+    @throws(classOf[ValueCastException])
     def withType(dataType: DataType) = ConversionHandler.cast(this, dataType)
+    
+    /**
+     * Casts this value to a new data type
+     * @param toType The target data type for the new value
+     * @return This value casted to the provided data type or None if the casting failed
+     */
+    def safeCast(toType: DataType) = ConversionHandler.safeCast(this, toType)
     
     /**
      * Returns the contents of this value, casted to the desired type range

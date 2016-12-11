@@ -12,31 +12,28 @@ import utopia.flow.util.Equatable
  * @since 11.12.2016
  */
 class DeclarationVariableGenerator[T <: Variable](val declarations: ModelDeclaration, 
-        val defaultValue: Option[Value] = None, 
+        val generateOnlyDeclared: Boolean = false, val defaultValue: Option[Value] = None, 
         val createVariable: (String, Value) => T = new Variable(_, _)) extends VariableGenerator[T] 
         with Equatable
 {
-    override def properties = Vector(declarations, defaultValue, createVariable)
+    override def properties = Vector(declarations, defaultValue, createVariable, generateOnlyDeclared)
     
     override def apply(variableName: String, value: Option[Value] = None) = 
     {
         val declaration = declarations.find(variableName)
         if (declaration.isDefined)
         {
-            try
-            {
-                val newValue = value.orElse(declaration.get.defaultValue).orElse(defaultValue).map { 
-                    _ withType declaration.get.dataType }
+                val newValue = value.orElse(declaration.get.defaultValue).orElse(defaultValue).flatMap { 
+                    _ safeCast declaration.get.dataType }
                 newValue.map { createVariable(variableName, _) }
-            }
-            catch
-            {
-                case _: DataTypeException => None
-            }
+        }
+        else if (!generateOnlyDeclared)
+        {
+            value.orElse(defaultValue).map { createVariable(variableName, _) }
         }
         else
         {
-            value.orElse(defaultValue).map { createVariable(variableName, _) }
+            None
         }
     }
 }

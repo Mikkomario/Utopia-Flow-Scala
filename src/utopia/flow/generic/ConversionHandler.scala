@@ -77,6 +77,25 @@ object ConversionHandler
         }
     }
     
+    /**
+     * Casts a value to a different data type
+     * @param value The value that is being cast
+     * @param toType The target data type
+     * @return The value, if it was casted properly, None otherwise
+     */
+    def safeCast(value: Value, toType: DataType) = 
+    {
+        try
+        {
+            val castValue = cast(value, toType)
+            Some(castValue)
+        }
+        catch
+        {
+            case _: DataTypeException => None
+        }
+    }
+    
     //def routeString(from: DataType, to: DataType) = optimalRouteTo(from, to).fold("No route")(_.toString())
     //def costOfRoute(from: DataType, to: DataType) = optimalRouteTo(from, to).fold(9999)(_.cost)
     
