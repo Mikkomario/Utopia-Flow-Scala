@@ -12,7 +12,7 @@ import utopia.flow.util.Equatable
  */
 case class SimpleVariableGenerator[T <: Variable](val defaultValue: Option[Value] = None, 
         createVariable: (String, Value) => T = new Variable(_, _)) extends VariableGenerator[T] 
-           with Equatable
+        with Equatable
 {
     def properties = Vector(defaultValue, createVariable)
     
@@ -23,6 +23,6 @@ case class SimpleVariableGenerator[T <: Variable](val defaultValue: Option[Value
      * @param value the value assigned to the variable (optional)
      * @return A generated variable or None if no value could be determined
      */
-    def apply(varName: String, value: Option[Value]) = value.orElse(defaultValue).flatMap { 
-        value => Some(createVariable(varName, value)) }
+    def apply(varName: String, value: Option[Value] = None) = value.orElse(defaultValue).map { 
+        createVariable(varName, _) }
 }

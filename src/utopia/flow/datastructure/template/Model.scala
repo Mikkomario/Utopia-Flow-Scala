@@ -47,8 +47,7 @@ trait Model[Attribute <: Property]
      * either
      */
     @throws(classOf[NoSuchAttributeException])
-    def apply(attName: String) = valueOf(attName).getOrElse(
-            throw new NoSuchAttributeException(s"This model doesn't contain attribute named $attName"))
+    def apply(attName: String) = get(attName).content
     
     
     // OTHER METHODS    -----------

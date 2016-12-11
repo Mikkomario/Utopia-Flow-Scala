@@ -2,7 +2,7 @@ package utopia.flow.util
 
 /**
  * This is an utility interface into the Equals -trait, providing a sample implementation. 
- * This trait should only be implemented by immutable elements
+ * This trait should only be implemented by immutable elements that have value semantics
  * @author Mikko Hilpinen
  * @since 6.11.2016
  */

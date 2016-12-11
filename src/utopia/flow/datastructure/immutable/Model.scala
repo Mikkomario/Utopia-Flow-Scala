@@ -11,7 +11,7 @@ import utopia.flow.generic.ConstantGenerator
  * @since 29.11.2016
  */
 class Model[Attribute <: Constant](content: Traversable[Attribute], 
-        attributeGenerator: Option[ConstantGenerator[Attribute]] = None) extends 
+        val attributeGenerator: Option[ConstantGenerator[Attribute]] = None) extends 
         template.Model[Attribute] with Equatable
 {
     // ATTRIBUTES    --------------
