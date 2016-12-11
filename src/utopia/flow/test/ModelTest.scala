@@ -1,6 +1,6 @@
 package utopia.flow.test
 
-import utopia.flow.util.SimpleVariableGenerator
+import utopia.flow.generic.SimpleVariableGenerator
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DataType
 import utopia.flow.generic.ConversionHandler
@@ -18,4 +18,13 @@ object ModelTest extends App
     
     assert(variableGenerator("Test", None).isEmpty)
     assert(variableGenerator("Test", Some(Value of 2)).isDefined)
+    
+    val generator2 = new SimpleVariableGenerator(Some(Value of 0))
+    
+    assert(generator2.defaultValue.isDefined)
+    val generated = generator2("Test", None)
+    assert(generated.isDefined)
+    assert(generated.get.content == generator2.defaultValue.get)
+    
+    println("Success")
 }

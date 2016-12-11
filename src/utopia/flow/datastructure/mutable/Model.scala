@@ -2,18 +2,18 @@ package utopia.flow.datastructure.mutable
 import utopia.flow.datastructure.template
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.immutable.Value
+import utopia.flow.generic.VariableGenerator
+import utopia.flow.generic.SimpleVariableGenerator
 
 /**
  * This is a mutable implementation of the Model template
  * @author Mikko Hilpinen
  * @since 27.11.2016
  * @param Attribute The type of attribute stored within this model
- * @param attributeFactory The function used for instantiating new attributes in this model. The 
- * first function parameter is the name of the attribute and the second is a possible preset 
- * value for the attribute.
+ * @param attributeGenerator The variable generator used for generating new values on this model
  */
-class Model[Attribute <: Variable](val attributeFactory: (String, Option[Value]) => Option[Attribute]) 
-        extends template.Model[Attribute]
+class Model[Attribute <: Variable](val attributeGenerator: VariableGenerator[Attribute] = 
+        new SimpleVariableGenerator()) extends template.Model[Attribute]
 {
     // ATTRIBUTES    --------------
     
@@ -68,7 +68,7 @@ class Model[Attribute <: Variable](val attributeFactory: (String, Option[Value])
     protected def generateAttribute(attName: String, value: Option[Value]) = 
     {
         // In addition to creating the attribute, adds it to the model
-        val attribute = attributeFactory(attName, value)
+        val attribute = attributeGenerator(attName, value)
         attribute.foreach { _attributes += _ }
         attribute
     }
