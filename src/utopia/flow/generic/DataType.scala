@@ -3,6 +3,8 @@ package utopia.flow.generic
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.mutable.Tree
 import utopia.flow.datastructure.immutable.Value
+import utopia.flow.datastructure.immutable.Model
+import utopia.flow.datastructure.immutable.Constant
 
 
 /**
@@ -45,6 +47,10 @@ object InstantType extends DataType("Instant", classOf[java.time.Instant])
  * are accepted
  */
 object VectorType extends DataType("Vector", classOf[Vector[Value]])
+/**
+ * Model type only accepts immutable models that contain basic constants
+ */
+object ModelType extends DataType("Model", classOf[Model[Constant]])
 
 
 object DataType
@@ -67,7 +73,7 @@ object DataType
         {
             isSetup = true
             introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, 
-                    BooleanType, InstantType, VectorType)
+                    BooleanType, InstantType, VectorType, ModelType)
             ConversionHandler.addCaster(BasicValueCaster)
         }
     }

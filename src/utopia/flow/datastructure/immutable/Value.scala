@@ -15,6 +15,7 @@ import utopia.flow.generic.ValueCastException
 import java.time.Instant
 import utopia.flow.generic.InstantType
 import utopia.flow.generic.VectorType
+import utopia.flow.generic.ModelType
 
 object Value
 {
@@ -50,6 +51,10 @@ object Value
      * Wraps a value vector into a value
      */
     def of(v: Vector[Value]) = new Value(v, VectorType)
+    /**
+     * Wraps a model into a value
+     */
+    def of(m: Model[Constant]) = new Value(m, ModelType)
 }
 
 /**
@@ -143,4 +148,9 @@ class Value(val content: Any, val dataType: DataType) extends Node[Any] with Equ
      * The contents of this value casted to a vector of values
      */
     def toVector = toObject(VectorType).asInstanceOf[Vector[Value]]
+    
+    /**
+     * The contents of this value casted to a model
+     */
+    def toModel = toObject(ModelType).asInstanceOf[Model[Constant]]
 }
