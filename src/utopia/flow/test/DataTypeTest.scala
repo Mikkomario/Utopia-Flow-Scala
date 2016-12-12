@@ -7,6 +7,7 @@ import utopia.flow.generic.ConversionReliability
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DoubleType
 import utopia.flow.generic.BooleanType
+import java.time.Instant
 
 object DataTypeTest extends App
 {
@@ -26,6 +27,7 @@ object DataTypeTest extends App
     val f = Value of 123.45f
     val l = Value of 9999999999l
     val b = Value of true
+    val time = Value of Instant.now()
     
     /*
     DataType.values.foreach { fromType => DataType.values.foreach { toType => 
@@ -60,6 +62,12 @@ object DataTypeTest extends App
     assert(b.toInt == 1)
     assert(b.toString() == "true")
     assert(b.toDouble == 1.0)
+    
+    assert(time.toLong > 0)
+    
+    val timeToString = Value of time.toString()
+    val timeStringToTime = Value of timeToString.toInstant
+    assert(time.toLong == timeStringToTime.toLong)
     
     println("Success")
 }

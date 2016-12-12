@@ -34,6 +34,11 @@ object LongType extends DataType("Long", classOf[java.lang.Long])
  * Boolean type stands for boolean values
  */
 object BooleanType extends DataType("Boolean", classOf[java.lang.Boolean])
+/**
+ * Instant type stands for instant time type, which can represent any other time type as well
+ * @see java.time
+ */
+object InstantType extends DataType("Instant", classOf[java.time.Instant])
 
 
 object DataType
@@ -55,7 +60,8 @@ object DataType
         if (!isSetup)
         {
             isSetup = true
-            introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, BooleanType)
+            introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, 
+                    BooleanType, InstantType)
             ConversionHandler.addCaster(BasicValueCaster)
         }
     }

@@ -7,6 +7,8 @@ import utopia.flow.generic.ConversionReliability.DATA_LOSS
 import utopia.flow.generic.ConversionReliability.DANGEROUS
 import utopia.flow.generic.ConversionReliability.MEANING_LOSS
 import utopia.flow.datastructure.immutable.Value
+import java.time.Instant
+import java.time.format.DateTimeParseException
 
 /**
  * This value caster handles the basic data types
@@ -36,8 +38,11 @@ object BasicValueCaster extends ValueCaster
             Conversion(DoubleType, LongType, DATA_LOSS), 
             Conversion(FloatType, LongType, DATA_LOSS), 
             Conversion(StringType, LongType, DANGEROUS), 
+            Conversion(InstantType, LongType, DATA_LOSS), 
             Conversion(IntType, BooleanType, MEANING_LOSS),  
-            Conversion(StringType, BooleanType, MEANING_LOSS))
+            Conversion(StringType, BooleanType, MEANING_LOSS), 
+            Conversion(LongType, InstantType, PERFECT), 
+            Conversion(StringType, InstantType, DANGEROUS))
     
     
     // IMPLEMENTED METHODS    ----
@@ -54,6 +59,7 @@ object BasicValueCaster extends ValueCaster
             case FloatType => floatOf(value)
             case LongType => longOf(value)
             case BooleanType => booleanOf(value)
+            case InstantType => instantOf(value)
             case _ => throw new ValueCastException(value, toType)
         }
         
@@ -127,6 +133,7 @@ object BasicValueCaster extends ValueCaster
             case IntType => value.toInt.toLong
             case DoubleType => value.toDouble.toLong
             case FloatType => value.toFloat.toLong
+            case InstantType => value.toInstant.getEpochSecond
             case StringType => {
                 try {value.toString().toDouble.toLong} 
                 catch 
@@ -145,6 +152,21 @@ object BasicValueCaster extends ValueCaster
             case IntType => value.toInt != 0
             case StringType => value.toString().toLowerCase() == "true"
             case _ => throw new ValueCastException(value, BooleanType)
+        }
+    }
+    
+    private def instantOf(value: Value) = 
+    {
+        value.dataType match 
+        {
+            case LongType => Instant.ofEpochSecond(value.toLong)
+            case StringType => {
+                try { Instant.parse(value.toString()) }
+                catch
+                {
+                    case e: DateTimeParseException => throw new ValueCastException(value, InstantType, e)
+                }
+            }
         }
     }
 }

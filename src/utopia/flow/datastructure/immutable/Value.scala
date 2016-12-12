@@ -12,6 +12,8 @@ import utopia.flow.generic.IntType
 import utopia.flow.generic.LongType
 import utopia.flow.generic.StringType
 import utopia.flow.generic.ValueCastException
+import java.time.Instant
+import utopia.flow.generic.InstantType
 
 object Value
 {
@@ -39,6 +41,10 @@ object Value
      * Wraps a boolean into a value
      */
     def of(b: Boolean) = new Value(b, BooleanType)
+    /**
+     * Wraps an instant into a value
+     */
+    def of(time: Instant) = new Value(time, InstantType)
 }
 
 /**
@@ -122,4 +128,9 @@ class Value(val content: Any, val dataType: DataType) extends Node[Any] with Equ
      * The contents of this value casted to a boolean value
      */
     def toBoolean = toObject(BooleanType).asInstanceOf[Boolean]
+    
+    /**
+     * The contents of this value casted to an instant
+     */
+    def toInstant = toObject(InstantType).asInstanceOf[Instant]
 }
