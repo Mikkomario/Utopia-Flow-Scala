@@ -16,7 +16,8 @@ object Tree
  * @author Mikko Hilpinen
  * @since 4.11.2016
  */
-class Tree[T](val content: T, val children: Vector[Tree[T]]) extends template.Tree[T, Tree[T]] with Equatable
+class Tree[T](val content: T, val children: Vector[Tree[T]]) extends 
+        template.Tree[T, Tree[T]] with Equatable
 {
     // COMP. PROPERTIES    ---------
     

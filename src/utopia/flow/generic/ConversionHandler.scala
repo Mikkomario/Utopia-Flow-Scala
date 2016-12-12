@@ -4,6 +4,7 @@ import utopia.flow.datastructure.mutable.GraphNode
 import utopia.flow.generic.ConversionReliability.NO_CONVERSION
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
+import utopia.flow.datastructure.immutable.Value
 
 /**
  * This object oversees all value conversion operations
@@ -73,6 +74,25 @@ object ConversionHandler
                     case e: ValueCastException => throw new ValueCastException(value, toType, e)
                 }
             }
+        }
+    }
+    
+    /**
+     * Casts a value to a different data type
+     * @param value The value that is being cast
+     * @param toType The target data type
+     * @return The value, if it was casted properly, None otherwise
+     */
+    def safeCast(value: Value, toType: DataType) = 
+    {
+        try
+        {
+            val castValue = cast(value, toType)
+            Some(castValue)
+        }
+        catch
+        {
+            case _: DataTypeException => None
         }
     }
     

@@ -1,6 +1,7 @@
 package utopia.flow.test
 
 import utopia.flow.datastructure.mutable.GraphNode
+import scala.collection.mutable.ListBuffer
 
 /**
  * This test tests the features implemented in graph, graphNode and graphEdge
@@ -45,5 +46,16 @@ object GraphTest
         assert(node1.routesTo(node5).size == 1)
         
         print("Success")
+        
+        /*
+        class SuperClass(val a: Int)
+        class SubClass(a: Int) extends SuperClass(a)
+        
+        val superNode = new GraphNode[SuperClass, Int](new SuperClass(1))
+        val subNode = new GraphNode[SubClass, Int](new SubClass(2))
+        
+        val supers = ListBuffer(new SuperClass(1))
+        supers += new SubClass(2)
+        */
 	}
 }

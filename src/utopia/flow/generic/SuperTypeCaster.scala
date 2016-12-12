@@ -1,6 +1,7 @@
 package utopia.flow.generic
 
 import utopia.flow.generic.ConversionReliability.NO_CONVERSION
+import utopia.flow.datastructure.immutable.Value
 
 /**
  * This value caster handles "conversions" from data types to their super types. In reality, no 

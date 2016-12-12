@@ -4,12 +4,13 @@ import utopia.flow.generic.DataType
 import utopia.flow.generic.AnyType
 import utopia.flow.generic.StringType
 import utopia.flow.generic.ConversionReliability
-import utopia.flow.generic.Value
+import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DoubleType
 import utopia.flow.generic.BooleanType
 
 object DataTypeTest extends App
 {
+    DataType.setup()
     DataType.values.foreach { println(_) }
     
     assert(StringType isOfType StringType)
