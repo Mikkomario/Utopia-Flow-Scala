@@ -28,6 +28,7 @@ object DataTypeTest extends App
     val l = Value of 9999999999l
     val b = Value of true
     val time = Value of Instant.now()
+    val vector = Value of Vector(i, d, f, l)
     
     /*
     DataType.values.foreach { fromType => DataType.values.foreach { toType => 
@@ -68,6 +69,11 @@ object DataTypeTest extends App
     val timeToString = Value of time.toString()
     val timeStringToTime = Value of timeToString.toInstant
     assert(time.toLong == timeStringToTime.toLong)
+    
+    println(vector.toString())
+    assert(vector.toVector.length == 4)
+    assert(vector.toString().startsWith("["))
+    assert(i.toVector.length == 1)
     
     println("Success")
 }

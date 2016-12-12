@@ -21,6 +21,7 @@ object BasicValueCaster extends ValueCaster
     
     override lazy val conversions = HashSet(
             Conversion(AnyType, StringType, DATA_LOSS), 
+            // Vector -> String
             Conversion(DoubleType, IntType, DATA_LOSS), 
             Conversion(LongType, IntType, DATA_LOSS), 
             Conversion(FloatType, IntType, DATA_LOSS), 
@@ -42,7 +43,8 @@ object BasicValueCaster extends ValueCaster
             Conversion(IntType, BooleanType, MEANING_LOSS),  
             Conversion(StringType, BooleanType, MEANING_LOSS), 
             Conversion(LongType, InstantType, PERFECT), 
-            Conversion(StringType, InstantType, DANGEROUS))
+            Conversion(StringType, InstantType, DANGEROUS), 
+            Conversion(AnyType, VectorType, MEANING_LOSS))
     
     
     // IMPLEMENTED METHODS    ----
@@ -53,13 +55,14 @@ object BasicValueCaster extends ValueCaster
         val castedValue = toType match 
         {
             // Any object can be cast into a string
-            case StringType => value.content.toString()
+            case StringType => stringOf(value)
             case IntType => intOf(value)
             case DoubleType => doubleOf(value)
             case FloatType => floatOf(value)
             case LongType => longOf(value)
             case BooleanType => booleanOf(value)
             case InstantType => instantOf(value)
+            case VectorType => vectorOf(value)
             case _ => throw new ValueCastException(value, toType)
         }
         
@@ -68,6 +71,30 @@ object BasicValueCaster extends ValueCaster
     
     
     // OTHER METHODS    ---------
+    
+    private def stringOf(value: Value) = 
+    {
+        value.dataType match 
+        {
+            // Vectors have a special formatting like "[a, b, c, d]" 
+            // This is in order to form JSON -compatible output
+            case VectorType =>
+            {
+                val vector = value.toVector
+                val s = new StringBuilder()
+                s += '['
+                if (!vector.isEmpty)
+                {
+                    s ++= vector.head.toString()
+                    vector.tail.foreach { s ++= ", " + _ }
+                }
+                s += ']'
+                
+                s.toString()
+            }
+            case _ => value.content.toString()
+        }
+    }
     
     private def intOf(value: Value) = 
     {
@@ -169,4 +196,6 @@ object BasicValueCaster extends ValueCaster
             }
         }
     }
+    
+    private def vectorOf(value: Value) = Vector(value)
 }

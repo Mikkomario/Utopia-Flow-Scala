@@ -2,6 +2,7 @@ package utopia.flow.generic
 
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.mutable.Tree
+import utopia.flow.datastructure.immutable.Value
 
 
 /**
@@ -39,6 +40,11 @@ object BooleanType extends DataType("Boolean", classOf[java.lang.Boolean])
  * @see java.time
  */
 object InstantType extends DataType("Instant", classOf[java.time.Instant])
+/**
+ * Vector type stands for a vector of values. Only Vectors with exact parameter type of Value
+ * are accepted
+ */
+object VectorType extends DataType("Vector", classOf[Vector[Value]])
 
 
 object DataType
@@ -61,7 +67,7 @@ object DataType
         {
             isSetup = true
             introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, 
-                    BooleanType, InstantType)
+                    BooleanType, InstantType, VectorType)
             ConversionHandler.addCaster(BasicValueCaster)
         }
     }
