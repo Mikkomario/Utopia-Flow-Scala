@@ -54,26 +54,31 @@ object ConversionHandler
         {
             // Finds the possible ways to cast the value to the target type or any target sub type
             val targetTypes = toType.subTypes :+ toType
-            val routes = targetTypes.flatMap { optimalRouteTo(value.dataType, _) }
+            try
+            {
+                _cast(value, targetTypes)
+            }
+            catch 
+            {
+                case e: ValueCastException => throw new ValueCastException(value, toType, e)
+            }
+        }
+    }
+    
+    private def _cast(value: Value, targetTypes: Traversable[DataType]) = 
+    {
+        val routes = targetTypes.flatMap { optimalRouteTo(value.dataType, _) }
             
-            // Only works if at least a single conversion was found
-            if (routes.isEmpty)
-            {
-                throw new ValueCastException(value, toType)
-            }
-            else
-            {
-                try
-                {
-                    // Casts the value using the optimal route / target type
-                    routes.reduceLeft { 
-                        (route1, route2) => if (route2.cost < route1.cost) route2 else route1 }(value)
-                }
-                catch 
-                {
-                    case e: ValueCastException => throw new ValueCastException(value, toType, e)
-                }
-            }
+        // Only works if at least a single conversion was found
+        if (routes.isEmpty)
+        {
+            throw new ValueCastException(value, targetTypes.head)
+        }
+        else
+        {
+            // Casts the value using the optimal route / target type
+            routes.reduceLeft { 
+                (route1, route2) => if (route2.cost < route1.cost) route2 else route1 }(value)
         }
     }
     
@@ -93,6 +98,43 @@ object ConversionHandler
         catch
         {
             case _: DataTypeException => None
+        }
+    }
+    
+    /**
+     * Casts the value to a value of any of the provided data types
+     * @param value The value that is being casted
+     * @param targetTypes The targeted data types
+     * @return The value cast to one of the data types, None if casting failed or was not possible
+     */
+    def safeCast(value: Value, targetTypes: Set[DataType]) = 
+    {
+        // Checks if the value already is of any of the types
+        if (targetTypes.exists { value.dataType isOfType _ })
+        {
+            Some(value)
+        }
+        else
+        {
+            // The targeted data types include the provided types, plus each of their sub types
+            val allTargetTypes = targetTypes.flatMap { datatype => datatype.subTypes :+ datatype }
+            
+            if (allTargetTypes.isEmpty)
+            {
+                None
+            }
+            else
+            {
+                try
+                {
+                    val castValue = _cast(value, allTargetTypes)
+                    Some(castValue)
+                }
+                catch 
+                {
+                    case e: ValueCastException => None
+                }
+            }
         }
     }
     

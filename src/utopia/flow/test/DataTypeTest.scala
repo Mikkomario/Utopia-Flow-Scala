@@ -10,6 +10,9 @@ import utopia.flow.generic.BooleanType
 import java.time.Instant
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.datastructure.immutable.Constant
+import utopia.flow.generic.ConversionHandler
+import scala.collection.immutable.HashSet
+import utopia.flow.generic.IntType
 
 object DataTypeTest extends App
 {
@@ -79,6 +82,10 @@ object DataTypeTest extends App
     assert(model.toVector.length == 1)
     
     println(model.toString())
+    
+    // Tests Multi type conversion
+    assert(ConversionHandler.safeCast(d, HashSet(StringType, IntType)).exists { 
+        _.dataType isOfType IntType })
     
     println("Success")
 }
