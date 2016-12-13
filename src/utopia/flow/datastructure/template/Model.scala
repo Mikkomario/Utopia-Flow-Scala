@@ -21,6 +21,26 @@ trait Model[Attribute <: Property]
     
     // COMP. PROPERTIES    --------
     
+    override def toString = 
+    {
+        val s = new StringBuilder()
+        s += '{'
+        
+        val iterator = attributes.iterator
+        if (iterator.hasNext)
+        {
+            s ++= iterator.next().toString()
+        }
+        while (iterator.hasNext)
+        {
+            s ++= ", "
+            s ++= iterator.next().toString()
+        }
+        
+        s += '}'
+        s.toString()
+    }
+    
     /**
      * The names of the attributes stored in this model
      */

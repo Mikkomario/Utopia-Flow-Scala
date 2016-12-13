@@ -2,6 +2,9 @@ package utopia.flow.generic
 
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.mutable.Tree
+import utopia.flow.datastructure.immutable.Value
+import utopia.flow.datastructure.immutable.Model
+import utopia.flow.datastructure.immutable.Constant
 
 
 /**
@@ -34,6 +37,20 @@ object LongType extends DataType("Long", classOf[java.lang.Long])
  * Boolean type stands for boolean values
  */
 object BooleanType extends DataType("Boolean", classOf[java.lang.Boolean])
+/**
+ * Instant type stands for instant time type, which can represent any other time type as well
+ * @see java.time
+ */
+object InstantType extends DataType("Instant", classOf[java.time.Instant])
+/**
+ * Vector type stands for a vector of values. Only Vectors with exact parameter type of Value
+ * are accepted
+ */
+object VectorType extends DataType("Vector", classOf[Vector[Value]])
+/**
+ * Model type only accepts immutable models that contain basic constants
+ */
+object ModelType extends DataType("Model", classOf[Model[Constant]])
 
 
 object DataType
@@ -55,7 +72,8 @@ object DataType
         if (!isSetup)
         {
             isSetup = true
-            introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, BooleanType)
+            introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, 
+                    BooleanType, InstantType, VectorType, ModelType)
             ConversionHandler.addCaster(BasicValueCaster)
         }
     }

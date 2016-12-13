@@ -8,4 +8,5 @@ import utopia.flow.datastructure.immutable.Value
  * @since 12.11.2016
  */
 class ValueCastException(val sourceValue: Value, val targetType: DataType, cause: Throwable = null) 
-        extends DataTypeException(s"Failed to cast $sourceValue to $targetType", cause)
+        extends DataTypeException(s"Failed to cast $sourceValue (${sourceValue.dataType
+        }) to $targetType", cause)

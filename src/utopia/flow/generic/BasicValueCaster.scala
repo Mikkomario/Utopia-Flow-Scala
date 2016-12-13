@@ -7,6 +7,8 @@ import utopia.flow.generic.ConversionReliability.DATA_LOSS
 import utopia.flow.generic.ConversionReliability.DANGEROUS
 import utopia.flow.generic.ConversionReliability.MEANING_LOSS
 import utopia.flow.datastructure.immutable.Value
+import java.time.Instant
+import java.time.format.DateTimeParseException
 
 /**
  * This value caster handles the basic data types
@@ -19,6 +21,7 @@ object BasicValueCaster extends ValueCaster
     
     override lazy val conversions = HashSet(
             Conversion(AnyType, StringType, DATA_LOSS), 
+            // Vector -> String
             Conversion(DoubleType, IntType, DATA_LOSS), 
             Conversion(LongType, IntType, DATA_LOSS), 
             Conversion(FloatType, IntType, DATA_LOSS), 
@@ -36,8 +39,12 @@ object BasicValueCaster extends ValueCaster
             Conversion(DoubleType, LongType, DATA_LOSS), 
             Conversion(FloatType, LongType, DATA_LOSS), 
             Conversion(StringType, LongType, DANGEROUS), 
+            Conversion(InstantType, LongType, DATA_LOSS), 
             Conversion(IntType, BooleanType, MEANING_LOSS),  
-            Conversion(StringType, BooleanType, MEANING_LOSS))
+            Conversion(StringType, BooleanType, MEANING_LOSS), 
+            Conversion(LongType, InstantType, PERFECT), 
+            Conversion(StringType, InstantType, DANGEROUS), 
+            Conversion(AnyType, VectorType, MEANING_LOSS))
     
     
     // IMPLEMENTED METHODS    ----
@@ -48,12 +55,14 @@ object BasicValueCaster extends ValueCaster
         val castedValue = toType match 
         {
             // Any object can be cast into a string
-            case StringType => value.content.toString()
+            case StringType => stringOf(value)
             case IntType => intOf(value)
             case DoubleType => doubleOf(value)
             case FloatType => floatOf(value)
             case LongType => longOf(value)
             case BooleanType => booleanOf(value)
+            case InstantType => instantOf(value)
+            case VectorType => vectorOf(value)
             case _ => throw new ValueCastException(value, toType)
         }
         
@@ -62,6 +71,30 @@ object BasicValueCaster extends ValueCaster
     
     
     // OTHER METHODS    ---------
+    
+    private def stringOf(value: Value) = 
+    {
+        value.dataType match 
+        {
+            // Vectors have a special formatting like "[a, b, c, d]" 
+            // This is in order to form JSON -compatible output
+            case VectorType =>
+            {
+                val vector = value.toVector
+                val s = new StringBuilder()
+                s += '['
+                if (!vector.isEmpty)
+                {
+                    s ++= vector.head.toString()
+                    vector.tail.foreach { s ++= ", " + _ }
+                }
+                s += ']'
+                
+                s.toString()
+            }
+            case _ => value.content.toString()
+        }
+    }
     
     private def intOf(value: Value) = 
     {
@@ -127,6 +160,7 @@ object BasicValueCaster extends ValueCaster
             case IntType => value.toInt.toLong
             case DoubleType => value.toDouble.toLong
             case FloatType => value.toFloat.toLong
+            case InstantType => value.toInstant.getEpochSecond
             case StringType => {
                 try {value.toString().toDouble.toLong} 
                 catch 
@@ -147,4 +181,21 @@ object BasicValueCaster extends ValueCaster
             case _ => throw new ValueCastException(value, BooleanType)
         }
     }
+    
+    private def instantOf(value: Value) = 
+    {
+        value.dataType match 
+        {
+            case LongType => Instant.ofEpochSecond(value.toLong)
+            case StringType => {
+                try { Instant.parse(value.toString()) }
+                catch
+                {
+                    case e: DateTimeParseException => throw new ValueCastException(value, InstantType, e)
+                }
+            }
+        }
+    }
+    
+    private def vectorOf(value: Value) = Vector(value)
 }
