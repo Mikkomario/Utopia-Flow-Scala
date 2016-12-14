@@ -14,5 +14,5 @@ trait PropertyGenerator[T <: Property]
      * @param value The value for the new property (optional)
      * @returns Either (left) back up property on failure or (right) a property on success
      */
-    def apply(propertyName: String, value: Option[Value] = None): Either[T, T]
+    def apply(propertyName: String, value: Option[Value] = None): T
 }

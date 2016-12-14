@@ -1,24 +1,10 @@
 package utopia.flow.generic
 
-import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.datastructure.immutable.Value
-import utopia.flow.util.Equatable
+import utopia.flow.datastructure.immutable.Constant
 
 /**
- * This constant generator uses a single default value for all new constants
- * @author Mikko Hilpinen
- * @since 11.12.2016
+ * A simple constant generator is another way to create a simple property generator for constants
  */
-class SimpleConstantGenerator[T <: Constant](val defaultValue: Value, 
-        val createConstant: (String, Value) => T = new Constant(_, _)) extends ConstantGenerator[T] 
-        with Equatable
-{
-    def properties = Vector(defaultValue, createConstant)
-    
-    /**
-     * Creates a new constant with the provided name. Will always succeed.
-     * @param constantName The name of the constant
-     * @return A constant with the provided name and the generator's default value
-     */
-    def apply(constantName: String) = Some(createConstant(constantName, defaultValue))
-}
+class SimpleConstantGenerator(defaultValue: Value = Value.empty()) extends 
+        SimplePropertyGenerator(new Constant(_, _), defaultValue)
