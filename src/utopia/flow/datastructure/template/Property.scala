@@ -28,6 +28,7 @@ trait Property extends Node[Value]
     
     override def toString = s"$name: $content"
     
+    /*
     /**
      * The value of this property as a string
      */
@@ -62,4 +63,5 @@ trait Property extends Node[Value]
      * The value of this property
      */
     def anyValue = content.content
+    * */
 }

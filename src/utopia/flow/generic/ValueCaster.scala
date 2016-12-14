@@ -21,9 +21,7 @@ trait ValueCaster
      * conversions marked possible by this caster instance.
      * @param value The source value that is being casted
      * @param toType The target data type of the cast
-     * @return The casted value
-     * @throws ValueCastException If the casting fails
+     * @return The casted value or None if the casting failed
      */
-    @throws(classOf[ValueCastException])
-    def cast(value: Value, toType: DataType): Value
+    def cast(value: Value, toType: DataType): Option[Value]
 }

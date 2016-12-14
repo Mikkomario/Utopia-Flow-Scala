@@ -30,6 +30,7 @@ object JSONValueWriter
     @throws(classOf[JSONParseException])
     def apply(value: Value) = 
     {
+        /*
         // Casts the value to a compatible type
         val casted = ConversionHandler.safeCast(value, writers.keySet)
         
@@ -57,7 +58,7 @@ object JSONValueWriter
         else
         {
             throw new JSONParseException(s"$value couldn't be converted to JSON compatible type (${writers.keySet})")
-        }
+        }*/
     }
 }
 

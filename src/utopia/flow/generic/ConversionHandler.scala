@@ -38,30 +38,56 @@ object ConversionHandler
      * @param value The source value that is being casted
      * @param toType The desired target data type
      * @return The value casted to the target data type or any of the sub types of the target data
-     * type
-     * @throws ValueCastException if there was no way to convert the value to the desired data type
-     * or if the conversion failed at some point
+     * type. None if the casting failed or was not possible to begin with.
      */
-    @throws(classOf[ValueCastException])
     def cast(value: Value, toType: DataType) = 
     {
-        // If value is already of desired type, doesn't need to cast
-        if (value.dataType isOfType toType)
+        // An empty value doens't need to be modified
+        if (value.isEmpty)
         {
-            value
+            Some(Value.empty(toType))
+        }
+        // If value is already of desired type, doesn't need to cast
+        else if (value isOfType toType)
+        {
+            Some(value)
+        }
+        // Finds the possible ways to cast the value to the target type or any target sub type
+        else
+        {
+            _cast(value, toType.subTypes :+ toType)    
+        }
+    }
+    
+    /**
+     * Casts the value to a value of any of the provided data types
+     * @param value The value that is being casted
+     * @param targetTypes The targeted data types
+     * @return The value cast to one of the data types, None if casting failed or was not possible
+     */
+    def cast(value: Value, targetTypes: Set[DataType]) = 
+    {
+        // If there are no target types, no value can be produced
+        if (targetTypes.isEmpty)
+        {
+            None
+        }
+        // Empty values needn't be modified
+        else if (value.isEmpty)
+        {
+            Some(Value.empty(targetTypes.head))
+        }
+        // Checks if the value already is of any of the types
+        else if (targetTypes.exists { value.dataType isOfType _ })
+        {
+            Some(value)
         }
         else
         {
-            // Finds the possible ways to cast the value to the target type or any target sub type
-            val targetTypes = toType.subTypes :+ toType
-            try
-            {
-                _cast(value, targetTypes)
-            }
-            catch 
-            {
-                case e: ValueCastException => throw new ValueCastException(value, toType, e)
-            }
+            // The targeted data types include the provided types, plus each of their sub types
+            val allTargetTypes = targetTypes.flatMap { datatype => datatype.subTypes :+ datatype }
+            
+            if (allTargetTypes.isEmpty) None else _cast(value, allTargetTypes)
         }
     }
     
@@ -72,69 +98,13 @@ object ConversionHandler
         // Only works if at least a single conversion was found
         if (routes.isEmpty)
         {
-            throw new ValueCastException(value, targetTypes.head)
+            None
         }
         else
         {
             // Casts the value using the optimal route / target type
             routes.reduceLeft { 
                 (route1, route2) => if (route2.cost < route1.cost) route2 else route1 }(value)
-        }
-    }
-    
-    /**
-     * Casts a value to a different data type
-     * @param value The value that is being cast
-     * @param toType The target data type
-     * @return The value, if it was casted properly, None otherwise
-     */
-    def safeCast(value: Value, toType: DataType) = 
-    {
-        try
-        {
-            val castValue = cast(value, toType)
-            Some(castValue)
-        }
-        catch
-        {
-            case _: DataTypeException => None
-        }
-    }
-    
-    /**
-     * Casts the value to a value of any of the provided data types
-     * @param value The value that is being casted
-     * @param targetTypes The targeted data types
-     * @return The value cast to one of the data types, None if casting failed or was not possible
-     */
-    def safeCast(value: Value, targetTypes: Set[DataType]) = 
-    {
-        // Checks if the value already is of any of the types
-        if (targetTypes.exists { value.dataType isOfType _ })
-        {
-            Some(value)
-        }
-        else
-        {
-            // The targeted data types include the provided types, plus each of their sub types
-            val allTargetTypes = targetTypes.flatMap { datatype => datatype.subTypes :+ datatype }
-            
-            if (allTargetTypes.isEmpty)
-            {
-                None
-            }
-            else
-            {
-                try
-                {
-                    val castValue = _cast(value, allTargetTypes)
-                    Some(castValue)
-                }
-                catch 
-                {
-                    case e: ValueCastException => None
-                }
-            }
         }
     }
     
@@ -195,9 +165,11 @@ object ConversionHandler
         
         
         // OPERATORS    ---------------
-        
+                
+        // Casts the value through each of the steps
         @throws(classOf[DataTypeException])
-        def apply(value: Value) = steps.foldLeft(value)((value, step) => step(value))
+        def apply(value: Value) = steps.foldLeft(Some(value): Option[Value])((value, step) => 
+            value.flatMap { step(_) })
     }
     
     private case class ConversionStep(val caster: ValueCaster, val conversion: Conversion)
@@ -214,7 +186,7 @@ object ConversionHandler
         @throws(classOf[DataTypeException])
         def apply(value: Value) =
         {
-            if (!value.dataType.isOfType(conversion.source))
+            if (!(value isOfType conversion.source))
                 throw DataTypeException(s"Input of $value in conversion $conversion")
             caster.cast(value, conversion.target)
         }
