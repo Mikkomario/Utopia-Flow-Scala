@@ -48,9 +48,6 @@ object ModelTest extends App
     val model3 = new immutable.Model(constants)
     
     assert(model3.attributeGenerator == model3.attributeGenerator)
-    // FIXME: Assertion failed!
-    assert(new SimpleConstantGenerator(Value of 0).createProperty == 
-            new SimpleConstantGenerator(Value of 0).createProperty)
     assert(model3.attributeGenerator == new SimpleConstantGenerator())
     
     assert(model3 == new immutable.Model(constants))

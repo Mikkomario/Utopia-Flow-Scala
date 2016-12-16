@@ -8,3 +8,6 @@ import utopia.flow.datastructure.immutable.Value
  */
 class SimpleVariableGenerator(defaultValue: Value = Value.empty()) extends 
         SimplePropertyGenerator(new Variable(_, _), defaultValue)
+{
+    override def properties = Vector(defaultValue)    
+}

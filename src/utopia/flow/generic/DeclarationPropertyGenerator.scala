@@ -10,12 +10,10 @@ import utopia.flow.util.Equatable
  * @author Mikko Hilpinen
  * @since 16.12.2016
  */
-class DeclarationPropertyGenerator[T <: Property](val createProperty: (String, Value) => T, 
+abstract class DeclarationPropertyGenerator[T <: Property](val createProperty: (String, Value) => T, 
         val declaration: ModelDeclaration, val defaultValue: Value = Value.empty()) extends 
-        PropertyGenerator[T] with Equatable
+        PropertyGenerator[T]
 {
-    override def properties = Vector(createProperty, declaration, defaultValue)
-    
     override def apply(propertyName: String, value: Option[Value] = None) = 
     {
         // Uses the declaration's data type (and default value, if possible and necessary)
