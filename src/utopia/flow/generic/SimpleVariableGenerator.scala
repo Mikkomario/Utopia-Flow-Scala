@@ -6,5 +6,5 @@ import utopia.flow.datastructure.immutable.Value
 /**
  * SimpleVariableGenerator is just another way to create a simple property generator for variables
  */
-case class SimpleVariableGenerator(defaultValue: Value = Value.empty()) extends 
+class SimpleVariableGenerator(defaultValue: Value = Value.empty()) extends 
         SimplePropertyGenerator(new Variable(_, _), defaultValue)
