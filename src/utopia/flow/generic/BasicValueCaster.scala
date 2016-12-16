@@ -91,7 +91,7 @@ object BasicValueCaster extends ValueCaster
                 
                 Some(s.toString())
             }
-            case _ => Some(value.content.toString())
+            case _ => value.content.map { _.toString() }
         }
     }
     

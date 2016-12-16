@@ -71,8 +71,8 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
 {
     // INITIAL CODE    ---------
     
-    // The content must be of correct type
-    require(dataType.isInstance(content), s"$content is not of type $dataType")
+    // The content must be of correct type, if defined
+    require(content.forall { dataType.isInstance(_) }, s"$content is not of type $dataType")
     
     
     // COMP. PROPERTIES    -----

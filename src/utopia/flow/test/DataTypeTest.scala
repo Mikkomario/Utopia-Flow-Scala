@@ -43,48 +43,48 @@ object DataTypeTest extends App
         println(s"Route cost $fromType to $toType: " + ConversionHandler.costOfRoute(fromType, toType)) } }
     */
     
-    assert(str.toDouble == 123.45)
-    assert(str.toInt == 123)
-    assert(str.toLong == 123)
-    assert(str.toBoolean == false)
-    assert(str.toString() == str.content)
-    assert(str2.toBoolean == true)
+    assert(str.doubleOr() == 123.45)
+    assert(str.intOr() == 123)
+    assert(str.longOr() == 123)
+    assert(str.booleanOr() == false)
+    assert(str.string == str.content)
+    assert(str2.booleanOr() == true)
     
-    assert(i.toDouble == 213)
-    assert(i.toBoolean == true)
-    assert(i.toLong == 213)
-    assert(i.toString() == "213")
+    assert(i.doubleOr() == 213)
+    assert(i.booleanOr() == true)
+    assert(i.longOr() == 213)
+    assert(i.stringOr() == "213")
     
-    assert(d.toInt == 123)
-    assert(d.toBoolean == true)
-    assert(d.toLong == 123)
+    assert(d.intOr() == 123)
+    assert(d.booleanOr() == true)
+    assert(d.longOr() == 123)
     
-    assert(f.toInt == 123)
-    assert(f.toLong == 123)
-    assert(f.toBoolean == true)
+    assert(f.intOr() == 123)
+    assert(f.longOr() == 123)
+    assert(f.booleanOr() == true)
     
-    assert(l.toDouble == 9999999999.0)
-    assert(l.toBoolean == true)
+    assert(l.doubleOr() == 9999999999.0)
+    assert(l.booleanOr() == true)
     
-    assert(b.toInt == 1)
-    assert(b.toString() == "true")
-    assert(b.toDouble == 1.0)
+    assert(b.intOr() == 1)
+    assert(b.stringOr() == "true")
+    assert(b.doubleOr() == 1.0)
     
-    assert(time.toLong > 0)
+    assert(time.longOr() > 0)
     
     val timeToString = Value of time.toString()
-    val timeStringToTime = Value of timeToString.toInstant
-    assert(time.toLong == timeStringToTime.toLong)
+    val timeStringToTime = Value of timeToString.instantOr()
+    assert(time.long == timeStringToTime.long)
     
     println(vector.toString())
-    assert(vector.toVector.length == 4)
+    assert(vector.vectorOr().length == 4)
     assert(vector.toString().startsWith("["))
-    assert(model.toVector.length == 1)
+    assert(model.vectorOr().length == 1)
     
     println(model.toString())
     
     // Tests Multi type conversion
-    assert(ConversionHandler.safeCast(d, HashSet(StringType, IntType)).exists { 
+    assert(ConversionHandler.cast(d, HashSet(StringType, IntType)).exists { 
         _.dataType isOfType IntType })
     
     println("Success")
