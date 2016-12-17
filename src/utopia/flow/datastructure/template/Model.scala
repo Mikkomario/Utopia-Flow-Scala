@@ -42,6 +42,25 @@ trait Model[Attribute <: Property]
     }
     
     /**
+     * Converts this model into a JSON string. Only non-empty properties will be included.
+     */
+    def toJSON = 
+    {
+        val s = new StringBuilder()
+        s += '{'
+        
+        val jsonProps = attributes.toSeq.flatMap { _.toJSON }
+        if (!jsonProps.isEmpty)
+        {
+            s ++= jsonProps.head
+            jsonProps.tail.foreach { json => s ++= s", $json"}
+        }
+        
+        s += '}'
+        s.toString()
+    }
+    
+    /**
      * The names of the attributes stored in this model
      */
     def attributeNames = attributes.map { _.name }

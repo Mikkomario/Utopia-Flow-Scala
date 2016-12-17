@@ -27,14 +27,18 @@ object JSONValueWriter
      */
     def introduce(writer: JSONValueWriter) = writer.supportedTypes.foreach { writers += Tuple2(_, writer) }
     
-    @throws(classOf[JSONParseException])
+    /**
+     * Writes the value as a JSON string
+     * @param value The value that will be converted to JSON
+     * @return The JSON representation of the value or None if the value is not convertible to JSON
+     */
     def apply(value: Value) = 
     {
-        /*
         // Casts the value to a compatible type
-        val casted = ConversionHandler.safeCast(value, writers.keySet)
+        val casted = ConversionHandler.cast(value, writers.keySet)
         
-        if (casted.isDefined)
+        // Only non-empty values are parsed
+        if (casted.exists { _.isDefined })
         {
             // Searches for a direct writer first, then an indirect writer
             val directWriter = writers.get(casted.get.dataType)
@@ -51,14 +55,14 @@ object JSONValueWriter
                 }
                 else
                 {
-                    throw new JSONParseException(s"No JSON value writer for type ${casted.get.dataType}")
+                    None
                 }
             }
         }
         else
         {
-            throw new JSONParseException(s"$value couldn't be converted to JSON compatible type (${writers.keySet})")
-        }*/
+            None
+        }
     }
 }
 
@@ -75,12 +79,14 @@ trait JSONValueWriter
     def supportedTypes: Set[DataType]
     
     /**
-     * Writes the contents of the 'value' that can be assumed to be of type 'dataType' into a string
-     * @param value The value that is written
+     * Writes the contents of the 'value' that can be assumed to be of type 'dataType' as a
+     * JSON string. No empty values will be offered for write.
+     * @param value The value that is written. Not empty.
      * @param dataType the data type of the provided value. The type is always
      * one of the supported data types of this writer. This can be matched against the supported 
      * types to find the correct parse method.
+     * @return JSON representation of the value or None if the value can't or should be written as
+     * JSON
      */
-    @throws(classOf[JSONParseException])
-    def write(value: Value, dataType: DataType): String
+    def write(value: Value, dataType: DataType): Option[String]
 }
