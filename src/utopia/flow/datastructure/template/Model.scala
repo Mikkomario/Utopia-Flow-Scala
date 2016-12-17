@@ -21,25 +21,7 @@ trait Model[Attribute <: Property]
     
     // COMP. PROPERTIES    --------
     
-    override def toString = 
-    {
-        val s = new StringBuilder()
-        s += '{'
-        
-        val iterator = attributes.iterator
-        if (iterator.hasNext)
-        {
-            s ++= iterator.next().toString()
-        }
-        while (iterator.hasNext)
-        {
-            s ++= ", "
-            s ++= iterator.next().toString()
-        }
-        
-        s += '}'
-        s.toString()
-    }
+    override def toString = toJSON
     
     /**
      * Converts this model into a JSON string. Only non-empty properties will be included.

@@ -79,12 +79,13 @@ object BasicValueCaster extends ValueCaster
             // This is in order to form JSON -compatible output
             case VectorType =>
             {
-                val vector = value.vectorOr()
+                // Only writes non-empty string values
+                val vector = value.vectorOr().flatMap { _.string }
                 val s = new StringBuilder()
                 s += '['
                 if (!vector.isEmpty)
                 {
-                    s ++= vector.head.toString()
+                    s ++= vector.head
                     vector.tail.foreach { s ++= ", " + _ }
                 }
                 s += ']'

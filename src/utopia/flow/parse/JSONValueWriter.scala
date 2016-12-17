@@ -17,12 +17,19 @@ object JSONValueWriter
     private var writers = HashMap[DataType, JSONValueWriter]()
     
     
+    // INITIAL CODE    ---------
+    
+    // Adds the basic JSON writing capabilities
+    introduce(BasicJSONValueWriter)
+    
+    
     // OTHER METHODS    --------
     
     /**
      * Introduces a new writer implementation to this interface. If the writer provides
      * implementation for some already covered data type, the new implementation will override the
-     * previous one
+     * previous one. This method should be called for each new JSONValueWriter implementation
+     * (except for the BasicJSONValueWriter, which is introduced by default)
      * @param writer The writer that is added to this interface
      */
     def introduce(writer: JSONValueWriter) = writer.supportedTypes.foreach { writers += Tuple2(_, writer) }

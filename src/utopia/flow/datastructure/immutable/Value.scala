@@ -83,7 +83,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     /**
      * The description of this value, describing both content and data type
      */
-    def description = s"$content ($dataType)"
+    def description = s"'${stringOr()}' ($dataType)"
     
     /**
      * Whether this value has a real object value associated with it
