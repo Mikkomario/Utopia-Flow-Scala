@@ -22,7 +22,7 @@ object ModelTest extends App
     
     assert(generator2.defaultValue.isDefined)
     val generated = generator2("Test", None)
-    assert(generated.content == generator2.defaultValue)
+    assert(generated.value == generator2.defaultValue)
     
     // Tests models
     // 1) Model with no default value

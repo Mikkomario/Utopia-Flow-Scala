@@ -8,13 +8,13 @@ import utopia.flow.util.Equatable
  * @author Mikko Hilpinen
  * @since 29.11.2016
  */
-class Constant(val name: String, val content: Value) extends Property with Equatable
+class Constant(val name: String, val value: Value) extends Property with Equatable
 {
     // COMP. PROPERTIES    ---------
     
-    override def dataType = content.dataType
+    override def dataType = value.dataType
     
-    override def properties = Vector(name, content)
+    override def properties = Vector(name, value)
     
     
     // OTHER METHODS    ------------

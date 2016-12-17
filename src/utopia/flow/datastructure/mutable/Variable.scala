@@ -12,13 +12,13 @@ import utopia.flow.datastructure.immutable.Constant
  * @param initialContent The initial content of the variable. This determines the data type of the 
  * variable
  */
-class Variable(val name: String, initialContent: Value) extends Property
+class Variable(val name: String, content: Value) extends Property
 {
     // ATTRIBUTES    -----------------
     
-    private var _content = initialContent
-    def content = _content
-    def content_=(value: Value) = _content = value.withType(dataType)
+    private var _value = content
+    def value = _value
+    def value_=(value: Value) = _value = value.withType(dataType)
     
     
     // COMP. PROPERTIES    -----------

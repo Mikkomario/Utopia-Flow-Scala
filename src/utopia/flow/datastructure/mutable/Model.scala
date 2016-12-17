@@ -37,7 +37,7 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     def update(attName: String, value: Value) = 
     {
         val existing = findExisting(attName)
-        if (existing.isDefined) existing.get.content = value else generateAttribute(attName, Some(value))
+        if (existing.isDefined) existing.get.value = value else generateAttribute(attName, Some(value))
         Unit
     }
     

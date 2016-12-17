@@ -40,23 +40,23 @@ object ModelDeclarationTest extends App
     // 1) Generator with no default value
     val generator1 = new DeclarationConstantGenerator(modelDec2)
     
-    assert(generator1("test1").content.isEmpty)
-    assert(generator1("test2").content.isDefined)
-    assert(generator1("test3").content.dataType == StringType)
-    assert(generator1("not here").content.isEmpty)
+    assert(generator1("test1").value.isEmpty)
+    assert(generator1("test2").value.isDefined)
+    assert(generator1("test3").value.dataType == StringType)
+    assert(generator1("not here").value.isEmpty)
     
     // 2) Generator with a default value
     val generator2 = new DeclarationConstantGenerator(modelDec2, Value of 0)
     
-    assert(generator2("test1").content.isDefined)
-    assert(generator2("test3").content.dataType == StringType)
-    assert(generator2("test4").content.content.get == false)
-    assert(generator2("something else").content.isDefined)
+    assert(generator2("test1").value.isDefined)
+    assert(generator2("test3").value.dataType == StringType)
+    assert(generator2("test4").value.content.get == false)
+    assert(generator2("something else").value.isDefined)
     
     // Quick test of variable generation
     val generator4 = new DeclarationVariableGenerator(modelDec2)
     
-    assert(generator4("test4", Some(Value of 1)).content.content.get == true)
+    assert(generator4("test4", Some(Value of 1)).value.content.get == true)
     
     println("Success")
 }

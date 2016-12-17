@@ -9,9 +9,11 @@ import utopia.flow.generic.DataType
  * @author Mikko Hilpinen
  * @since 26.11.2016
  */
-trait Property extends Node[Value]
+trait Property
 {
     // PROPERTIES    -----------
+    
+    def value: Value
     
     /**
      * The name of the property
@@ -26,7 +28,7 @@ trait Property extends Node[Value]
     
     // COMP. PROPERTIES    -----
     
-    override def toString = s"$name: $content"
+    override def toString = s"$name: $value"
     
     /*
     /**

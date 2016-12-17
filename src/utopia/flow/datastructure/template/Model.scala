@@ -49,7 +49,7 @@ trait Model[Attribute <: Property]
     /**
      * The attributes which have a defined value
      */
-    def attributesWithValue: Set[Attribute] = attributes.filter { _.content.isDefined }
+    def attributesWithValue: Set[Attribute] = attributes.filter { _.value.isDefined }
     
     
     // TRAIT METHODS    -----------
@@ -69,7 +69,7 @@ trait Model[Attribute <: Property]
      * @param attName The name of the attribute from which the value is taken
      * @return The value of the attribute with the provided name
      */
-    def apply(attName: String) = get(attName).content
+    def apply(attName: String) = get(attName).value
     
     
     // OTHER METHODS    -----------
