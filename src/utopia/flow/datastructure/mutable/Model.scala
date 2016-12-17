@@ -1,10 +1,13 @@
 package utopia.flow.datastructure.mutable
 
 import utopia.flow.datastructure.template
+import utopia.flow.datastructure.immutable
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.SimpleVariableGenerator
 import utopia.flow.generic.PropertyGenerator
+import utopia.flow.datastructure.immutable.Constant
+import utopia.flow.generic.SimpleConstantGenerator
 
 /**
  * This is a mutable implementation of the Model template
@@ -65,6 +68,14 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     
     
     // OTHER METHODS    -----------
+    
+    /**
+     * Creates an immutable version of this model by using the provided attribute generator
+     * @param generator The attribute generator used by the new model. Default is a simple constant 
+     * generator that generates instances of Constant
+     */
+    def immutableCopy[T <: Constant](generator: PropertyGenerator[T] = new SimpleConstantGenerator()) = 
+        new immutable.Model(attributes.map { att => generator(att.name, Some(att.value)) }, generator)
     
     protected def generateAttribute(attName: String, value: Option[Value]) = 
     {

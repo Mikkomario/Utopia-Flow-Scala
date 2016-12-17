@@ -54,6 +54,11 @@ object ModelTest extends App
     assert(model3.attributes.size == 2)
     assert(model3("Test1").content.get == 1)
     
+    val mutableModel2 = new mutable.Model()
+    mutableModel2("Test1") = Value of 1
+    mutableModel2("Test2") = Value of 2
+    assert(mutableModel2.immutableCopy() == model3)
+    
     val model4 = model3 + new Constant("Test3", Value of 3)
     
     assert(model4.attributes.size == 3)
