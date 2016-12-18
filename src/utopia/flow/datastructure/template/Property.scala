@@ -33,5 +33,5 @@ trait Property
     /**
      * Represents the property in JSON
      */
-    def toJSON = value.toJSON.map { s"$name: " + _ }
+    def toJSON = value.toJSON.map { "\"" + name + "\": " + _ }
 }

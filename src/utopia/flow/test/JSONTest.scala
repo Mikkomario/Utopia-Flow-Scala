@@ -8,6 +8,7 @@ import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.parse.JSONReader
 import utopia.flow.generic.IntType
+import utopia.flow.generic.ModelType
 
 object JSONTest extends App
 {
@@ -45,7 +46,7 @@ object JSONTest extends App
     
     assert(prop3.toJSON.isEmpty)
     assert(prop2.toJSON.isDefined)
-    assert(prop1.toJSON.exists { _ == "test1: 123" })
+    assert(prop1.toJSON.exists { _ == "\"test1\": 123" })
     
     // Tests / prints model writing
     val model = new Model(Vector(prop1, prop2, prop3))
@@ -63,4 +64,22 @@ object JSONTest extends App
     
     assert(readModel2.get("name").stringOr() == "Matti")
     assert(readModel2.get("age").dataType == IntType)
+    
+    // Tests more difficult data types
+    val prop4 = new Constant("test4", v)
+    val prop5 = new Constant("test5", Value of model)
+    val prop6 = new Constant("test6", time)
+    
+    val model2 = new Model(Vector(prop4, prop5, prop6))
+    
+    println(model2)
+    
+    val readModel3 = JSONReader.parseSingle(model2.toJSON)
+    
+    assert(readModel3.isDefined)
+    println(readModel3.get)
+    
+    assert(readModel3.get("test6").longOr(-1) > 0)
+    assert(readModel3.get("test4").vectorOr().length == 2)
+    assert(readModel3.get("test5").dataType == ModelType)
 }

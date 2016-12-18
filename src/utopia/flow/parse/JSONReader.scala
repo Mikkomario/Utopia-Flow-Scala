@@ -56,7 +56,7 @@ object JSONReader
             {
                 val parsedObject = parseObject(json, index)
                 
-                objects :+ parsedObject._1
+                objects += parsedObject._1
                 index = findNext(json, index, ObjectStart).map { _._2 }.getOrElse(-1)
             }
         }
@@ -70,9 +70,9 @@ object JSONReader
     }
     
     private def parseObject(json: String, objStartIndex: Int) = 
-    {
+    {   
         val properties = new ListBuffer[Constant]()
-        var index = objStartIndex + 1
+        var index = objStartIndex
         
         // Parses values until it stops at object end marker
         while (json.charAt(index) != ObjectEnd.marker)
@@ -85,13 +85,13 @@ object JSONReader
                 case Quote => 
                 {
                     // Parses the property
-                    val parsedProperty = parseProperty(json, index)
+                    val parsedProperty = parseProperty(json, nextEvent._2)
                     index = parsedProperty._2
                     
                     // Parsed models will only contain non-empty values / properties
                     if (parsedProperty._1.value.isDefined)
                     {
-                        properties :+ parsedProperty._1
+                        properties += parsedProperty._1
                     }
                 }
                 // Doesn't parse the property and doesn't continue the loop
@@ -120,6 +120,7 @@ object JSONReader
         Tuple2(new Constant(propertyName, parsedValue._1), parsedValue._2)
     }
     
+    // Ends at the next separator or container (array or object) end. Never inside content.
     private def parsePropertyValue(json: String, lastMarkerIndex: Int): (Value, Int) = 
     {
         // Finds either a) start of object, b) start of array, 
@@ -132,12 +133,12 @@ object JSONReader
             case ObjectStart => 
             {
                 val nextObject = parseObject(json, nextEvent._2)
-                Tuple2(Value of nextObject._1, nextObject._2)
+                Tuple2(Value of nextObject._1, nextObject._2 + 1) // +1 to escape content range
             }
             case ArrayStart => 
             {
                 val nextArray = parseArray(json, nextEvent._2)
-                Tuple2(Value of nextArray._1, nextArray._2)
+                Tuple2(Value of nextArray._1, nextArray._2 + 1) // +1 to escape content range
             }
             case _ => Tuple2(parseSimpleValue(json.substring(lastMarkerIndex + 1, nextEvent._2)), 
                     nextEvent._2)
@@ -147,7 +148,7 @@ object JSONReader
     private def parseArray(json: String, arrayStartIndex: Int) = 
     {
         val buffer = new ListBuffer[Value]()
-        var index = arrayStartIndex + 1
+        var index = arrayStartIndex
         
         // Parses values until it stops at array end marker
         while (json.charAt(index) != ArrayEnd.marker)
@@ -159,7 +160,7 @@ object JSONReader
             // (empty value is generated on empty arrays)
             if (parsedValue._1.isDefined)
             {
-                buffer :+ parsedValue._1
+                buffer += parsedValue._1
             }
         }
         
