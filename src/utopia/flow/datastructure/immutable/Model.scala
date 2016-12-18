@@ -5,6 +5,8 @@ import utopia.flow.util.Equatable
 import utopia.flow.generic.PropertyGenerator
 import utopia.flow.generic.SimpleConstantGenerator
 import utopia.flow.generic.PropertyGenerator
+import utopia.flow.datastructure.mutable
+import utopia.flow.generic.SimpleVariableGenerator
 
 /**
  * This is the immutable model implementation
@@ -78,4 +80,17 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
      * Creates a new model with the same attributes but a different attribute generator
      */
     def withGenerator(generator: PropertyGenerator[Attribute]) = new Model(attributes, generator)
+    
+    /**
+     * Creates a mutable copy of this model
+     * @param generator The property generator used for creating the properties of the new model
+     * @return A mutable copy of this model using the provided property generator
+     */
+    def mutableCopy[T <: mutable.Variable](generator: PropertyGenerator[T] = new SimpleVariableGenerator()) = 
+    {
+        val copy = new mutable.Model(generator)
+        attributes.foreach { att => copy(att.name) = att.value }
+        
+        copy
+    }
 }
