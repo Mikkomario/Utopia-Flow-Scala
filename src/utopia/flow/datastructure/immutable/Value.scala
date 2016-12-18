@@ -104,6 +104,35 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     override def toString = string.getOrElse("")
     
     
+    // OPERATORS    -------------
+    
+    /**
+     * Finds a value from this value as if this value was a model
+     * @param propertyName The name of the requested property
+     * @return The value of the requested property 
+     */
+    def apply(propertyName: String) = modelOr()(propertyName)
+    
+    /**
+     * Finds a value from this value as if this value was a vector
+     * @param index The index at which the value is searched
+     * @return The value from the provided index from a vector within this value or empty value if 
+     * this value doesn't contain a vector or index was out of range
+     */
+    def apply(index: Int) = 
+    {
+        val vector = vectorOr()
+        if (index < 0 || index >= vector.length)
+        {
+            Value.empty()
+        }
+        else
+        {
+            vector(index)
+        }
+    }
+    
+    
     // OTHER METHODS    ---------
     
     /**
