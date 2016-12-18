@@ -18,17 +18,11 @@ object ModelTest extends App
     //println(DataType)
     
     // Tests variable creation
-    val variableGenerator = new SimpleVariableGenerator(None)
-    
-    assert(variableGenerator("Test", None).isEmpty)
-    assert(variableGenerator("Test", Some(Value of 2)).isDefined)
-    
-    val generator2 = new SimpleVariableGenerator(Some(Value of 0))
+    val generator2 = new SimpleVariableGenerator(Value of 0)
     
     assert(generator2.defaultValue.isDefined)
     val generated = generator2("Test", None)
-    assert(generated.isDefined)
-    assert(generated.get.content == generator2.defaultValue.get)
+    assert(generated.value == generator2.defaultValue)
     
     // Tests models
     // 1) Model with no default value
@@ -37,37 +31,45 @@ object ModelTest extends App
     model1("Another") = Value of "Hello"
     
     assert(model1.attributes.size == 2)
-    assert(model1("Test").content == 2)
+    assert(model1("Test").content.get == 2)
     
     model1("another") = Value of "Hello2"
     
     assert(model1.attributes.size == 2)
-    assert(model1("Another").content == "Hello2")
+    assert(model1("Another").content.get == "Hello2")
     
     // 2) model with default value
     val model2 = new mutable.Model(generator2)
-    assert(model2.find("Test").isDefined)
-    assert(model2("Test").content == 0)
+    assert(!model2.findExisting("Test").isDefined)
+    assert(model2("Test").content.get == 0)
     
     // 3) immutable model with no default value
     val constants = Vector(new Constant("Test1", Value of 1), new Constant("Test2", Value of 2))
     val model3 = new immutable.Model(constants)
     
+    assert(model3.attributeGenerator == model3.attributeGenerator)
+    assert(model3.attributeGenerator == new SimpleConstantGenerator())
+    
     assert(model3 == new immutable.Model(constants))
     assert(model3.attributes.size == 2)
-    assert(model3("Test1").content == 1)
+    assert(model3("Test1").content.get == 1)
+    
+    val mutableModel2 = new mutable.Model()
+    mutableModel2("Test1") = Value of 1
+    mutableModel2("Test2") = Value of 2
+    assert(mutableModel2.immutableCopy() == model3)
     
     val model4 = model3 + new Constant("Test3", Value of 3)
     
     assert(model4.attributes.size == 3)
-    assert(model4("Test3").content == 3)
+    assert(model4("Test3").content.get == 3)
     
     // 4) Immutable model with a default value
     val generator3 = new SimpleConstantGenerator(Value of 0)
-    val model5 = new immutable.Model(constants, Some(generator3))
+    val model5 = new immutable.Model(constants, generator3)
     
     assert(model5 != model3)
-    assert(model5("nonexisting").content == 0)
+    assert(model5("nonexisting").content.get == 0)
     assert(model5.attributes.size == constants.size)
     
     println(model5.toString())

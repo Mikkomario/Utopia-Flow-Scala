@@ -40,34 +40,23 @@ object ModelDeclarationTest extends App
     // 1) Generator with no default value
     val generator1 = new DeclarationConstantGenerator(modelDec2)
     
-    assert(generator1("test1").isEmpty)
-    assert(generator1("test2").isDefined)
-    assert(generator1("test3").exists { _.dataType == StringType })
-    assert(generator1("not here").isEmpty)
+    assert(generator1("test1").value.isEmpty)
+    assert(generator1("test2").value.isDefined)
+    assert(generator1("test3").value.dataType == StringType)
+    assert(generator1("not here").value.isEmpty)
     
     // 2) Generator with a default value
-    val generator2 = new DeclarationConstantGenerator(modelDec2, false, Some(Value of 0))
+    val generator2 = new DeclarationConstantGenerator(modelDec2, Value of 0)
     
-    assert(generator2("test1").isDefined)
-    assert(generator2("test3").exists { _.content.dataType == StringType })
-    assert(generator2("test4").get.content.content == false)
-    assert(generator2("something else").isDefined)
-    
-    // 3) Generator with default value that limits to declared properties
-    val generator3 = new DeclarationConstantGenerator(modelDec2, true, Some(Value of 0))
-    
-    assert(generator3("something else").isEmpty)
+    assert(generator2("test1").value.isDefined)
+    assert(generator2("test3").value.dataType == StringType)
+    assert(generator2("test4").value.content.get == false)
+    assert(generator2("something else").value.isDefined)
     
     // Quick test of variable generation
     val generator4 = new DeclarationVariableGenerator(modelDec2)
     
-    assert(generator4("test4", Some(Value of 1)).get.content.content == true)
-    
-    val generator5 = new DeclarationVariableGenerator(modelDec2, true, Some(Value of 0))
-    
-    assert(generator5("something else").isEmpty)
-    assert(generator5("test1").isDefined)
-    assert(generator5("test3").get.content.content == "3")
+    assert(generator4("test4", Some(Value of 1)).value.content.get == true)
     
     println("Success")
 }

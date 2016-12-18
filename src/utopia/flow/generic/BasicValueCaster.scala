@@ -49,10 +49,9 @@ object BasicValueCaster extends ValueCaster
     
     // IMPLEMENTED METHODS    ----
     
-    @throws(classOf[ValueCastException])
     override def cast(value: Value, toType: DataType) = 
     {
-        val castedValue = toType match 
+        val castResult: Option[Any] = toType match 
         {
             // Any object can be cast into a string
             case StringType => stringOf(value)
@@ -63,16 +62,16 @@ object BasicValueCaster extends ValueCaster
             case BooleanType => booleanOf(value)
             case InstantType => instantOf(value)
             case VectorType => vectorOf(value)
-            case _ => throw new ValueCastException(value, toType)
+            case _ => None
         }
         
-        new Value(castedValue, toType)
+        castResult.map { objValue => new Value(Some(objValue), toType) }
     }
     
     
     // OTHER METHODS    ---------
     
-    private def stringOf(value: Value) = 
+    private def stringOf(value: Value): Option[String] = 
     {
         value.dataType match 
         {
@@ -80,122 +79,108 @@ object BasicValueCaster extends ValueCaster
             // This is in order to form JSON -compatible output
             case VectorType =>
             {
-                val vector = value.toVector
+                // Only writes non-empty string values
+                val vector = value.vectorOr().flatMap { _.string }
                 val s = new StringBuilder()
                 s += '['
                 if (!vector.isEmpty)
                 {
-                    s ++= vector.head.toString()
+                    s ++= vector.head
                     vector.tail.foreach { s ++= ", " + _ }
                 }
                 s += ']'
                 
-                s.toString()
+                Some(s.toString())
             }
-            case _ => value.content.toString()
+            case _ => value.content.map { _.toString() }
         }
     }
     
-    private def intOf(value: Value) = 
+    private def intOf(value: Value): Option[Int] = 
     {
         // Double, long, float and boolean can be cast to integers
         // String needs to be parsed
         value.dataType match 
         {
-            case DoubleType => value.toDouble.intValue()
-            case LongType => value.toLong.intValue()
-            case FloatType => value.toFloat.intValue()
-            case BooleanType => if (value.toBoolean) 1 else 0
+            case DoubleType => Some(value.doubleOr().intValue())
+            case LongType => Some(value.longOr().intValue())
+            case FloatType => Some(value.floatOr().intValue())
+            case BooleanType => Some(if (value.booleanOr()) 1 else 0)
             case StringType => {
-                try {value.toString.toDouble.toInt} 
-                catch 
-                {
-                    case e: Exception => throw new ValueCastException(value, IntType, e)
-                }
+                try { Some(value.stringOr("0").toDouble.toInt) } 
+                catch { case e: Exception => None }
             }
-            case _ => throw new ValueCastException(value, IntType)
+            case _ => None
         }
     }
     
-    private def doubleOf(value: Value) = 
+    private def doubleOf(value: Value): Option[Double] = 
     {
         value.dataType match 
         {
-            case IntType => value.toInt.toDouble
-            case LongType => value.toLong.toDouble
-            case FloatType => value.toFloat.toDouble
+            case IntType => Some(value.intOr().toDouble)
+            case LongType => Some(value.longOr().toDouble)
+            case FloatType => Some(value.floatOr().toDouble)
             case StringType => {
-                try {value.toString().toDouble} 
-                catch 
-                {
-                    case e: Exception => throw new ValueCastException(value, DoubleType, e)
-                }
+                try { Some(value.stringOr("0").toDouble) } 
+                catch { case e: Exception => None }
             }
-            case _ => throw new ValueCastException(value, DoubleType)
+            case _ => None
         }
     }
     
-    private def floatOf(value: Value) = 
+    private def floatOf(value: Value): Option[Float] = 
     {
         value.dataType match 
         {
-            case IntType => value.toInt.toFloat
-            case LongType => value.toLong.toFloat
-            case DoubleType => value.toDouble.toFloat
+            case IntType => Some(value.intOr().toFloat)
+            case LongType => Some(value.longOr().toFloat)
+            case DoubleType => Some(value.doubleOr().toFloat)
             case StringType => {
-                try {value.toString().toFloat} 
-                catch 
-                {
-                    case e: Exception => throw new ValueCastException(value, FloatType, e)
-                }
+                try { Some(value.stringOr("0").toFloat) } 
+                catch { case e: Exception => None }
             }
-            case _ => throw new ValueCastException(value, FloatType)
+            case _ => None
         }
     }
     
-    private def longOf(value: Value) = 
+    private def longOf(value: Value): Option[Long] = 
     {
         value.dataType match 
         {
-            case IntType => value.toInt.toLong
-            case DoubleType => value.toDouble.toLong
-            case FloatType => value.toFloat.toLong
-            case InstantType => value.toInstant.getEpochSecond
+            case IntType => Some(value.intOr().toLong)
+            case DoubleType => Some(value.doubleOr().toLong)
+            case FloatType => Some(value.floatOr().toLong)
+            case InstantType => Some(value.instantOr().getEpochSecond)
             case StringType => {
-                try {value.toString().toDouble.toLong} 
-                catch 
-                {
-                    case e: Exception => throw new ValueCastException(value, LongType, e)
-                }
+                try { Some(value.stringOr("0").toDouble.toLong) } 
+                catch { case e: Exception => None }
             }
-            case _ => throw new ValueCastException(value, LongType)
+            case _ => None
         }
     }
     
-    private def booleanOf(value: Value) = 
+    private def booleanOf(value: Value): Option[Boolean] = 
     {
         value.dataType match 
         {
-            case IntType => value.toInt != 0
-            case StringType => value.toString().toLowerCase() == "true"
-            case _ => throw new ValueCastException(value, BooleanType)
+            case IntType => Some(value.intOr() != 0)
+            case StringType => Some(value.stringOr().toLowerCase() == "true")
+            case _ => None
         }
     }
     
-    private def instantOf(value: Value) = 
+    private def instantOf(value: Value): Option[Instant] = 
     {
         value.dataType match 
         {
-            case LongType => Instant.ofEpochSecond(value.toLong)
+            case LongType => Some(Instant.ofEpochSecond(value.longOr()))
             case StringType => {
-                try { Instant.parse(value.toString()) }
-                catch
-                {
-                    case e: DateTimeParseException => throw new ValueCastException(value, InstantType, e)
-                }
+                try { Some(Instant.parse(value.toString())) }
+                catch { case e: DateTimeParseException => None }
             }
         }
     }
     
-    private def vectorOf(value: Value) = Vector(value)
+    private def vectorOf(value: Value) = Some(Vector(value))
 }

@@ -2,7 +2,9 @@ package utopia.flow.datastructure.immutable
 
 import utopia.flow.datastructure.template
 import utopia.flow.util.Equatable
-import utopia.flow.generic.ConstantGenerator
+import utopia.flow.generic.PropertyGenerator
+import utopia.flow.generic.SimpleConstantGenerator
+import utopia.flow.generic.PropertyGenerator
 
 /**
  * This is the immutable model implementation
@@ -11,7 +13,7 @@ import utopia.flow.generic.ConstantGenerator
  * @since 29.11.2016
  */
 class Model[Attribute <: Constant](content: Traversable[Attribute], 
-        val attributeGenerator: Option[ConstantGenerator[Attribute]] = None) extends 
+        val attributeGenerator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) extends 
         template.Model[Attribute] with Equatable
 {
     // ATTRIBUTES    --------------
@@ -27,7 +29,7 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
     
     // IMPLEMENTED METHODS    ----
     
-    override def generateAttribute(attName: String) = attributeGenerator.flatMap { _(attName) }
+    override def generateAttribute(attName: String) = attributeGenerator(attName, None)
     
     
     // OPERATORS    --------------
@@ -35,12 +37,12 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model with the provided attribute added
      */
-    def +(attribute: Attribute) = new Model(attributes + attribute, attributeGenerator)
+    def +(attribute: Attribute) = withAttributes(attributes + attribute)
     
     /**
      * Creates a new model with the provided attributes added
      */
-    def ++(attributes: Traversable[Attribute]) = new Model(this.attributes ++ attributes, attributeGenerator)
+    def ++(attributes: Traversable[Attribute]) = withAttributes(this.attributes ++ attributes)
     
     /**
      * Creates a new model that contains the attributes from both of the models. The new model 
@@ -63,4 +65,17 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
      * Creates a new model without any attributes within the provided model
      */
     def --(other: Model[Attribute]): Model[Attribute] = this -- other.attributes
+    
+    
+    // OTHER METHODS    ------
+    
+    /**
+     * Creates a new model with the same generator but different attributes
+     */
+    def withAttributes(attributes: Traversable[Attribute]) = new Model(attributes, attributeGenerator)
+    
+    /**
+     * Creates a new model with the same attributes but a different attribute generator
+     */
+    def withGenerator(generator: PropertyGenerator[Attribute]) = new Model(attributes, generator)
 }

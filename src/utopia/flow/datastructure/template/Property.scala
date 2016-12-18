@@ -9,9 +9,11 @@ import utopia.flow.generic.DataType
  * @author Mikko Hilpinen
  * @since 26.11.2016
  */
-trait Property extends Node[Value]
+trait Property
 {
     // PROPERTIES    -----------
+    
+    def value: Value
     
     /**
      * The name of the property
@@ -26,40 +28,10 @@ trait Property extends Node[Value]
     
     // COMP. PROPERTIES    -----
     
-    override def toString = s"$name: $content"
+    override def toString = s"$name: $value"
     
     /**
-     * The value of this property as a string
+     * Represents the property in JSON
      */
-    def stringValue = content.toString
-    
-    /**
-     * The value of this property as an integer
-     */
-    def intValue = content.toInt
-    
-    /**
-     * The value of this property as a double
-     */
-    def doubleValue = content.toDouble
-    
-    /**
-     * The value of this property as a float
-     */
-    def floatValue = content.toFloat
-    
-    /**
-     * The value of this property as a long
-     */
-    def longValue = content.toLong
-    
-    /**
-     * The value of this property as a boolean
-     */
-    def booleanValue = content.toBoolean
-    
-    /**
-     * The value of this property
-     */
-    def anyValue = content.content
+    def toJSON = value.toJSON.map { "\"" + name + "\": " + _ }
 }

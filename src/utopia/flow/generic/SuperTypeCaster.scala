@@ -17,5 +17,5 @@ class SuperTypeCaster(val types: Set[DataType]) extends ValueCaster
         superType => Conversion(dataType, superType, NO_CONVERSION) } }
     
     // No conversion is required since the value already represents an instance of the supertype
-    override def cast(value: Value, toType: DataType) = value
+    override def cast(value: Value, toType: DataType) = Some(value)
 }

@@ -1,9 +1,13 @@
 package utopia.flow.datastructure.mutable
+
 import utopia.flow.datastructure.template
+import utopia.flow.datastructure.immutable
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.immutable.Value
-import utopia.flow.generic.VariableGenerator
 import utopia.flow.generic.SimpleVariableGenerator
+import utopia.flow.generic.PropertyGenerator
+import utopia.flow.datastructure.immutable.Constant
+import utopia.flow.generic.SimpleConstantGenerator
 
 /**
  * This is a mutable implementation of the Model template
@@ -12,7 +16,7 @@ import utopia.flow.generic.SimpleVariableGenerator
  * @param Attribute The type of attribute stored within this model
  * @param attributeGenerator The variable generator used for generating new values on this model
  */
-class Model[Attribute <: Variable](val attributeGenerator: VariableGenerator[Attribute] = 
+class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Attribute] = 
         new SimpleVariableGenerator()) extends template.Model[Attribute]
 {
     // ATTRIBUTES    --------------
@@ -35,8 +39,8 @@ class Model[Attribute <: Variable](val attributeGenerator: VariableGenerator[Att
      */
     def update(attName: String, value: Value) = 
     {
-        val existing = find(attName)
-        if (existing.isDefined) existing.get.content = value else generateAttribute(attName, Some(value))
+        val existing = findExisting(attName)
+        if (existing.isDefined) existing.get.value = value else generateAttribute(attName, Some(value))
         Unit
     }
     
@@ -65,11 +69,19 @@ class Model[Attribute <: Variable](val attributeGenerator: VariableGenerator[Att
     
     // OTHER METHODS    -----------
     
+    /**
+     * Creates an immutable version of this model by using the provided attribute generator
+     * @param generator The attribute generator used by the new model. Default is a simple constant 
+     * generator that generates instances of Constant
+     */
+    def immutableCopy[T <: Constant](generator: PropertyGenerator[T] = new SimpleConstantGenerator()) = 
+        new immutable.Model(attributes.map { att => generator(att.name, Some(att.value)) }, generator)
+    
     protected def generateAttribute(attName: String, value: Option[Value]) = 
     {
         // In addition to creating the attribute, adds it to the model
         val attribute = attributeGenerator(attName, value)
-        attribute.foreach { _attributes += _ }
+        _attributes += attribute
         attribute
     }
 }
