@@ -8,6 +8,19 @@ import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.mutable
 import utopia.flow.generic.SimpleVariableGenerator
 
+object Model
+{
+    /**
+     * Creates a new model with input format that is more friendly to literals
+     * @param content The attribute name value pairs used for generating the model's attributes
+     * @param generator The attribute generator that will generate the attributes
+     * @return The newly generated model
+     */
+    def apply[Attribute <: Constant](content: Traversable[(String, Value)], 
+            generator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) = 
+            new Model(content.map { case (name, value) => generator(name, Some(value)) }, generator)
+}
+
 /**
  * This is the immutable model implementation
  * The model will only accept constant properties

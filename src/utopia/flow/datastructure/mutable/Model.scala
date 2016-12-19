@@ -9,6 +9,23 @@ import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.SimpleConstantGenerator
 
+object Model
+{
+    /**
+     * Creates a new model with existing set of attributes.
+     * @param content The attribute name value pairs used for generating the model's attributes
+     * @param generator The attribute generator
+     * @return A generated model
+     */
+    def apply[Attribute <: Variable](content: Traversable[(String, Value)], 
+            generator: PropertyGenerator[Attribute] = new SimpleVariableGenerator()) = 
+    {
+        val model = new Model(generator)
+        content.foreach { case (name, value) => model(name) = value }
+        model
+    }    
+}
+
 /**
  * This is a mutable implementation of the Model template
  * @author Mikko Hilpinen
