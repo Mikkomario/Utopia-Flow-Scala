@@ -34,7 +34,7 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
     // ATTRIBUTES    --------------
     
     // Filters out duplicates (case-insensitive)
-    val attributes = content.groupBy { _.name.toLowerCase() }.values.map { _.head }.toSet
+    val attributeMap = content.groupBy { _.name.toLowerCase() }.map { case (name, atts) => name -> atts.head }
     
     
     // COMP. PROPERTIES    -------
