@@ -2,12 +2,29 @@ package utopia.flow.datastructure.mutable
 
 import utopia.flow.datastructure.template
 import utopia.flow.datastructure.immutable
-import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.SimpleVariableGenerator
 import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.SimpleConstantGenerator
+import scala.collection.immutable.HashMap
+
+object Model
+{
+    /**
+     * Creates a new model with existing set of attributes.
+     * @param content The attribute name value pairs used for generating the model's attributes
+     * @param generator The attribute generator
+     * @return A generated model
+     */
+    def apply[Attribute <: Variable](content: Traversable[(String, Value)], 
+            generator: PropertyGenerator[Attribute] = new SimpleVariableGenerator()) = 
+    {
+        val model = new Model(generator)
+        content.foreach { case (name, value) => model(name) = value }
+        model
+    }    
+}
 
 /**
  * This is a mutable implementation of the Model template
@@ -21,8 +38,8 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
 {
     // ATTRIBUTES    --------------
     
-    private var _attributes = HashSet[Attribute]()
-    def attributes = _attributes
+    private var _attributeMap = HashMap[String, Attribute]()
+    def attributeMap = _attributeMap
     
     
     // IMPLEMENTED METHODS    -----
@@ -49,10 +66,7 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      * is overwritten
      * @param attribute The attribute added to this model
      */
-    def +=(attribute: Attribute) = 
-    {
-        _attributes = attributes.filterNot { _.name.equalsIgnoreCase(attribute.name) } + attribute
-    }
+    def +=(attribute: Attribute) = _attributeMap += attribute.name.toLowerCase() -> attribute
     
     /**
      * Adds a number of attributes to this model
@@ -64,7 +78,7 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      * Removes an attribute from this model
      * @param attribute The attribute that is removed from this model
      */
-    def -=(attribute: Attribute) = _attributes -= attribute
+    def -=(attribute: Attribute) = _attributeMap = _attributeMap.filter { case (_, att) => att != attribute }
     
     
     // OTHER METHODS    -----------
@@ -81,7 +95,7 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     {
         // In addition to creating the attribute, adds it to the model
         val attribute = attributeGenerator(attName, value)
-        _attributes += attribute
+        this += attribute
         attribute
     }
 }

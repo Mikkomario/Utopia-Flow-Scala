@@ -74,5 +74,12 @@ object ModelTest extends App
     
     println(model5.toString())
     
+    // Tests other model generator functions
+    val model6 = mutable.Model(Vector("a" -> Value.of(1), "b" -> Value.of(2)))
+    assert(model6.attributes.size == 2)
+    
+    val model7 = immutable.Model(Vector("a" -> Value.of(1), "b" -> Value.of(2)))
+    assert(model7.attributes.size == 2)
+    
     println("Success")
 }

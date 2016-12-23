@@ -14,9 +14,10 @@ trait Model[Attribute <: Property]
     // ATTRIBUTES    --------------
     
     /**
-     * The attributes stored in this model
+     * The attributes stored in this model. The key is the attribute's name (lower case), 
+     * the value is the attribute itself
      */
-    def attributes: Set[Attribute]
+    def attributeMap: Map[String, Attribute]
     
     
     // COMP. PROPERTIES    --------
@@ -42,15 +43,17 @@ trait Model[Attribute <: Property]
         s.toString()
     }
     
+    def attributes = attributeMap.values.toSet
+    
     /**
      * The names of the attributes stored in this model
      */
-    def attributeNames = attributes.map { _.name }
+    def attributeNames = attributeMap.keySet
     
     /**
      * The attributes which have a defined value
      */
-    def attributesWithValue: Set[Attribute] = attributes.filter { _.value.isDefined }
+    def attributesWithValue = attributes.filter { _.value.isDefined }
     
     
     // TRAIT METHODS    -----------
@@ -81,7 +84,7 @@ trait Model[Attribute <: Property]
      * @return an attribute in this model with the provided name or None if no such attribute 
      * exists
      */
-    def findExisting(attName: String) = attributes.find { _.name.equalsIgnoreCase(attName) }
+    def findExisting(attName: String) = attributeMap.get(attName.toLowerCase())
     
     /**
      * Finds an attribute from this model. Generating one if necessary.
