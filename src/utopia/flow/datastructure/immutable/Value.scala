@@ -17,7 +17,7 @@ import utopia.flow.generic.InstantType
 import utopia.flow.generic.VectorType
 import utopia.flow.generic.ModelType
 import utopia.flow.generic.AnyType
-import utopia.flow.parse.JSONValueWriter
+import utopia.flow.parse.JSONValueConverter
 
 object Value
 {
@@ -156,7 +156,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     /**
      * Converts the value into a JSON string
      */
-    def toJSON = JSONValueWriter(this)
+    def toJSON = JSONValueConverter(this)
     
     /**
      * Returns the contents of this value, casted to the desired type range
