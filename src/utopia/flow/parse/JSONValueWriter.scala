@@ -5,6 +5,10 @@ import utopia.flow.generic.DataType
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.ConversionHandler
 
+// TODO: Create a generic version of this implementation
+// Result of type T generated, otherwise very much same
+// Some initial code needs to be run for the object though. Shouldn't be a problem, though
+
 /**
  * This object provides an interface that allows converting of values into valid JSON data
  * @author Mikko Hilpinen
