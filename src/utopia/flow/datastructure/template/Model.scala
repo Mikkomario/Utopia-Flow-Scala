@@ -55,6 +55,12 @@ trait Model[Attribute <: Property]
      */
     def attributesWithValue = attributes.filter { _.value.isDefined }
     
+    /**
+     * A model is empty when no attributes have been assigned to it. It doesn't matter whether the
+     * defined attributes actually contain a value or not.
+     */
+    def isEmpty = attributeMap.isEmpty
+    
     
     // TRAIT METHODS    -----------
     
