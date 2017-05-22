@@ -9,7 +9,7 @@ import java.util.NoSuchElementException
  * @since 26.11.2016
  * @param Attribute The type of the properties stored within this model
  */
-trait Model[Attribute <: Property]
+trait Model[+Attribute <: Property]
 {
     // ATTRIBUTES    --------------
     
@@ -43,7 +43,7 @@ trait Model[Attribute <: Property]
         s.toString()
     }
     
-    def attributes = attributeMap.values.toSet
+    def attributes = attributeMap.values.toVector
     
     /**
      * The names of the attributes stored in this model
