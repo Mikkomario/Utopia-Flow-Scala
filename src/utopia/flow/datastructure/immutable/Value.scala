@@ -17,7 +17,7 @@ import utopia.flow.generic.InstantType
 import utopia.flow.generic.VectorType
 import utopia.flow.generic.ModelType
 import utopia.flow.generic.AnyType
-import utopia.flow.parse.JSONValueWriter
+import utopia.flow.parse.JSONValueConverter
 
 object Value
 {
@@ -156,7 +156,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     /**
      * Converts the value into a JSON string
      */
-    def toJSON = JSONValueWriter(this)
+    def toJSON = JSONValueConverter(this)
     
     /**
      * Returns the contents of this value, casted to the desired type range
@@ -215,48 +215,48 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     /**
      * The contents of this value casted to a string, or if that fails, the default value ''
      */
-    def stringOr(default: String = "") = string.getOrElse(default)
+    def stringOr(default: => String = "") = string.getOrElse(default)
     
     /**
      * The contents of this value casted to an integer, or if that fails, the default value 0
      */
-    def intOr(default: Int = 0) = int.getOrElse(default)
+    def intOr(default: => Int = 0) = int.getOrElse(default)
     
     /**
      * The contents of this value casted to a double, or if that fails, the default value 0
      */
-    def doubleOr(default: Double = 0) = double.getOrElse(default)
+    def doubleOr(default: => Double = 0) = double.getOrElse(default)
     
     /**
      * The contents of this value casted to a float, or if that fails, the default value 0
      */
-    def floatOr(default: Float = 0) = float.getOrElse(default)
+    def floatOr(default: => Float = 0) = float.getOrElse(default)
     
     /**
      * The contents of this value casted to a long, or if that fails, the default value 0
      */
-    def longOr(default: Long = 0) = long.getOrElse(default)
+    def longOr(default: => Long = 0) = long.getOrElse(default)
     
     /**
      * The contents of this value casted to a boolean, or if that fails, the default value false
      */
-    def booleanOr(default: Boolean = false) = boolean.getOrElse(default)
+    def booleanOr(default: => Boolean = false) = boolean.getOrElse(default)
     
     /**
      * The contents of this value casted to an instant, or if that fails, the default value
      * (current instant)
      */
-    def instantOr(default: Instant = Instant.now()) = instant.getOrElse(default)
+    def instantOr(default: => Instant = Instant.now()) = instant.getOrElse(default)
     
     /**
      * The contents of this value casted to a vector, or if that fails, the default value (empty
      * vector)
      */
-    def vectorOr(default: Vector[Value] = Vector[Value]()) = vector.getOrElse(default)
+    def vectorOr(default: => Vector[Value] = Vector[Value]()) = vector.getOrElse(default)
     
     /**
      * The contents of this value casted to a model, or if that fails, the default value (empty
      * model)
      */
-    def modelOr(default: Model[Constant] = new Model(Vector[Constant]())) = model.getOrElse(default)
+    def modelOr(default: => Model[Constant] = new Model(Vector[Constant]())) = model.getOrElse(default)
 }

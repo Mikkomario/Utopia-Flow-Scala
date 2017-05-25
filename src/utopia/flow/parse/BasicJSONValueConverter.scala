@@ -17,16 +17,16 @@ import utopia.flow.generic.BooleanType
  * @author Mikko Hilpinen
  * @since 17.12.2016
  */
-object BasicJSONValueWriter extends JSONValueWriter
+object BasicJSONValueConverter extends ValueConverter[String]
 {
     override def supportedTypes = HashSet(StringType, VectorType, ModelType, IntType, DoubleType, 
             FloatType, LongType, BooleanType)
     
-    override def write(value: Value, dataType: DataType) = 
+    override def apply(value: Value, dataType: DataType) = 
     {
         dataType match 
         {
-            case StringType => Some("\"" + value.stringOr() + "\"")
+            case StringType => "\"" + value.stringOr() + "\""
             case VectorType =>
             {
                 val v = value.vectorOr()
@@ -41,10 +41,10 @@ object BasicJSONValueWriter extends JSONValueWriter
                 }
                 
                 s += ']'
-                Some(s.toString())
+                s.toString()
             }
-            case ModelType => value.model.map { _.toJSON }
-            case _ => value.string
+            case ModelType => value.modelOr().toJSON
+            case _ => value.stringOr()
         }
     }
 }

@@ -6,6 +6,7 @@ import utopia.flow.datastructure.immutable.Value
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.datastructure.immutable.Constant
 
+import scala.language.existentials
 
 /**
  * Any type is the superType for all other types
@@ -67,6 +68,10 @@ object DataType
     
     // OTHER METHODS    -------
     
+    /**
+     * Sets up the basic data type information. This method should be called before using any of the
+     * data types
+     */
     def setup() = 
     {
         if (!isSetup)

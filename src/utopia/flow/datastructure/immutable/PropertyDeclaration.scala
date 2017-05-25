@@ -13,7 +13,7 @@ class PropertyDeclaration(val name: String, val dataType: DataType,
 {
     // COMP. PROPERTIES    ------------
     
-    def properties = Vector(name, dataType, defaultValue)
+    def properties: Vector[Any] = Vector(name, dataType, defaultValue)
     
     
     // CONSTRUCTOR OVERLOAD    --------

@@ -27,14 +27,14 @@ object Model
  * @author Mikko Hilpinen
  * @since 29.11.2016
  */
-class Model[Attribute <: Constant](content: Traversable[Attribute], 
+class Model[+Attribute <: Constant](content: Traversable[Attribute], 
         val attributeGenerator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) extends 
         template.Model[Attribute] with Equatable
 {
     // ATTRIBUTES    --------------
     
-    // Filters out duplicates (case-insensitive)
-    val attributeMap = content.groupBy { _.name.toLowerCase() }.map { case (name, atts) => name -> atts.head }
+    // Filters out duplicates (case-insensitive) (if there are duplicates, last instance is used)
+    val attributeMap = content.groupBy { _.name.toLowerCase() }.map { case (name, atts) => name -> atts.last }
     
     
     // COMP. PROPERTIES    -------
@@ -52,34 +52,36 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model with the provided attribute added
      */
-    def +(attribute: Attribute) = withAttributes(attributes + attribute)
+    def +[B >: Attribute <: Constant](attribute: B) = withAttributes(attributes :+ attribute)
     
     /**
      * Creates a new model with the provided attributes added
      */
-    def ++(attributes: Traversable[Attribute]) = withAttributes(this.attributes ++ attributes)
+    def ++[B >: Attribute <: Constant](attributes: Traversable[B]) = 
+            withAttributes(this.attributes ++ attributes);
     
     /**
      * Creates a new model that contains the attributes from both of the models. The new model 
      * will still use this model's attribute generator
      */
-    def ++(other: Model[Attribute]): Model[Attribute] = this ++ other.attributes
+    def ++[B >: Attribute <: Constant](other: Model[B]): Model[B] = this ++ other.attributes
     
     /**
      * Creates a new model without the provided attribute
      */
-    def -(attribute: Attribute) = new Model(attributes.filterNot { _ == attribute}, attributeGenerator)
+    def -[B >: Attribute <: Constant](attribute: B) = new Model(attributes.filterNot { 
+            _ == attribute}, attributeGenerator)
     
     /**
      * Creates a new model without the provided attributes
      */
-    def --(attributes: Set[Attribute]): Model[Attribute] = new Model(
+    def --[B >: Attribute <: Constant](attributes: Seq[B]): Model[Attribute] = new Model(
             this.attributes.filterNot { attributes.contains(_) }, attributeGenerator)
     
     /**
      * Creates a new model without any attributes within the provided model
      */
-    def --(other: Model[Attribute]): Model[Attribute] = this -- other.attributes
+    def --[B >: Attribute <: Constant](other: Model[B]): Model[B] = this -- other.attributes
     
     
     // OTHER METHODS    ------
@@ -87,12 +89,14 @@ class Model[Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model with the same generator but different attributes
      */
-    def withAttributes(attributes: Traversable[Attribute]) = new Model(attributes, attributeGenerator)
+    def withAttributes[B >: Attribute <: Constant](attributes: Traversable[B]) = 
+            new Model[B](attributes, attributeGenerator);
     
     /**
      * Creates a new model with the same attributes but a different attribute generator
      */
-    def withGenerator(generator: PropertyGenerator[Attribute]) = new Model(attributes, generator)
+    def withGenerator[B >: Attribute <: Constant](generator: PropertyGenerator[B]) = 
+            new Model[B](attributes, generator);
     
     /**
      * Creates a mutable copy of this model
