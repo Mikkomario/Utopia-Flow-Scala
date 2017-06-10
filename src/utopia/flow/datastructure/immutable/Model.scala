@@ -73,6 +73,12 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
             _ == attribute}, attributeGenerator)
     
     /**
+     * Creates a new model without an attribute with the provided name (case-insensitive)
+     */
+    def -(attributeName: String) = new Model(attributes.filterNot { 
+            _.name.toLowerCase == attributeName.toLowerCase }, attributeGenerator)
+    
+    /**
      * Creates a new model without the provided attributes
      */
     def --[B >: Attribute <: Constant](attributes: Seq[B]): Model[Attribute] = new Model(
