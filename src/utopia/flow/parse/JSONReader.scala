@@ -8,6 +8,8 @@ import utopia.flow.generic.LongType
 import utopia.flow.generic.IntType
 import utopia.flow.datastructure.immutable.Model
 
+import utopia.flow.generic.ValueConversions._
+
 /**
  * This object provides an interface that reads valid JSON data into model format
  * @author Mikko Hilpinen
@@ -133,12 +135,12 @@ object JSONReader
             case ObjectStart => 
             {
                 val nextObject = parseObject(json, nextEvent._2)
-                Tuple2(Value of nextObject._1, nextObject._2 + 1) // +1 to escape content range
+                Tuple2(nextObject._1, nextObject._2 + 1) // +1 to escape content range
             }
             case ArrayStart => 
             {
                 val nextArray = parseArray(json, nextEvent._2)
-                Tuple2(Value of nextArray._1, nextArray._2 + 1) // +1 to escape content range
+                Tuple2(nextArray._1, nextArray._2 + 1) // +1 to escape content range
             }
             case _ => Tuple2(parseSimpleValue(json.substring(lastMarkerIndex + 1, nextEvent._2)), 
                     nextEvent._2)
@@ -167,7 +169,7 @@ object JSONReader
         Tuple2(buffer.toVector, index)
     }
     
-    private def parseSimpleValue(str: String) = 
+    private def parseSimpleValue(str: String): Value = 
     {
         val trimmed = str.trim()
         
@@ -179,30 +181,30 @@ object JSONReader
         // If there are any quotation markers, the contents are considered to be a string
         else if (trimmed.contains(Quote.marker))
         {
-            Value of trimmed.replace(Quote.marker + "", "")
+            trimmed.replace(Quote.marker + "", "")
         }
         // 'true' / 'false' are considered to be boolean
         else if (trimmed.equalsIgnoreCase("true"))
         {
-            Value of true
+            true
         }
         else if (trimmed.equalsIgnoreCase("false"))
         {
-            Value of false
+            false
         }
         // Double is the only number format that contains a '.'
         else if (trimmed.contains('.'))
         {
-            Value of trimmed withType DoubleType
+            trimmed withType DoubleType
         }
         // Very long numbers are considered to be of type long
         else if (trimmed.length() >= 10)
         {
-            Value of trimmed withType LongType
+            trimmed withType LongType
         }
         else
         {
-            Value of trimmed withType IntType
+            trimmed withType IntType
         }
     }
     

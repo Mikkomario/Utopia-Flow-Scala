@@ -7,6 +7,8 @@ import utopia.flow.generic.SimpleConstantGenerator
 import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.mutable
 import utopia.flow.generic.SimpleVariableGenerator
+import utopia.flow.generic.ValueConvertible
+import utopia.flow.generic.ModelType
 
 object Model
 {
@@ -29,7 +31,7 @@ object Model
  */
 class Model[+Attribute <: Constant](content: Traversable[Attribute], 
         val attributeGenerator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) extends 
-        template.Model[Attribute] with Equatable
+        template.Model[Attribute] with Equatable with ValueConvertible
 {
     // ATTRIBUTES    --------------
     
@@ -40,6 +42,8 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     // COMP. PROPERTIES    -------
     
     override def properties = Vector(attributes, attributeGenerator)
+    
+    override def toValue = new Value(Some(this), ModelType)
     
     
     // IMPLEMENTED METHODS    ----

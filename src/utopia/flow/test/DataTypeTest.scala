@@ -14,6 +14,8 @@ import utopia.flow.generic.ConversionHandler
 import scala.collection.immutable.HashSet
 import utopia.flow.generic.IntType
 
+import utopia.flow.generic.ValueConversions._
+
 object DataTypeTest extends App
 {
     DataType.setup()
@@ -25,16 +27,16 @@ object DataTypeTest extends App
     
     assert(ConversionReliability.DANGEROUS < ConversionReliability.NO_CONVERSION)
     
-    val str = Value of "123.45"
-    val str2 = Value of "true"
-    val i = Value of 213
-    val d = Value of 123.4567891234
-    val f = Value of 123.45f
-    val l = Value of 9999999999l
-    val b = Value of true
-    val time = Value of Instant.now()
-    val vector = Value of Vector(i, d, f, l)
-    val model = Value of new Model(Vector(new Constant("attributeName", i)))
+    val str = "123.45".toValue
+    val str2 = "true".toValue
+    val i = 213.toValue
+    val d = 123.4567891234.toValue
+    val f = 123.45f.toValue
+    val l = 9999999999l.toValue
+    val b = true.toValue
+    val time = Instant.now().toValue
+    val vector = Vector(i, d, f, l).toValue
+    val model = new Model(Vector(new Constant("attributeName", i))).toValue
     
     /*
     DataType.values.foreach { fromType => DataType.values.foreach { toType => 
@@ -72,8 +74,8 @@ object DataTypeTest extends App
     
     assert(time.longOr() > 0)
     
-    val timeToString = Value of time.toString()
-    val timeStringToTime = Value of timeToString.instantOr()
+    val timeToString = time.toString()
+    val timeStringToTime = timeToString.instantOr()
     assert(time.long == timeStringToTime.long)
     
     println(vector.toString())

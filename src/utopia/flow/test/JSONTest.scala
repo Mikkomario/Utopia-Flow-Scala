@@ -10,6 +10,8 @@ import utopia.flow.parse.JSONReader
 import utopia.flow.generic.IntType
 import utopia.flow.generic.ModelType
 
+import utopia.flow.generic.ValueConversions._
+
 object JSONTest extends App
 {
     DataType.setup()
@@ -22,13 +24,13 @@ object JSONTest extends App
     }
     
     // Tests value JSON parsing first
-    val i = Value of 123
-    val d = Value of 222.222
-    val s = Value of "Hello World!"
-    val time = Value of Instant.now()
-    val b = Value of true
+    val i = 123.toValue
+    val d = 222.222.toValue
+    val s = "Hello World!".toValue
+    val time = Instant.now().toValue
+    val b = true.toValue
     val empty = Value.empty(StringType)
-    val v = Value of Vector(empty, b, i)
+    val v = Vector(empty, b, i).toValue
     
     assert(empty.toJSON.isEmpty)
     
@@ -67,7 +69,7 @@ object JSONTest extends App
     
     // Tests more difficult data types
     val prop4 = new Constant("test4", v)
-    val prop5 = new Constant("test5", Value of model)
+    val prop5 = new Constant("test5", model)
     val prop6 = new Constant("test6", time)
     
     val model2 = new Model(Vector(prop4, prop5, prop6))
@@ -82,4 +84,6 @@ object JSONTest extends App
     assert(readModel3.get("test6").longOr(-1) > 0)
     assert(readModel3.get("test4").vectorOr().length == 2)
     assert(readModel3.get("test5").dataType == ModelType)
+    
+    println("Success!")
 }

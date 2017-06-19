@@ -29,38 +29,47 @@ object Value
     /**
      * Wraps a string into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(s: String) = new Value(Some(s), StringType)
     /**
      * Wraps an integer into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(i: Int) = new Value(Some(i), IntType)
     /**
      * Wraps a double into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(d: Double) = new Value(Some(d), DoubleType)
     /**
      * Wraps a floating point number into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(f: Float) = new Value(Some(f), FloatType)
     /**
      * Wraps a long number into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(l: Long) = new Value(Some(l), LongType)
     /**
      * Wraps a boolean into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(b: Boolean) = new Value(Some(b), BooleanType)
     /**
      * Wraps an instant into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(time: Instant) = new Value(Some(time), InstantType)
     /**
      * Wraps a value vector into a value
      */
+    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
     def of(v: Vector[Value]) = new Value(Some(v), VectorType)
     /**
      * Wraps a model into a value
      */
+    @deprecated("Replaced with Model.toValue which is implicit", "v1.2")
     def of(m: Model[Constant]) = new Value(Some(m), ModelType)
 }
 
