@@ -3,13 +3,14 @@ package utopia.flow.datastructure.template
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.util.Equatable
 import utopia.flow.generic.DataType
+import utopia.flow.parse.JSONConvertible
 
 /**
  * Properties are named and contain a value in a certain data type
  * @author Mikko Hilpinen
  * @since 26.11.2016
  */
-trait Property
+trait Property extends JSONConvertible
 {
     // PROPERTIES    -----------
     
@@ -30,8 +31,5 @@ trait Property
     
     override def toString = s"$name: $value"
     
-    /**
-     * Represents the property in JSON
-     */
-    def toJSON = value.toJSON.map { "\"" + name + "\": " + _ }
+    override def toJSON = "\"" + name + "\": " + value.toJSON
 }

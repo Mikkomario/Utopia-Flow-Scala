@@ -18,6 +18,7 @@ import utopia.flow.generic.VectorType
 import utopia.flow.generic.ModelType
 import utopia.flow.generic.AnyType
 import utopia.flow.parse.JSONValueConverter
+import utopia.flow.parse.JSONConvertible
 
 object Value
 {
@@ -77,7 +78,7 @@ object Value
  * Values can wrap an object value and associate it with a certain data type. Values can be cast 
  * to different data types. They are immutable.
  */
-class Value(val content: Option[Any], val dataType: DataType) extends Node[Option[Any]] with Equatable
+class Value(val content: Option[Any], val dataType: DataType) extends Node[Option[Any]] with Equatable with JSONConvertible
 {
     // INITIAL CODE    ---------
     
@@ -88,6 +89,8 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     // COMP. PROPERTIES    -----
     
     override def properties = Vector(content, dataType)
+    
+    override def toJSON = JSONValueConverter(this).getOrElse("null")
     
     /**
      * The description of this value, describing both content and data type
@@ -161,11 +164,6 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
      * value is returned instead
      */
     def withType(dataType: DataType) = ConversionHandler.cast(this, dataType).getOrElse(Value.empty(dataType))
-    
-    /**
-     * Converts the value into a JSON string
-     */
-    def toJSON = JSONValueConverter(this)
     
     /**
      * Returns the contents of this value, casted to the desired type range

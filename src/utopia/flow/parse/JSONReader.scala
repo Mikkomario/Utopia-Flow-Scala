@@ -89,12 +89,7 @@ object JSONReader
                     // Parses the property
                     val parsedProperty = parseProperty(json, nextEvent._2)
                     index = parsedProperty._2
-                    
-                    // Parsed models will only contain non-empty values / properties
-                    if (parsedProperty._1.value.isDefined)
-                    {
-                        properties += parsedProperty._1
-                    }
+                    properties += parsedProperty._1 // NB: Previously checked if value was empty
                 }
                 // Doesn't parse the property and doesn't continue the loop
                 case _ => index = nextEvent._2
@@ -157,13 +152,7 @@ object JSONReader
         {
             val parsedValue = parsePropertyValue(json, index)
             index = parsedValue._2
-            
-            // Parsed vectors will only contain non-empty values 
-            // (empty value is generated on empty arrays)
-            if (parsedValue._1.isDefined)
-            {
-                buffer += parsedValue._1
-            }
+            buffer += parsedValue._1 // NB: Previously checked that value is defined
         }
         
         Tuple2(buffer.toVector, index)
@@ -174,7 +163,8 @@ object JSONReader
         val trimmed = str.trim()
         
         // Values may be empty in some special cases
-        if (trimmed.isEmpty())
+        // also, 'null' (without quotations) is a synonym for empty value
+        if (trimmed.isEmpty() || trimmed.equalsIgnoreCase("null"))
         {
             Value.empty()
         }

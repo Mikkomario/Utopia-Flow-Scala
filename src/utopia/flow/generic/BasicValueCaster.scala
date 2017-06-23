@@ -21,7 +21,6 @@ object BasicValueCaster extends ValueCaster
     
     override lazy val conversions = HashSet(
             Conversion(AnyType, StringType, DATA_LOSS), 
-            // Vector -> String
             Conversion(DoubleType, IntType, DATA_LOSS), 
             Conversion(LongType, IntType, DATA_LOSS), 
             Conversion(FloatType, IntType, DATA_LOSS), 
@@ -77,21 +76,7 @@ object BasicValueCaster extends ValueCaster
         {
             // Vectors have a special formatting like "[a, b, c, d]" 
             // This is in order to form JSON -compatible output
-            case VectorType =>
-            {
-                // Only writes non-empty string values
-                val vector = value.vectorOr().flatMap { _.string }
-                val s = new StringBuilder()
-                s += '['
-                if (!vector.isEmpty)
-                {
-                    s ++= vector.head
-                    vector.tail.foreach { s ++= ", " + _ }
-                }
-                s += ']'
-                
-                Some(s.toString())
-            }
+            case VectorType => Some('[' + value.vectorOr().map { _.toJSON }.reduceLeft { _ + ", " + _ } + ']')
             case _ => value.content.map { _.toString() }
         }
     }
