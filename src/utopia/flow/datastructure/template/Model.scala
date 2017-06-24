@@ -2,6 +2,7 @@ package utopia.flow.datastructure.template
 
 import utopia.flow.datastructure.immutable.Value
 import java.util.NoSuchElementException
+import utopia.flow.parse.JSONConvertible
 
 /**
  * Models are used for storing named values
@@ -9,7 +10,7 @@ import java.util.NoSuchElementException
  * @since 26.11.2016
  * @param Attribute The type of the properties stored within this model
  */
-trait Model[+Attribute <: Property]
+trait Model[+Attribute <: Property] extends JSONConvertible
 {
     // ATTRIBUTES    --------------
     
@@ -24,24 +25,7 @@ trait Model[+Attribute <: Property]
     
     override def toString = toJSON
     
-    /**
-     * Converts this model into a JSON string. Only non-empty properties will be included.
-     */
-    def toJSON = 
-    {
-        val s = new StringBuilder()
-        s += '{'
-        
-        val jsonProps = attributes.toSeq.flatMap { _.toJSON }
-        if (!jsonProps.isEmpty)
-        {
-            s ++= jsonProps.head
-            jsonProps.tail.foreach { json => s ++= s", $json"}
-        }
-        
-        s += '}'
-        s.toString()
-    }
+    override def toJSON = '{' + attributes.map { _.toJSON }.reduceLeft { _ + ", " + _ } + '}'
     
     def attributes = attributeMap.values.toVector
     
@@ -98,4 +82,12 @@ trait Model[+Attribute <: Property]
      * @return The attribute from this model (possibly generated)
      */
     def get(attName: String) = findExisting(attName).getOrElse(generateAttribute(attName))
+    
+    /**
+     * Converts and unwraps this model's attributes into a map format
+     * @param f a function that converts an attribute value into the desired instance type
+     * @return a map from the converted attributes of this model
+     */
+    def toMap[T](f: Value => Option[T]) = attributeMap.flatMap { case (name, attribute) => 
+            f(attribute.value).map { (name, _) } }
 }

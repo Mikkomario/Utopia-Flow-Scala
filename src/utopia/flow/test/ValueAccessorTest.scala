@@ -5,15 +5,17 @@ import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.generic.DataType
 
+import utopia.flow.generic.ValueConversions._
+
 object ValueAccessorTest extends App
 {
     DataType.setup()
     
-    val i = Value of 1
-    val s = Value of "2"
-    val b = Value of true
+    val i = 1.toValue
+    val s = "2".toValue
+    val b = true.toValue
     
-    val v = Value of Vector(i, s, b)
+    val v = Vector(i, s, b).toValue
     
     val prop1 = new Constant("int", i)
     val prop2 = new Constant("string", s)
@@ -22,7 +24,7 @@ object ValueAccessorTest extends App
     
     val model1 = new Model(Vector(prop1, prop2, prop3))
     
-    val prop5 = new Constant("model", Value of model1)
+    val prop5 = new Constant("model", model1)
     
     val model2 = new Model(Vector(prop4, prop5))
     
@@ -42,4 +44,6 @@ object ValueAccessorTest extends App
     assert(model2("vector")(6).isEmpty)
     
     assert(model2("not here")("int").isEmpty)
+    
+    println("Success!")
 }

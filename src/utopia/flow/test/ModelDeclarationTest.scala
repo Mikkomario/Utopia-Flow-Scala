@@ -10,16 +10,18 @@ import utopia.flow.generic.BooleanType
 import utopia.flow.generic.DeclarationConstantGenerator
 import utopia.flow.generic.DeclarationVariableGenerator
 
+import utopia.flow.generic.ValueConversions._
+
 object ModelDeclarationTest extends App
 {
     DataType.setup()
     
     // Tests property declarations
     val prop1 = new PropertyDeclaration("test1", IntType)
-    val prop2 = new PropertyDeclaration("test2", Value of 0)
+    val prop2 = new PropertyDeclaration("test2", 0)
     
     // (not the usual use case but possible)
-    val prop3 = new PropertyDeclaration("test3", StringType, Some(Value of 3))
+    val prop3 = new PropertyDeclaration("test3", StringType, Some(3))
     
     assert(prop1 == new PropertyDeclaration("test1", IntType))
     assert(prop1.defaultValue.isEmpty)
@@ -46,7 +48,7 @@ object ModelDeclarationTest extends App
     assert(generator1("not here").value.isEmpty)
     
     // 2) Generator with a default value
-    val generator2 = new DeclarationConstantGenerator(modelDec2, Value of 0)
+    val generator2 = new DeclarationConstantGenerator(modelDec2, 0)
     
     assert(generator2("test1").value.isDefined)
     assert(generator2("test3").value.dataType == StringType)
@@ -56,7 +58,7 @@ object ModelDeclarationTest extends App
     // Quick test of variable generation
     val generator4 = new DeclarationVariableGenerator(modelDec2)
     
-    assert(generator4("test4", Some(Value of 1)).value.content.get == true)
+    assert(generator4("test4", Some(1)).value.content.get == true)
     
     println("Success")
 }

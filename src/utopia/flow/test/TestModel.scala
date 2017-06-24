@@ -1,0 +1,50 @@
+package utopia.flow.test
+
+import utopia.flow.generic.ModelConvertible
+import utopia.flow.datastructure.immutable.Model
+import utopia.flow.datastructure.immutable.Constant
+
+import utopia.flow.generic.ValueConversions._
+import utopia.flow.generic.ValueConvertible
+import utopia.flow.generic.FromModelFactory
+import utopia.flow.datastructure.template.Property
+import utopia.flow.datastructure.template
+import utopia.flow.util.Equatable
+
+object TestModel extends FromModelFactory[TestModel]
+{
+    def apply(model: template.Model[Property]) = 
+    {
+        val name = model("name").string
+        
+        // Name field is required
+        if (name.isDefined)
+        {
+            val level = model("level").intOr(1)
+            val stats = model("stats").modelOr().toMap { _.int }
+            val title = model("title").string
+            
+            Some(new TestModel(name.get, level, stats, title))
+        }
+        else 
+        {
+            None
+        }
+    }
+}
+
+/**
+ * This is a test implementation of ModelConvertible / FromModelParseable traits
+ * @author Mikko Hilpinen
+ * @since 24.6.2017
+ */
+class TestModel(val name: String, val level: Int = 1, val stats: Map[String, Int], 
+        val title: Option[String] = None) extends ModelConvertible with Equatable
+{
+    // COMPUTED PROPERTIES    ------------------
+    
+    override def toModel = Model(Vector("name" -> name, "level" -> level, 
+            "stats" -> Model.fromMap(stats), "title" -> title));
+    
+    override def properties = Vector(name, level, stats, title)
+}
