@@ -82,4 +82,12 @@ trait Model[+Attribute <: Property] extends JSONConvertible
      * @return The attribute from this model (possibly generated)
      */
     def get(attName: String) = findExisting(attName).getOrElse(generateAttribute(attName))
+    
+    /**
+     * Converts and unwraps this model's attributes into a map format
+     * @param f a function that converts an attribute value into the desired instance type
+     * @return a map from the converted attributes of this model
+     */
+    def toMap[T](f: Value => Option[T]) = attributeMap.flatMap { case (name, attribute) => 
+            f(attribute.value).map { (name, _) } }
 }

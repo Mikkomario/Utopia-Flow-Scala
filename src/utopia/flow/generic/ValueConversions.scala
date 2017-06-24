@@ -55,7 +55,7 @@ object ValueConversions
         def toValue = new Value(Some(v), VectorType)
     }
     
-    implicit class ValueOfOption(val option: Option[ValueConvertible]) extends ValueConvertible
+    implicit class ValueOfOption[C1](val option: Option[C1])(implicit f: C1 => ValueConvertible) extends ValueConvertible
     {
         def toValue = if (option.isDefined) option.get.toValue else Value.empty()
     }

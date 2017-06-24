@@ -15,12 +15,25 @@ object Model
     /**
      * Creates a new model with input format that is more friendly to literals
      * @param content The attribute name value pairs used for generating the model's attributes
-     * @param generator The attribute generator that will generate the attributes
+     * @param generator The attribute generator that will generate the attributes 
+     * (simple constant generator used by default)
      * @return The newly generated model
      */
     def apply[Attribute <: Constant](content: Traversable[(String, Value)], 
             generator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) = 
             new Model(content.map { case (name, value) => generator(name, Some(value)) }, generator)
+    
+    /**
+     * Converts a map of valueConvertible elements into a model format. The generator the model 
+     * uses can be specified as well.
+     * @param content The map that is converted to model attributes
+     * @param generator the attirbute generator that will generate the attributes 
+     * (simple constant generator used by default)
+     * @return The newly generated model
+     */
+    def fromMap[Attribute <: Constant, C1](content: Map[String, C1], 
+            generator: PropertyGenerator[Attribute] = new SimpleConstantGenerator())(implicit f: C1 => ValueConvertible) = 
+            new Model(content.map { case (name, value) => generator(name, Some(value.toValue)) }, generator)
 }
 
 /**

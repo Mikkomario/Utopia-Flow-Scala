@@ -22,4 +22,6 @@ trait ModelConvertible extends JSONConvertible
     // COMPUTED PROPERTIES    ---------------------------
     
     override def toJSON = toModel.toJSON
+    
+    override def toString = toModel.toString
 }
