@@ -58,6 +58,11 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     
     override def toValue = new Value(Some(this), ModelType)
     
+    /**
+     * A version of this model where all empty values have been filtered out
+     */
+    def withoutEmptyValues = new Model(attributesWithValue, attributeGenerator)
+    
     
     // IMPLEMENTED METHODS    ----
     
