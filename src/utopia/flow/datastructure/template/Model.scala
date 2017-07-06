@@ -25,7 +25,7 @@ trait Model[+Attribute <: Property] extends JSONConvertible
     
     override def toString = toJSON
     
-    override def toJSON = '{' + attributes.map { _.toJSON }.reduceLeft { _ + ", " + _ } + '}'
+    override def toJSON = if (isEmpty) "{}" else '{' + attributes.map { _.toJSON }.reduceLeft { _ + ", " + _ } + '}'
     
     def attributes = attributeMap.values.toVector
     
