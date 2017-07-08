@@ -27,7 +27,10 @@ object BasicJSONValueConverter extends ValueConverter[String]
         dataType match 
         {
             case StringType => "\"" + value.stringOr() + "\""
-            case VectorType => '[' + value.vectorOr().map{ _.toJSON }.reduceLeft{ _ + ", " + _ } + ']'
+            case VectorType => 
+                val vector = value.vectorOr()
+                if (vector.isEmpty) "[]" else 
+                        '[' + vector.map{ _.toJSON }.reduceLeft{ _ + ", " + _ } + ']'
             case ModelType => value.modelOr().toJSON
             case _ => value.stringOr()
         }

@@ -76,7 +76,10 @@ object BasicValueCaster extends ValueCaster
         {
             // Vectors have a special formatting like "[a, b, c, d]" 
             // This is in order to form JSON -compatible output
-            case VectorType => Some('[' + value.vectorOr().map { _.toJSON }.reduceLeft { _ + ", " + _ } + ']')
+            case VectorType => 
+                val vector = value.vectorOr()
+                if (vector.isEmpty) Some("[]") else 
+                        Some('[' + value.vectorOr().map { _.toJSON }.reduceLeft { _ + ", " + _ } + ']')
             case _ => value.content.map { _.toString() }
         }
     }
