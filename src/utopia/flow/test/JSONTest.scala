@@ -40,6 +40,8 @@ object JSONTest extends App
     assertJSON(time, s"${time.longOr()}")
     assertJSON(b, "true")
     assertJSON(v, "[null, true, 123]")
+    assertJSON(Vector(), "[]")
+    assertJSON(new Model(Vector()), "{}")
     
     // Tests Property writing next
     val prop1 = new Constant("test1", i)
