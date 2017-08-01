@@ -167,6 +167,7 @@ object BasicValueCaster extends ValueCaster
                 try { Some(Instant.parse(value.toString())) }
                 catch { case e: DateTimeParseException => None }
             }
+            case _ => None
         }
     }
     
