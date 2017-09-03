@@ -9,6 +9,7 @@ import utopia.flow.generic.IntType
 import utopia.flow.datastructure.immutable.Model
 
 import utopia.flow.generic.ValueConversions._
+import scala.util.Try
 
 /**
  * This object provides an interface that reads valid JSON data into model format
@@ -71,6 +72,12 @@ object JSONReader
         objects.toVector
     }
     
+    /**
+     * Parses a single value from the provided JSON. Only the first value will be read, whether it 
+     * is an array, object or a simple value. Fails if the provided json is malformed.
+     */
+    def parseValue(json: String) = Try(parsePropertyValue(json, -1)._1)
+    
     private def parseObject(json: String, objStartIndex: Int) = 
     {   
         val properties = new ListBuffer[Constant]()
@@ -122,23 +129,33 @@ object JSONReader
     {
         // Finds either a) start of object, b) start of array, 
         // c) end marker (separator, end object, end array)
-        val nextEvent = next(json, lastMarkerIndex + 1, ObjectStart, ArrayStart, ObjectEnd, ArrayEnd, Separator)
+        val nextEvent = findNext(json, lastMarkerIndex + 1, ObjectStart, ArrayStart, ObjectEnd, 
+                ArrayEnd, Separator);
         
-        nextEvent._1 match 
+        if (nextEvent.isDefined)
         {
-            // case object: Parses the object and wraps it into a value
-            case ObjectStart => 
+            nextEvent.get._1 match 
             {
-                val nextObject = parseObject(json, nextEvent._2)
-                Tuple2(nextObject._1, nextObject._2 + 1) // +1 to escape content range
+                // case object: Parses the object and wraps it into a value
+                case ObjectStart => 
+                {
+                    val nextObject = parseObject(json, nextEvent.get._2)
+                    (nextObject._1, nextObject._2 + 1) // +1 to escape content range
+                }
+                case ArrayStart => 
+                {
+                    val nextArray = parseArray(json, nextEvent.get._2)
+                    (nextArray._1, nextArray._2 + 1) // +1 to escape content range
+                }
+                case _ => (parseSimpleValue(json.substring(lastMarkerIndex + 1, nextEvent.get._2)), 
+                        nextEvent.get._2)
             }
-            case ArrayStart => 
-            {
-                val nextArray = parseArray(json, nextEvent._2)
-                Tuple2(nextArray._1, nextArray._2 + 1) // +1 to escape content range
-            }
-            case _ => Tuple2(parseSimpleValue(json.substring(lastMarkerIndex + 1, nextEvent._2)), 
-                    nextEvent._2)
+        }
+        else 
+        {
+            // If didn't find a proper marker to handle, just reads the remaining string as a single 
+            // simple value
+            (parseSimpleValue(json.substring(lastMarkerIndex + 1)), json.length())
         }
     }
     
@@ -182,19 +199,28 @@ object JSONReader
         {
             false
         }
-        // Double is the only number format that contains a '.'
-        else if (trimmed.contains('.'))
+        else 
         {
-            trimmed withType DoubleType
-        }
-        // Very long numbers are considered to be of type long
-        else if (trimmed.length() >= 10)
-        {
-            trimmed withType LongType
-        }
-        else
-        {
-            trimmed withType IntType
+            val parsedNumber = 
+            {
+                // Double is the only number format that contains a '.'
+                if (trimmed.contains('.'))
+                {
+                    trimmed withType DoubleType
+                }
+                // Very long numbers are considered to be of type long
+                else if (trimmed.length() >= 10)
+                {
+                    trimmed withType LongType
+                }
+                else
+                {
+                    trimmed withType IntType
+                }
+            }
+            
+            // If the number couldn't be parsed, returns the value as a string instead
+            parsedNumber.orElse(trimmed)
         }
     }
     

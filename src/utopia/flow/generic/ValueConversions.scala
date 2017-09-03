@@ -58,6 +58,9 @@ object ValueConversions
         def toValue = new Value(Some(v), VectorType)
     }
     
+    // TODO: Modify vector to allow implicit conversion in vector type, then test properly
+    // Release with nullSafe -feature
+    
     /*
     implicit class ValueOfOption[C1](val option: Option[C1])(implicit f: C1 => ValueConvertible) extends ValueConvertible
     {

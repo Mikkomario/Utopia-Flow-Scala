@@ -148,6 +148,11 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     // OTHER METHODS    ---------
     
     /**
+     * If this value is empty, returns the default value. If this value is defined, returns this value.
+     */
+    def orElse(default: => Value) = if (isDefined) this else default;
+    
+    /**
      * Checks whether this value is of the specified data type
      */
     def isOfType(dataType: DataType) = this.dataType.isOfType(dataType)

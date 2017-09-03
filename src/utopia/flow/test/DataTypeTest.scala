@@ -83,6 +83,9 @@ object DataTypeTest extends App
     assert(vector.toString().startsWith("["))
     assert(model.vectorOr().length == 1)
     
+    assert(str.orElse(i) == str)
+    assert(Value.empty().orElse(i) == i)
+    
     println(model.toString())
     
     // Tests Multi type conversion
