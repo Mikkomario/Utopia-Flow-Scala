@@ -53,7 +53,7 @@ object ValueConversions
         def toValue = new Value(Some(i), InstantType)
     }
     
-    implicit class ValueOfVector(val v: Vector[Value]) extends ValueConvertible
+    implicit class ValueOfVector[V](val v: Vector[V])(implicit f: V => Value) extends ValueConvertible
     {
         def toValue = new Value(Some(v), VectorType)
     }
