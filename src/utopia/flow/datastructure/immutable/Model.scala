@@ -54,7 +54,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     
     // COMP. PROPERTIES    -------
     
-    override def properties = Vector(attributes, attributeGenerator)
+    override def properties = Vector(attributeMap, attributeGenerator)
     
     override def toValue = new Value(Some(this), ModelType)
     

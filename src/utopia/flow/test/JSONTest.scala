@@ -55,6 +55,10 @@ object JSONTest extends App
     val model = new Model(Vector(prop1, prop2, prop3))
     println(model.toJSON)
     
+    // Tests value reading
+    assert(JSONReader.parseValue("1").get.intOr() == 1)
+    assert(JSONReader.parseValue("[1, 2, 3]").get.vectorOr() == Vector[Value](1, 2, 3))
+    
     // Tests model reading
     val readModel1 = JSONReader.parseSingle(model.toJSON)
     assert(readModel1.isDefined)
@@ -86,6 +90,10 @@ object JSONTest extends App
     assert(readModel3.get("test6").longOr(-1) > 0)
     assert(readModel3.get("test4").vectorOr().length == 3)
     assert(readModel3.get("test5").dataType == ModelType)
+    
+    // Tests value reading vs. model reading
+    assert(JSONReader.parseSingle(readModel2.get.toJSON).get == readModel2.get)
+    assert(JSONReader.parseValue(readModel2.get.toJSON).get.model == readModel2)
     
     println("Success!")
 }
