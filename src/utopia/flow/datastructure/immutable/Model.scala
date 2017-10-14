@@ -127,6 +127,17 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
             new Model[B](attributes, generator);
     
     /**
+     * Creates a copy of this model with filtered attributes
+     */
+    def filter(f: Attribute => Boolean) = withAttributes(attributes.filter(f))
+    
+    /**
+     * Creates a copy of this model with filtered attributes. The result model only contains 
+     * attributes not included by the filter
+     */
+    def filterNot(f: Attribute => Boolean) = withAttributes(attributes.filterNot(f))
+    
+    /**
      * Creates a mutable copy of this model
      * @param generator The property generator used for creating the properties of the new model
      * @return A mutable copy of this model using the provided property generator
