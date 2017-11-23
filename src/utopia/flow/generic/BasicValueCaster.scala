@@ -79,7 +79,7 @@ object BasicValueCaster extends ValueCaster
             case VectorType => 
                 val vector = value.vectorOr()
                 if (vector.isEmpty) Some("[]") else 
-                        Some('[' + value.vectorOr().map { _.toJSON }.reduceLeft { _ + ", " + _ } + ']')
+                        Some('[' + vector.map { _.toJSON }.reduceLeft { _ + ", " + _ } + ']')
             case _ => value.content.map { _.toString() }
         }
     }

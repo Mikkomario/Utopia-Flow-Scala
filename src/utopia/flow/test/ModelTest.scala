@@ -83,5 +83,14 @@ object ModelTest extends App
     val model7 = immutable.Model(Vector("a" -> 1, "b" -> 2))
     assert(model7.attributes.size == 2)
     
+    // Tests immutable model filter
+    val model3Filtered = model3.filter(_.value.intOr() == 2)
+    assert(model3Filtered("Test1").isEmpty)
+    assert(model3Filtered("Test2").intOr() == 2)
+    
+    val model3Filtered2 = model3.filterNot(_.value.intOr() == 2)
+    assert(model3Filtered2("Test2").isEmpty)
+    assert(model3Filtered2("Test1").intOr() == 1)
+    
     println("Success")
 }
