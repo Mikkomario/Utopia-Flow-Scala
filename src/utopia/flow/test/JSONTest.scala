@@ -11,6 +11,7 @@ import utopia.flow.generic.IntType
 import utopia.flow.generic.ModelType
 
 import utopia.flow.generic.ValueConversions._
+import utopia.flow.generic.VectorType
 
 object JSONTest extends App
 {
@@ -94,6 +95,11 @@ object JSONTest extends App
     // Tests value reading vs. model reading
     assert(JSONReader.parseSingle(readModel2.get.toJSON).get == readModel2.get)
     assert(JSONReader.parseValue(readModel2.get.toJSON).get.model == readModel2)
+    
+    // This kind of setting was causing a problem earlier
+    val test = Vector(1)
+    println(test)
+    println(test.toValue)
     
     println("Success!")
 }
