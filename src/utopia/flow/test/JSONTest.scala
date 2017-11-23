@@ -74,6 +74,8 @@ object JSONTest extends App
     assert(readModel2.get("name").stringOr() == "Matti")
     assert(readModel2.get("age").dataType == IntType)
     
+    assert(readModel2 == JSONReader.parseSingle(readModel2.get.toJSON))
+    
     // Tests more difficult data types
     val prop4 = new Constant("test4", v)
     val prop5 = new Constant("test5", model)
@@ -100,6 +102,28 @@ object JSONTest extends App
     val test = Vector(1)
     println(test)
     println(test.toValue)
+    
+    // Tests model parsing with empty vector values
+    println()
+    println("Testing empty vectors and models")
+    val model4 = Model(Vector("vec" -> Vector(), "normal" -> "a"))
+    
+    println(model4)
+    val parsed = JSONReader.parseSingle(model4.toJSON).get
+    println(parsed)
+    assert(parsed == model4)
+    
+    val model5 = Model(Vector("mod" -> Model(Vector())))
+    
+    println(model5)
+    val parsed5 = JSONReader.parseSingle(model5.toJSON).get
+    println(parsed5)
+    assert(parsed5 == model5)
+    
+    assert(JSONReader.parseValue("[]").get == Vector[Value]().toValue)
+    assert(JSONReader.parseValue("[ ]").get == Vector[Value]().toValue)
+    assert(JSONReader.parseValue("[null]").get == Vector(Value.empty()).toValue)
+    assert(JSONReader.parseValue("[,]").get == Vector(Value.empty(), Value.empty()).toValue)
     
     println("Success!")
 }

@@ -76,7 +76,7 @@ object JSONReader
      * Parses a single value from the provided JSON. Only the first value will be read, whether it 
      * is an array, object or a simple value. Fails if the provided json is malformed.
      */
-    def parseValue(json: String) = Try(parsePropertyValue(json, -1)._1)
+    def parseValue(json: String) = Try(parsePropertyValue(json, 0)._1)
     
     private def parseObject(json: String, objStartIndex: Int) = 
     {   
@@ -118,18 +118,18 @@ object JSONReader
         val assignment = next(json, nameEndIndex + 1, Assignment)
         
         // Parses the property value
-        val parsedValue = parsePropertyValue(json, assignment._2)
+        val parsedValue = parsePropertyValue(json, assignment._2 + 1)
         
         // Returns the parsed property + the end marker index
         Tuple2(new Constant(propertyName, parsedValue._1), parsedValue._2)
     }
     
     // Ends at the next separator or container (array or object) end. Never inside content.
-    private def parsePropertyValue(json: String, lastMarkerIndex: Int): (Value, Int) = 
+    private def parsePropertyValue(json: String, propertyStartIndex: Int): (Value, Int) = 
     {
         // Finds either a) start of object, b) start of array, 
         // c) end marker (separator, end object, end array)
-        val nextEvent = findNext(json, lastMarkerIndex + 1, ObjectStart, ArrayStart, ObjectEnd, 
+        val nextEvent = findNext(json, propertyStartIndex, ObjectStart, ArrayStart, ObjectEnd, 
                 ArrayEnd, Separator);
         
         if (nextEvent.isDefined)
@@ -147,7 +147,7 @@ object JSONReader
                     val nextArray = parseArray(json, nextEvent.get._2)
                     (nextArray._1, nextArray._2 + 1) // +1 to escape content range
                 }
-                case _ => (parseSimpleValue(json.substring(lastMarkerIndex + 1, nextEvent.get._2)), 
+                case _ => (parseSimpleValue(json.substring(propertyStartIndex, nextEvent.get._2)), 
                         nextEvent.get._2)
             }
         }
@@ -155,24 +155,36 @@ object JSONReader
         {
             // If didn't find a proper marker to handle, just reads the remaining string as a single 
             // simple value
-            (parseSimpleValue(json.substring(lastMarkerIndex + 1)), json.length())
+            (parseSimpleValue(json.substring(propertyStartIndex)), json.length())
         }
     }
     
     private def parseArray(json: String, arrayStartIndex: Int) = 
     {
-        val buffer = new ListBuffer[Value]()
-        var index = arrayStartIndex
+        // Checks first if the array is empty
+        val firstArrayEndIndex = findNext(json, arrayStartIndex, ArrayEnd).map(_._2)
+        val onlySpacesInArray = firstArrayEndIndex.exists(endIndex => 
+            json.substring(arrayStartIndex + 1, endIndex).trim().isEmpty());
         
-        // Parses values until it stops at array end marker
-        while (json.charAt(index) != ArrayEnd.marker)
+        if (onlySpacesInArray)
         {
-            val parsedValue = parsePropertyValue(json, index)
-            index = parsedValue._2
-            buffer += parsedValue._1 // NB: Previously checked that value is defined
+            Tuple2(Vector(), firstArrayEndIndex.get)
         }
-        
-        Tuple2(buffer.toVector, index)
+        else
+        {
+            val buffer = new ListBuffer[Value]()
+            var index = arrayStartIndex
+            
+            // Parses values until it stops at array end marker
+            while (json.charAt(index) != ArrayEnd.marker)
+            {
+                val parsedValue = parsePropertyValue(json, index + 1)
+                index = parsedValue._2
+                buffer += parsedValue._1 // NB: Previously checked that value is defined
+            }
+            
+            Tuple2(buffer.toVector, index)
+        }
     }
     
     private def parseSimpleValue(str: String): Value = 
