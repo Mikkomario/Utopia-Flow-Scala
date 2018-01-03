@@ -86,7 +86,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
      * Creates a new model that contains the attributes from both of the models. The new model 
      * will still use this model's attribute generator
      */
-    def ++[B >: Attribute <: Constant](other: Model[B]): Model[B] = this ++ other.attributes
+    def ++[B >: Attribute <: Constant](other: template.Model[B]): Model[B] = this ++ other.attributes
     
     /**
      * Creates a new model without the provided attribute
@@ -109,7 +109,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model without any attributes within the provided model
      */
-    def --[B >: Attribute <: Constant](other: Model[B]): Model[B] = this -- other.attributes
+    def --[B >: Attribute <: Constant](other: template.Model[B]): Model[B] = this -- other.attributes
     
     
     // OTHER METHODS    ------
