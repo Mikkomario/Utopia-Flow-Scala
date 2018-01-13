@@ -12,6 +12,16 @@ import utopia.flow.generic.ModelType
 
 object Model
 {
+    // ATTRIBUTES    -------------------
+    
+    /**
+     * An empty model with a simple constant generator
+     */
+    val empty = Model(Vector())
+    
+    
+    // OPERATORS    --------------------
+    
     /**
      * Creates a new model with input format that is more friendly to literals
      * @param content The attribute name value pairs used for generating the model's attributes
