@@ -102,6 +102,27 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
                 "children" -> children.map(_.toModel).toVector))
     }
     
+    def toXml: String = 
+    {
+        // Case: Empty element
+        if (text.forall(_.isEmpty) && children.isEmpty)
+        {
+            // Eg. <foo att1="2"/>
+            s"<$name${ attributesString.map(" " + _).getOrElse("") }/>"
+        }
+        else
+        {
+            // Eg. <foo att1="2">Test value</foo>
+            // Or <foo><bar/></foo>
+            s"<$name${ attributesString.map(" " + _).getOrElse("") }>${ text.getOrElse("") }${ 
+                    children.map(_.toXml).reduceLeftOption(_ + _).getOrElse("") }</$name>"
+        }
+    }
+    
+    // Eg. 'att1="abc" att2="3"'. None if empty
+    private def attributesString = attributes.attributes.map(a => 
+            s"${a.name}=${"\""}${a.value.stringOr()}${"\""}").reduceOption(_ + " " + _);
+    
     
     // OTHER METHODS    ------------------------
     
