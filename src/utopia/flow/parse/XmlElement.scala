@@ -10,6 +10,7 @@ import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.ModelConvertible
 import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
+import utopia.flow.util.Equatable
 
 object XmlElement extends FromModelFactory[XmlElement]
 {
@@ -87,7 +88,7 @@ object XmlElement extends FromModelFactory[XmlElement]
  */
 class XmlElement(val name: String, val value: Value = Value.empty(StringType), 
         val attributes: Model[Constant] = Model(Vector()), val children: Seq[XmlElement] = Vector()) 
-        extends ModelConvertible
+        extends ModelConvertible with Equatable
 {
     // COMPUTED PROPERTIES    ------------------
     
@@ -101,6 +102,8 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
         Model(Vector("name" -> name, "value" -> value, "attributes" -> attributes, 
                 "children" -> children.map(_.toModel).toVector))
     }
+    
+    override def properties = Vector(name, value, attributes, children)
     
     def toXml: String = 
     {
