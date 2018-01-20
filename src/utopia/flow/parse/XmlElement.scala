@@ -11,6 +11,7 @@ import utopia.flow.generic.ModelConvertible
 import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
 import utopia.flow.util.Equatable
+import scala.collection.immutable.VectorBuilder
 
 object XmlElement extends FromModelFactory[XmlElement]
 {
@@ -35,7 +36,8 @@ object XmlElement extends FromModelFactory[XmlElement]
     {
         // Value is either in 'value' or 'text' attribute
         val valueAttribute = model.findExisting("value")
-        val value = valueAttribute.map(_.value).getOrElse(model("text"))
+        val value = valueAttribute.map(_.value).orElse(
+                model.findExisting("text").map(_.value)).getOrElse(Value.empty(StringType))
         
         // There may be some unused / non-standard attributes in the model
         val unspecifiedAttributes = model.attributes.filter(att => 
@@ -96,11 +98,29 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
      * The text inside this xml element. None if the element doesn't contain any text
      */
     def text = value.string
-    
     override def toModel: Model[Constant] = 
     {
-        Model(Vector("name" -> name, "value" -> value, "attributes" -> attributes, 
-                "children" -> children.map(_.toModel).toVector))
+        val atts = new VectorBuilder[Tuple2[String, Value]]
+        atts += ("name" -> name)
+        
+        if (!value.isEmpty)
+        {
+            atts += ("value" -> value)
+        }
+        
+        // Children are only included if necessary
+        if (!children.isEmpty)
+        {
+            atts += ("children" -> children.map(_.toModel).toVector)
+        }
+        
+        // Attributes are also only included if necessary
+        if (!attributes.isEmpty)
+        {
+            atts += ("attributes" -> attributes)
+        }
+        
+        Model(atts.result())
     }
     
     override def properties = Vector(name, value, attributes, children)

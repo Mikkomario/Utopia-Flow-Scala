@@ -21,10 +21,10 @@ object XmlWriter
     
     // Characters not accepted in the xml text (http://validchar.com/d/xml10/xml10_namestart [17.1.2018])
     // Ordered
-    private val invalidCharRanges = Vector((0 to 64), (91 to 94), (123 to 191), (768 to 879), 
+    private val invalidCharRanges = Vector(/*(0 to 64), */(91 to 94), (123 to 191), (768 to 879), 
             (8192 to 8203), (8206 to 8303), (8592 to 11263), (12272 to 12288), (55296 to 63743), 
             (64976 to 65007), (65534 to 1114111));
-    private val invalidExtraChars = Vector(96, 215, 247, 894)
+    private val invalidExtraChars = Vector(34, 38, 39, 60, 62, 96, 215, 247, 894)
     
     
     // OTHER METHODS    ----------------
@@ -36,7 +36,8 @@ object XmlWriter
      * @param contentWriter the function that writes the document contents
      * @return The results of the operation
      */
-    def writeToStream(stream: OutputStream, charset: Charset = StandardCharsets.UTF_8, contentWriter: XmlWriter => Unit) = 
+    def writeToStream(stream: OutputStream, charset: Charset = StandardCharsets.UTF_8, 
+            contentWriter: XmlWriter => Unit) = 
     {
         def write = 
         {
@@ -77,7 +78,8 @@ object XmlWriter
         val stream = Try(new FileOutputStream(file, false))
         stream match 
         {
-            case Success(stream) => try { writeToStream(stream, charset, contentWriter) } finally { stream.close() }
+            case Success(stream) => try { 
+                    writeToStream(stream, charset, contentWriter) } finally { stream.close() }
             case Failure(ex) => Failure(ex)
         }
     }
