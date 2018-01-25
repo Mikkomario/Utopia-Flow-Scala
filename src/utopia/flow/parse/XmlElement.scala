@@ -125,6 +125,9 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
     
     override def properties = Vector(name, value, attributes, children)
     
+    /**
+     * Prints an xml string from this element. Character data is represented as is.
+     */
     def toXml: String = 
     {
         // Case: Empty element
@@ -145,6 +148,17 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
     // Eg. 'att1="abc" att2="3"'. None if empty
     private def attributesString = attributes.attributes.map(a => 
             s"${a.name}=${"\""}${a.value.stringOr()}${"\""}").reduceOption(_ + " " + _);
+    
+    
+    // OPERATORS    ----------------------------
+    
+    /**
+     * Finds a child under this element with the provided name. If there is no such child, creates 
+     * a substitute element so that the method can be chained together
+     * @param childName the name of the searched child (case-insensitive)
+     * @return the searched child or a substitute element
+     */
+    def /(childName: String) = childWithName(childName).getOrElse(new XmlElement(childName))
     
     
     // OTHER METHODS    ------------------------
