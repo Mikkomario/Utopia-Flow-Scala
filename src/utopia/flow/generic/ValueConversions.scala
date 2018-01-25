@@ -58,6 +58,16 @@ object ValueConversions
         def toValue = new Value(Some(v.map(f)), VectorType)
     }
     
+    /*
+    implicit class ValueOfVectorConvertible[V](val v: Vector[V])(implicit f: V => ValueConvertible) extends ValueConvertible
+    {
+        def toValue = 
+        {
+            val valueVector: Vector[Value] = v.map(f).map(_.toValue)
+            new Value(Some(valueVector), VectorType)
+        }
+    }*/
+    
     // TODO: Modify vector to allow implicit conversion in vector type, then test properly
     // Release with nullSafe -feature
     

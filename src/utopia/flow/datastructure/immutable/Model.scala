@@ -12,6 +12,16 @@ import utopia.flow.generic.ModelType
 
 object Model
 {
+    // ATTRIBUTES    -------------------
+    
+    /**
+     * An empty model with a simple constant generator
+     */
+    val empty = Model(Vector())
+    
+    
+    // OPERATORS    --------------------
+    
     /**
      * Creates a new model with input format that is more friendly to literals
      * @param content The attribute name value pairs used for generating the model's attributes
@@ -86,7 +96,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
      * Creates a new model that contains the attributes from both of the models. The new model 
      * will still use this model's attribute generator
      */
-    def ++[B >: Attribute <: Constant](other: Model[B]): Model[B] = this ++ other.attributes
+    def ++[B >: Attribute <: Constant](other: template.Model[B]): Model[B] = this ++ other.attributes
     
     /**
      * Creates a new model without the provided attribute
@@ -109,7 +119,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model without any attributes within the provided model
      */
-    def --[B >: Attribute <: Constant](other: Model[B]): Model[B] = this -- other.attributes
+    def --[B >: Attribute <: Constant](other: template.Model[B]): Model[B] = this -- other.attributes
     
     
     // OTHER METHODS    ------
