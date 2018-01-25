@@ -90,6 +90,11 @@ object XmlReader
             case Failure(ex) => Failure(ex)
         }
     }
+    
+    /**
+     * Parses a value from a stirng
+     */
+    private[parse] def valueFromString(s: String) = JSONReader.parseValue(s).toOption.getOrElse(s.toValue)
 }
 
 /**
@@ -133,7 +138,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
         if (isAtDocumentEnd) 
             Model.empty 
         else 
-            Model(parseAttributes().mapValues(_.toValue).toVector)
+            Model(parseAttributes().mapValues(XmlReader.valueFromString).toVector)
     }
     
     private def currentEvent = 
@@ -371,8 +376,8 @@ private class UnfinishedElement(val name: String, val attributes: Map[String, St
     
     def toXmlElement: XmlElement = 
     {
-        val attributesModel = Model(attributes.mapValues(_.toValue).toVector)
-        new XmlElement(name, if (text.isEmpty()) Value.empty(StringType) else text, 
-                attributesModel, children.map(_.toXmlElement))
+        val attributesModel = Model(attributes.mapValues(XmlReader.valueFromString).toVector)
+        new XmlElement(name, if (text.isEmpty()) Value.empty(StringType) else 
+                XmlReader.valueFromString(text), attributesModel, children.map(_.toXmlElement))
     }
 }

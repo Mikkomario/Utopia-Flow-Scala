@@ -7,6 +7,8 @@ import utopia.flow.parse.XmlElement
 import utopia.flow.datastructure.immutable.Model
 import java.io.File
 import utopia.flow.parse.XmlWriter
+import utopia.flow.parse.XmlReader
+import scala.util.Try
 
 /**
  * This app tests xml writing and reading functions
@@ -25,6 +27,10 @@ object XmlTest extends App
     val child = new XmlElement(name = "b", children = Vector(grandChild1, grandChild2, grandChild3))
     val root = new XmlElement(name = "a", attributes = Model(Vector("id" -> 34)), children = Vector(child))
     
+    // Tests some basic XmlElement methods
+    assert(root.childWithName("b").contains(child))
+    assert(root/"b"/"d" == grandChild2)
+    
     // Test prints
     println(root.toXml)
     println(root.toJSON)
@@ -41,6 +47,26 @@ object XmlTest extends App
     val testFile = new File("test/XmlTest.xml")
     testFile.getParentFile.mkdirs()
     assert(XmlWriter.writeElementToFile(testFile, root).isSuccess)
+    
+    // Parses the contents of the xml file (dom)
+    val parsed2 = XmlReader.parseFile(testFile)
+    
+    println(parsed2.get.toXml)
+    println(parsed2.get.toJSON)
+    
+    assert(parsed2.get == root)
+    
+    // Parses an element from the xml file (sax)
+    val parsed3 = XmlReader.readFile(file = testFile, contentReader = reader => Try
+        {
+            reader.toNextChildWithName("c")
+            reader.readElement().get
+        });
+    
+    println(parsed3.get.toXml)
+    println(parsed3.get.toJSON)
+    
+    assert(parsed3.get == grandChild1)
     
     println("Success!")
 }
