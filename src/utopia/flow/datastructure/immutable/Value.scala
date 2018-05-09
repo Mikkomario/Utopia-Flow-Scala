@@ -19,6 +19,12 @@ import utopia.flow.generic.ModelType
 import utopia.flow.generic.AnyType
 import utopia.flow.parse.JSONValueConverter
 import utopia.flow.parse.JSONConvertible
+import utopia.flow.generic.LocalDateType
+import java.time.LocalDate
+import utopia.flow.generic.LocalTimeType
+import java.time.LocalTime
+import utopia.flow.generic.LocalDateTimeType
+import java.time.LocalDateTime
 
 object Value
 {
@@ -215,6 +221,21 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     def instant = objectValue(InstantType).map { _.asInstanceOf[Instant]}
     
     /**
+     * The local date value of this value or None if the value can't be casted
+     */
+    def localDate = objectValue(LocalDateType).map { _.asInstanceOf[LocalDate]}
+    
+    /**
+     * The local time value of this value or None if the value can't be casted
+     */
+    def localTime = objectValue(LocalTimeType).map { _.asInstanceOf[LocalTime]}
+    
+    /**
+     * The local date time value of this value or None if the value can't be casted
+     */
+    def localDateTime = objectValue(LocalDateTimeType).map { _.asInstanceOf[LocalDateTime]}
+    
+    /**
      * The vector value of this value or None if the value can't be casted
      */
     def vector = objectValue(VectorType).map { _.asInstanceOf[Vector[Value]]}
@@ -259,6 +280,21 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
      * (current instant)
      */
     def instantOr(default: => Instant = Instant.now()) = instant.getOrElse(default)
+    
+    /**
+     * The current contents of this value as a local date or the default value (current date)
+     */
+    def localDateOr(default: => LocalDate = LocalDate.now()) = localDate.getOrElse(default)
+    
+    /**
+     * The current contents of this value as a local time or the default value (current time)
+     */
+    def localTimeOr(default: => LocalTime = LocalTime.now()) = localTime.getOrElse(default)
+    
+    /**
+     * The current contents of this value as a local date time or the default value (current time)
+     */
+    def localDateTimeOr(default: => LocalDateTime = LocalDateTime.now()) = localDateTime.getOrElse(default)
     
     /**
      * The contents of this value casted to a vector, or if that fails, the default value (empty
