@@ -73,6 +73,9 @@ object BasicValueCaster extends ValueCaster
             case LongType => longOf(value)
             case BooleanType => booleanOf(value)
             case InstantType => instantOf(value)
+            case LocalDateType => localDateOf(value)
+            case LocalTimeType => localTimeOf(value)
+            case LocalDateTimeType => localDateTimeOf(value)
             case VectorType => vectorOf(value)
             case _ => None
         }
