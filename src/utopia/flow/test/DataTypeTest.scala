@@ -15,6 +15,11 @@ import scala.collection.immutable.HashSet
 import utopia.flow.generic.IntType
 
 import utopia.flow.generic.ValueConversions._
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.LocalDateTime
+import utopia.flow.generic.InstantType
+import utopia.flow.generic.LocalDateTimeType
 
 object DataTypeTest extends App
 {
@@ -35,6 +40,9 @@ object DataTypeTest extends App
     val l = 9999999999l.toValue
     val b = true.toValue
     val time = Instant.now().toValue
+    val lDate = LocalDate.now().toValue
+    val lTime = LocalTime.now().toValue
+    val lDT = LocalDateTime.now().toValue
     val vector = Vector(i, d, f, l).toValue
     val model = new Model(Vector(new Constant("attributeName", i))).toValue
     
@@ -77,6 +85,13 @@ object DataTypeTest extends App
     val timeToString = time.toString()
     val timeStringToTime = timeToString.instantOr()
     assert(time.long == timeStringToTime.long)
+    
+    // println(lDT.localDateTimeOr())
+    // println(lDT.instantOr())
+    // println(lDT.castTo(InstantType).castTo(LocalDateTimeType))
+    assert(lDT.castTo(InstantType).castTo(LocalDateTimeType).localDateTime == lDT.localDateTime)
+    assert(lDate.castTo(LocalDateTimeType).localDate == lDate.localDate)
+    assert(lDate.castTo(StringType).localDate == lDate.localDate)
     
     println(vector.toString())
     assert(vector.vectorOr().length == 4)

@@ -9,6 +9,11 @@ import utopia.flow.generic.ConversionReliability.MEANING_LOSS
 import utopia.flow.datastructure.immutable.Value
 import java.time.Instant
 import java.time.format.DateTimeParseException
+import scala.util.Try
+import java.time.ZoneId
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.LocalDateTime
 
 /**
  * This value caster handles the basic data types
@@ -42,7 +47,15 @@ object BasicValueCaster extends ValueCaster
             Conversion(IntType, BooleanType, MEANING_LOSS),  
             Conversion(StringType, BooleanType, MEANING_LOSS), 
             Conversion(LongType, InstantType, PERFECT), 
+            Conversion(LocalDateTimeType, InstantType, PERFECT), 
             Conversion(StringType, InstantType, DANGEROUS), 
+            Conversion(LocalDateTimeType, LocalDateType, DATA_LOSS), 
+            Conversion(StringType, LocalDateType, DANGEROUS), 
+            Conversion(LocalDateTimeType, LocalTimeType, DATA_LOSS), 
+            Conversion(StringType, LocalTimeType, DANGEROUS), 
+            Conversion(InstantType, LocalDateTimeType, DATA_LOSS), 
+            Conversion(LocalDateType, LocalDateTimeType, PERFECT), 
+            Conversion(StringType, LocalDateTimeType, DANGEROUS), 
             Conversion(AnyType, VectorType, MEANING_LOSS))
     
     
@@ -60,6 +73,9 @@ object BasicValueCaster extends ValueCaster
             case LongType => longOf(value)
             case BooleanType => booleanOf(value)
             case InstantType => instantOf(value)
+            case LocalDateType => localDateOf(value)
+            case LocalTimeType => localTimeOf(value)
+            case LocalDateTimeType => localDateTimeOf(value)
             case VectorType => vectorOf(value)
             case _ => None
         }
@@ -94,10 +110,7 @@ object BasicValueCaster extends ValueCaster
             case LongType => Some(value.longOr().intValue())
             case FloatType => Some(value.floatOr().intValue())
             case BooleanType => Some(if (value.booleanOr()) 1 else 0)
-            case StringType => {
-                try { Some(value.stringOr("0").toDouble.toInt) } 
-                catch { case e: Exception => None }
-            }
+            case StringType => Try(value.stringOr("0").toDouble.toInt).toOption
             case _ => None
         }
     }
@@ -109,10 +122,7 @@ object BasicValueCaster extends ValueCaster
             case IntType => Some(value.intOr().toDouble)
             case LongType => Some(value.longOr().toDouble)
             case FloatType => Some(value.floatOr().toDouble)
-            case StringType => {
-                try { Some(value.stringOr("0").toDouble) } 
-                catch { case e: Exception => None }
-            }
+            case StringType => Try(value.stringOr("0").toDouble).toOption
             case _ => None
         }
     }
@@ -124,10 +134,7 @@ object BasicValueCaster extends ValueCaster
             case IntType => Some(value.intOr().toFloat)
             case LongType => Some(value.longOr().toFloat)
             case DoubleType => Some(value.doubleOr().toFloat)
-            case StringType => {
-                try { Some(value.stringOr("0").toFloat) } 
-                catch { case e: Exception => None }
-            }
+            case StringType => Try(value.stringOr("0").toFloat).toOption
             case _ => None
         }
     }
@@ -140,10 +147,7 @@ object BasicValueCaster extends ValueCaster
             case DoubleType => Some(value.doubleOr().toLong)
             case FloatType => Some(value.floatOr().toLong)
             case InstantType => Some(value.instantOr().getEpochSecond)
-            case StringType => {
-                try { Some(value.stringOr("0").toDouble.toLong) } 
-                catch { case e: Exception => None }
-            }
+            case StringType => Try(value.stringOr("0").toDouble.toLong).toOption
             case _ => None
         }
     }
@@ -163,10 +167,43 @@ object BasicValueCaster extends ValueCaster
         value.dataType match 
         {
             case LongType => Some(Instant.ofEpochSecond(value.longOr()))
-            case StringType => {
-                try { Some(Instant.parse(value.toString())) }
-                catch { case e: DateTimeParseException => None }
+            case StringType => Try(Instant.parse(value.toString())).toOption
+            case LocalDateTimeType => 
+            {
+                val dateTime = value.localDateTimeOr()
+                Some(dateTime.toInstant(ZoneId.systemDefault().getRules.getOffset(dateTime)))
             }
+            case _ => None
+        }
+    }
+    
+    private def localDateOf(value: Value): Option[LocalDate] = 
+    {
+        value.dataType match 
+        {
+            case LocalDateTimeType => Some(value.localDateTimeOr().toLocalDate())
+            case StringType => Try(LocalDate.parse(value.toString())).toOption
+            case _ => None
+        }
+    }
+    
+    private def localTimeOf(value: Value): Option[LocalTime] = 
+    {
+        value.dataType match 
+        {
+            case LocalDateTimeType => Some(value.localDateTimeOr().toLocalTime())
+            case StringType => Try(LocalTime.parse(value.toString())).toOption
+            case _ => None
+        }
+    }
+    
+    private def localDateTimeOf(value: Value): Option[LocalDateTime] = 
+    {
+        value.dataType match 
+        {
+            case InstantType => Some(LocalDateTime.ofInstant(value.instantOr(), ZoneId.systemDefault()))
+            case LocalDateType => Some(value.localDateOr().atStartOfDay())
+            case StringType => Try(LocalDateTime.parse(value.toString())).toOption
             case _ => None
         }
     }

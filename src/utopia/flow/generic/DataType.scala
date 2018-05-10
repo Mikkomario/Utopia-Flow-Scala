@@ -44,6 +44,20 @@ object BooleanType extends DataType("Boolean", classOf[java.lang.Boolean])
  */
 object InstantType extends DataType("Instant", classOf[java.time.Instant])
 /**
+ * The local date type is used for representing dates on a local clock / time zone
+ */
+object LocalDateType extends DataType("LocalDate", classOf[java.time.LocalDate])
+/**
+ * Time type represents a time (hour, minute, second) portion of a specific date + time in 
+ * the local clock / time zone
+ */
+object LocalTimeType extends DataType("LocalTime", classOf[java.time.LocalTime])
+/**
+ * The local date time type represents a combination of date and time components in a local 
+ * clock / time zone
+ */
+object LocalDateTimeType extends DataType("LocalDateTime", classOf[java.time.LocalDateTime])
+/**
  * Vector type stands for a vector of values. Only Vectors with exact parameter type of Value
  * are accepted
  */
@@ -78,7 +92,8 @@ object DataType
         {
             isSetup = true
             introduceTypes(AnyType, StringType, IntType, DoubleType, FloatType, LongType, 
-                    BooleanType, InstantType, VectorType, ModelType)
+                    BooleanType, InstantType, LocalDateType, LocalTimeType, LocalDateTimeType, 
+                    VectorType, ModelType)
             ConversionHandler.addCaster(BasicValueCaster)
         }
     }
