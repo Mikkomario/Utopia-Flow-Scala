@@ -8,6 +8,7 @@ import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.SimpleConstantGenerator
 import scala.collection.immutable.HashMap
+import utopia.flow.datastructure.template.Property
 
 object Model
 {
@@ -60,6 +61,17 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
         if (existing.isDefined) existing.get.value = value else generateAttribute(attName, Some(value))
         Unit
     }
+    
+    /**
+     * Updates the value of a single attribute within this model
+     * @param property a name value pair that will be updated or added
+     */
+    def update(property: Property): Unit = update(property.name, property.value)
+    
+    /**
+     * Updates values of multiple attributes in this model
+     */
+    def update(data: template.Model[Property]): Unit = data.attributes.foreach(update)
     
     /**
      * Adds a new attribute to this model. If an attribute with the same name already exists, it 
