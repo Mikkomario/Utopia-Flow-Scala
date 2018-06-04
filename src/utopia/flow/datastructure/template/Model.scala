@@ -84,6 +84,12 @@ trait Model[+Attribute <: Property] extends JSONConvertible
     def get(attName: String) = findExisting(attName).getOrElse(generateAttribute(attName))
     
     /**
+     * Whether this model contains an existing attribute for the specified attribute name
+     * @param attName the name of the attribute
+     */
+    def contains(attName: String) = attributeMap.contains(attName.toLowerCase())
+    
+    /**
      * Converts and unwraps this model's attributes into a map format
      * @param f a function that converts an attribute value into the desired instance type
      * @return a map from the converted attributes of this model
