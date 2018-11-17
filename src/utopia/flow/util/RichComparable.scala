@@ -13,12 +13,12 @@ object RichComparable
     /**
      * Finds the smaller of the two provided values
      */
-    def min[B, A <: Comparable[B]](a: A, b: B) = if (a.isLargerThan(b)) b else a
+    def min[T <: Comparable[T]](a: T, b: T) = if (a.isLargerThan(b)) b else a
     
     /**
      * Finds the larger of the two values
      */
-    def max[B, A <: Comparable[B]](a: A, b: B) = if (a.isSmallerThan(b)) b else a
+    def max[T <: Comparable[T]](a: T, b: T) = if (a.isSmallerThan(b)) b else a
 }
 
 /**
