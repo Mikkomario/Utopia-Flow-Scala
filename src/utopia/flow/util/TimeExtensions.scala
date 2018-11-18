@@ -3,6 +3,7 @@ package utopia.flow.util
 import java.time.Instant
 import java.time.temporal.TemporalAmount
 import java.time.ZoneId
+import java.time.Duration
 
 /**
 * This object contains some extensions for java's time classes
@@ -27,5 +28,15 @@ object TimeExtensions
 	     * An instant after the specified duration has passed from this instant
 	     */
 	    def +(amount: TemporalAmount) = i.plus(amount)
+	    
+	    /**
+	     * An instant before the specified duration
+	     */
+	    def -(amount: TemporalAmount) = i.minus(amount)
+	    
+	    /**
+	     * Finds the difference (duration) between the two time instances
+	     */
+	    def -(time: Instant) = Duration.between(time, i)
 	}
 }

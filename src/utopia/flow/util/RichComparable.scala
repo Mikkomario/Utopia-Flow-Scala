@@ -13,12 +13,12 @@ object RichComparable
     /**
      * Finds the smaller of the two provided values
      */
-    def min[T <: Comparable[T]](a: T, b: T) = if (a.isLargerThan(b)) b else a
+    def min[T <: Comparable[T]](a: T, b: T) = if (a > b) b else a
     
     /**
      * Finds the larger of the two values
      */
-    def max[T <: Comparable[T]](a: T, b: T) = if (a.isSmallerThan(b)) b else a
+    def max[T <: Comparable[T]](a: T, b: T) = if (a < b) b else a
 }
 
 /**
@@ -31,12 +31,22 @@ trait RichComparable[-T] extends Comparable[T @uncheckedVariance]
     /**
      * Checks whether this item is larger than the specified item
      */
-	def isLargerThan(other: T) = compareTo(other) > 0
+	def >(other: T) = compareTo(other) > 0
 	
 	/**
 	 * Checks whether this item is smaller than the specified item
 	 */
-	def isSmallerThan(other: T) = compareTo(other) < 0
+	def <(other: T) = compareTo(other) < 0
+	
+	/**
+	 * Checks whether this item is equal or larger than the specified item
+	 */
+	def >=(other: T) = !(<(other))
+	
+	/**
+	 * Checks whether this item is equal or smaller than the specified item
+	 */
+	def <=(other: T) = !(>(other))
 	
 	/**
 	 * Checks whether this item may be considered equal with the specified item
