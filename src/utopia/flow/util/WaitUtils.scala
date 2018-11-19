@@ -1,4 +1,4 @@
-package utopia.sapling.util
+package utopia.flow.util
 
 import utopia.flow.util.TimeExtensions._
 import utopia.flow.util.RichComparable._
@@ -17,7 +17,7 @@ object WaitUtils
     /**
      * Waits for a certain amount of time (blocking), then releases the lock
      */
-    def wait(lock: AnyRef, duration: Duration) = waitUntil(lock, Instant.now() + duration)
+    def wait(duration: Duration, lock: AnyRef) = waitUntil(Instant.now() + duration, lock)
     
     /**
      * Waits until the lock is notified
@@ -50,7 +50,7 @@ object WaitUtils
      */
     def notify(lock: AnyRef) = lock.synchronized { lock.notifyAll() }
     
-    private def waitUntil(lock: AnyRef, targetTime: Instant) = 
+    private def waitUntil(targetTime: Instant, lock: AnyRef) = 
     {
         lock.synchronized
         {
