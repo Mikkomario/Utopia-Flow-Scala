@@ -39,4 +39,12 @@ object TimeExtensions
 	     */
 	    def -(time: Instant) = Duration.between(time, i)
 	}
+	
+	implicit class ExtendedDuration(val d: Duration) extends AnyVal
+	{
+	    /**
+	     * The this duration as milliseconds, but with double precision
+	     */
+	    def toPreciseMillis = d.toNanos() / 1000000.0
+	}
 }
