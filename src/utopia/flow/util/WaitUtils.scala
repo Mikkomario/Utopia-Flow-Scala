@@ -50,7 +50,10 @@ object WaitUtils
      */
     def notify(lock: AnyRef) = lock.synchronized { lock.notifyAll() }
     
-    private def waitUntil(targetTime: Instant, lock: AnyRef) = 
+    /**
+     * Waits until the specified time has been reached
+     */
+    def waitUntil(targetTime: Instant, lock: AnyRef) = 
     {
         lock.synchronized
         {
