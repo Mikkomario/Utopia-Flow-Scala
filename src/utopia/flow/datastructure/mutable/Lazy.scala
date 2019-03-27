@@ -44,6 +44,11 @@ class Lazy[T](val generator: () => T)
     // OTHER    ---------------------
     
     /**
+     * Updates the value in this container
+     */
+    def set(newValue: T) = item = Some(newValue)
+    
+    /**
      * Resets this container so that the next time #get is called, a new item will be generated
      */
     def reset() = item = None
