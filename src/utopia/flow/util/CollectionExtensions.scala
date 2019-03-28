@@ -3,6 +3,7 @@ package utopia.flow.util
 import collection.mutable
 
 import scala.collection.generic.CanBuildFrom
+import scala.collection.GenSeqLike
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
@@ -11,6 +12,23 @@ import scala.collection.generic.CanBuildFrom
 **/
 object CollectionExtensions
 {
+    implicit class RichGenSeqLike[T, Repr](val seq: GenSeqLike[T, Repr]) extends AnyVal
+    {
+        /**
+         * Finds the index of the first item that matches the predicate
+         * @param find a function for finding the correct item
+         * @return The index of the item in this seq or None if no such item was found
+         */
+        def indexWhereOption(find: T => Boolean) = 
+        {
+            val result = seq.indexWhere(find)
+            if (result < 0)
+                None
+            else
+                Some(result)
+        }
+    }
+    
     /**
      * This implicit class is used for extending collection map conversion
      */

@@ -1,8 +1,9 @@
-package utopia.flow.util
+package utopia.flow.async
 
 import java.time.Duration
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
+import utopia.flow.util.WaitUtils
 
 /**
 * This object provides utility tools for asynchronous processes
