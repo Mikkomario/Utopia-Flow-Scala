@@ -7,28 +7,17 @@ object VolatileList
     /**
      * Creates a new empty list
      */
-    def apply[T]() = new VolatileList[T]()
+    def apply[T]() = new VolatileList[T](Vector())
     
     /**
      * Creates a new list with a single item
      */
-    def apply[T](item: T) = 
-    {
-        val list = new VolatileList[T]()
-        list :+= item
-        list
-    }
+    def apply[T](item: T) = new VolatileList[T](Vector(item))
     
     /**
      * Creates a new list with multiple items
      */
-    def apply[T](first: T, second: T, more: T*): VolatileList[T] = 
-    {
-        val list = VolatileList(first)
-        list :+= second
-        list ++= more
-        list
-    }
+    def apply[T](first: T, second: T, more: T*) = new VolatileList(Vector(first, second) ++ more)
 }
 
 /**
@@ -36,7 +25,7 @@ object VolatileList
 * @author Mikko Hilpinen
 * @since 28.3.2019
 **/
-class VolatileList[T] extends Volatile(Vector[T]()) with Seq[T]
+class VolatileList[T](list: Vector[T]) extends Volatile(list) with Seq[T]
 {
     // IMPLEMENTED    ---------------
     

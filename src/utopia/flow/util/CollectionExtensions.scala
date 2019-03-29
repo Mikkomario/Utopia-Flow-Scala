@@ -4,6 +4,7 @@ import collection.mutable
 
 import scala.collection.generic.CanBuildFrom
 import scala.collection.GenSeqLike
+import scala.util.Try
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
@@ -27,6 +28,18 @@ object CollectionExtensions
             else
                 Some(result)
         }
+    }
+    
+    implicit class RichTry[T](val t: Try[T]) extends AnyVal
+    {
+        /**
+         * The success value of this try. None if this try was a failure
+         */
+        def success = t.toOption
+        /**
+         * The failure (throwable) value of this try. None if this try was a success.
+         */
+        def failure = t.failed.toOption
     }
     
     /**
