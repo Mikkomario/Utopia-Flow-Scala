@@ -79,7 +79,7 @@ class VolatileList[T](list: Vector[T]) extends Volatile(list) with Seq[T]
 	/**
 	 * Removes and returns the first item in this list
 	 */
-	def pop(): Option[T] = pop { v => v.headOption -> v.tail }
+	def pop(): Option[T] = pop { v => v.headOption -> v.drop(1) }
 	
 	/**
 	 * Removes and returns the first item in this list that satisfies the provided predicate

@@ -5,6 +5,7 @@ import utopia.flow.util.RichComparable._
 
 import java.time.Instant
 import java.time.Duration
+import scala.concurrent.duration.FiniteDuration
 
 /**
  * WaitUtils contains a number of utility tools for waiting on a thread. This utility object handles 
@@ -18,6 +19,11 @@ object WaitUtils
      * Waits for a certain amount of time (blocking), then releases the lock
      */
     def wait(duration: Duration, lock: AnyRef) = waitUntil(Instant.now() + duration, lock)
+    
+    /**
+     * Waits for a certain amount of time (blocking), then releases the lock
+     */
+    def wait(duration: FiniteDuration, lock: AnyRef): Unit = wait(Duration.ofNanos(duration.toNanos), lock)
     
     /**
      * Waits until the lock is notified
