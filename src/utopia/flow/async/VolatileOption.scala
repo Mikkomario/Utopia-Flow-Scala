@@ -6,6 +6,11 @@ object VolatileOption
      * Creates a new filled volatile option
      */
     def apply[T](item: T) = new VolatileOption(Some(item))
+    
+    /**
+     * Creates a new empty volatile option
+     */
+    def apply[T]() = new VolatileOption[T](None)
 }
 
 /**
@@ -47,4 +52,9 @@ class VolatileOption[T](value: Option[T]) extends Volatile[Option[T]](value) wit
      * Sets a new value this option, but only if there is no current value
      */
     def setOneIfEmpty(getValue: () => T) = setIfEmpty(() => Some(getValue()))
+    
+    /**
+     * Sets a new value to this option, then returns that value
+     */
+    def setOneAndGet(newValue: T) = pop { old => newValue -> Some(newValue) }
 }

@@ -37,6 +37,15 @@ class Volatile[T](@volatile private var value: T)
     def update(mutate: T => T) = this.synchronized { value = mutate(value) }
     
     /**
+     * Safely updates the value in this container, then returns it
+     */
+    def updateAndGet(mutate: T => T) = this.synchronized
+    {
+        value = mutate(value)
+        value
+    }
+    
+    /**
      * Updates a value in this container. Returns the state before the update.
      */
     def takeAndUpdate[B](taker: T => B)(updater: T => T) = this.synchronized

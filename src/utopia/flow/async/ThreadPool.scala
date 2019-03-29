@@ -102,16 +102,15 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
     // ATTRIBUTES    ---------------------
     
     private val ended = new VolatileFlag()
-    private val waiting = new VolatileFlag()
-    private val nextTask = new Volatile(Promise[() => Unit]())
+    private val waitingTask = VolatileOption[Promise[() => Unit]]()
+    
+    private var nextTask = initialTask
     
     
     // INITIAL CODE    -------------------
     
     setName(name)
     setDaemon(true)
-    
-    initialTask.foreach { nextTask.get.success(_) }
     
     
     // COMPUTED    -----------------------
@@ -123,16 +122,12 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
     
     override def run() = 
     {
-        var waitingTask: Option[() => Unit] = None
-        
         while (!ended.isSet)
         {
             // Finds the next task to perform, may fail if maximum idle duration is reached
-            val next = waitingTask orElse 
+            val next = nextTask orElse 
             {
-                val nextFuture = nextTask.get.future
-                if (!nextFuture.isCompleted)
-                    waiting.set
+                val nextFuture = waitingTask.setOneAndGet(Promise()).future
                 nextFuture.waitFor(maxIdleDuration).toOption
             }
             
@@ -145,7 +140,7 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
                 Try(next.get()).failure.foreach(errorHandler)
                 
                 // Takes the next task right away, if one is available
-                waitingTask = getWaitingTask()
+                nextTask = getWaitingTask()
             }
         }
         
@@ -165,24 +160,8 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
         // Only accepts new tasks if not busy already
         if (!ended.isSet)
         {
-            waiting.pop
-            {
-                isWaiting =>
-                    
-                    if (isWaiting)
-                    {
-                        nextTask.update
-                        {
-                            current => 
-                                // Completes the current task and prepares the next promise
-                                current.success(task)
-                                Promise()
-                        }
-                        true -> false
-                    }
-                    else
-                        false -> isWaiting
-            }
+            // If this thread is waiting for another task, provides it
+            waitingTask.get.map { p => if (p.isCompleted) false else { p.success(task); true } } getOrElse false
         }
         else
             false
