@@ -6,6 +6,9 @@ import utopia.flow.util.RichComparable._
 import java.time.Instant
 import java.time.Duration
 import scala.concurrent.duration.FiniteDuration
+import utopia.flow.util.WaitTarget.WaitDuration
+import utopia.flow.util.WaitTarget.UntilNotified
+import utopia.flow.util.WaitTarget.Until
 
 /**
  * WaitUtils contains a number of utility tools for waiting on a thread. This utility object handles 
@@ -16,39 +19,25 @@ import scala.concurrent.duration.FiniteDuration
 object WaitUtils
 {
     /**
-     * Waits for a certain amount of time (blocking), then releases the lock
+     * Waits the duration of the specified wait target
      */
-    def wait(duration: Duration, lock: AnyRef) = waitUntil(Instant.now() + duration, lock)
+    def wait(target: WaitTarget, lock: AnyRef) = target.waitWith(lock)
     
     /**
      * Waits for a certain amount of time (blocking), then releases the lock
      */
-    def wait(duration: FiniteDuration, lock: AnyRef): Unit = wait(Duration.ofNanos(duration.toNanos), lock)
+    def wait(duration: Duration, lock: AnyRef): Unit = wait(WaitDuration(duration), lock)
+    
+    /**
+     * Waits for a certain amount of time (blocking), then releases the lock
+     */
+    def wait(duration: FiniteDuration, lock: AnyRef): Unit = wait(WaitDuration(duration), lock)
     
     /**
      * Waits until the lock is notified
      * @see #notify(AnyRef)
      */
-    def waitUntilNotified(lock: AnyRef) = 
-    {
-        lock.synchronized
-        {
-            var waiting = true
-            while (waiting)
-            {
-                try
-                {
-                    lock.wait()
-                    waiting = false
-                }
-                catch
-                {
-                    // InterrupredExceptions are ignored
-                    case _: InterruptedException => Unit
-                }
-            }
-        }
-    }
+    def waitUntilNotified(lock: AnyRef) = wait(UntilNotified, lock)
     
     /**
      * Notifies the lock, so that threads waiting on it will be released
@@ -59,24 +48,5 @@ object WaitUtils
     /**
      * Waits until the specified time has been reached
      */
-    def waitUntil(targetTime: Instant, lock: AnyRef) = 
-    {
-        lock.synchronized
-        {
-            var currentTime = Instant.now()
-            while (currentTime < targetTime)
-            {
-                try
-                {
-                    lock.wait((targetTime - currentTime).toMillis())
-                }
-                catch
-                {
-                    case _: InterruptedException => Unit
-                }
-                
-                currentTime = Instant.now()
-            }
-        }
-    }
+    def waitUntil(targetTime: Instant, lock: AnyRef) = wait(Until(targetTime), lock)
 }
