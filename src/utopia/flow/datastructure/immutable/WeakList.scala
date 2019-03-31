@@ -2,6 +2,15 @@ package utopia.flow.datastructure.immutable
 
 import scala.ref.WeakReference
 import scala.collection.immutable.Traversable
+import scala.collection.Iterable
+import scala.collection.IterableLike
+import scala.collection.mutable.Builder
+import scala.collection.immutable.VectorBuilder
+
+object WeakList
+{
+    def apply[A <: AnyRef]() = new WeakList[A](Vector())    
+}
 
 /**
 * This list only weakly references items, which means that they may disappear once no other object 
@@ -10,23 +19,40 @@ import scala.collection.immutable.Traversable
 * @author Mikko Hilpinen
 * @since 31.3.2019
 **/
-class WeakList[T <: AnyRef](private val refs: Vector[WeakReference[T]]) extends Traversable[T]
+class WeakList[A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends IterableLike[A, WeakList[A]]
 {
     // COMPUTED    -----------------
     
     def strong = refs.flatMap { _.get }
     
-    private def filteredRefs = refs.filter { _.get.isDefined }
-    
     
     // IMPLEMENTED    --------------
     
-    def foreach[U](f: T => U) = refs.foreach { _.get.foreach(f) }
+    def iterator = refs.view.flatMap { _.get }.iterator
+    
+    def seq = this
+    
+    override def foreach[U](f: A => U) = refs.foreach { _.get.foreach(f) }
+    
+    protected[this] def newBuilder = new WeakListBuilder()
+}
+
+class WeakListBuilder[A <: AnyRef] extends Builder[A, WeakList[A]]
+{
+    // ATTRIBUTES    ---------------------
+    
+    private val builder = new VectorBuilder[WeakReference[A]]()
     
     
-    // OPERATORS    ----------------
+    // IMPLEMENTED    --------------------
     
-    def +(item: T) = new WeakList(filteredRefs :+ WeakReference(item))
+    def +=(elem: A): WeakListBuilder.this.type = 
+    {
+        builder += WeakReference(elem)
+        this
+    }
     
-    def ++(items: TraversableOnce[T]) = new WeakList(filteredRefs ++ items.map { WeakReference(_) })
+    def clear() = builder.clear()
+    
+    def result() = new WeakList(builder.result())
 }
