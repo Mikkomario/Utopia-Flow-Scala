@@ -26,7 +26,7 @@ class SingleWait(val target: WaitTarget) extends Runnable with Breakable
     /**
      * Whether this wait has already started
      */
-    def started = _started.get
+    def hasStarted = _started.get
     
     /**
      * A future of the completion of this wait
@@ -36,7 +36,7 @@ class SingleWait(val target: WaitTarget) extends Runnable with Breakable
     /**
      * Whether this wait has already ended
      */
-    def ended = promise.isCompleted
+    def hasEnded = promise.isCompleted
     
     
     // IMPLEMENTED    -------------------

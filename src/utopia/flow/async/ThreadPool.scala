@@ -26,7 +26,7 @@ class ThreadPool(val name: String, coreSize: Int, val maxSize: Int, val maxIdleD
     private val indexCounter = new Counter(1)
     // Creates the core threads from the very beginning
     private val threads = new VolatileList(Vector.fill(coreSize)(WorkerThread.core(nextCoreName(), errorHandler, () => nextQueueTask)))
-    private val queue = VolatileList[() => Unit]()
+    private val queue = VolatileList[Runnable]()
     
     /**
      * An execution context based on this thread pool
@@ -36,16 +36,11 @@ class ThreadPool(val name: String, coreSize: Int, val maxSize: Int, val maxIdleD
     
     // IMPLEMENTED    --------------------
     
-	def execute(action: Runnable): Unit = execute(() => action.run())
-	
-	
-	// OTHER    --------------------------
-	
-	/**
+    /**
 	 * Executes a task asynchronously. If maximum amount of simultaneous tasks has been reached, 
 	 * the execution of the task will wait until some of the previous tasks have been handled
 	 */
-	def execute(task: () => Unit) = 
+	def execute(task: Runnable) = 
 	{
         threads.update
         {
@@ -71,6 +66,9 @@ class ThreadPool(val name: String, coreSize: Int, val maxSize: Int, val maxIdleD
         }
 	}
 	
+	
+	// OTHER    --------------------------
+	
 	private def nextCoreName() = s"$name-core-${indexCounter.next()}"
     
     private def nextThreadName() = s"$name-${indexCounter.next()}"
@@ -80,15 +78,15 @@ class ThreadPool(val name: String, coreSize: Int, val maxSize: Int, val maxIdleD
 
 private object WorkerThread
 {
-    def core(name: String, errorHandler: Throwable => Unit, getWaitingTask: () => Option[() => Unit]) = 
+    def core(name: String, errorHandler: Throwable => Unit, getWaitingTask: () => Option[Runnable]) = 
     {
         val t = new WorkerThread(name, Duration.Inf, None, errorHandler, getWaitingTask)
         t.start()
         t
     }
     
-    def temp(name: String, maxIdleDuration: Duration, initialTask: () => Unit, 
-            errorHandler: Throwable => Unit, getWaitingTask: () => Option[() => Unit]) = 
+    def temp(name: String, maxIdleDuration: Duration, initialTask: Runnable, 
+            errorHandler: Throwable => Unit, getWaitingTask: () => Option[Runnable]) = 
     {
         val t = new WorkerThread(name, maxIdleDuration, Some(initialTask), errorHandler, getWaitingTask)
         t.start()
@@ -96,13 +94,13 @@ private object WorkerThread
     }
 }
 
-private class WorkerThread(name: String, val maxIdleDuration: Duration, initialTask: Option[() => Unit], 
-        val errorHandler: Throwable => Unit, val getWaitingTask: () => Option[() => Unit]) extends Thread
+private class WorkerThread(name: String, val maxIdleDuration: Duration, initialTask: Option[Runnable], 
+        val errorHandler: Throwable => Unit, val getWaitingTask: () => Option[Runnable]) extends Thread
 {
     // ATTRIBUTES    ---------------------
     
     private val ended = new VolatileFlag()
-    private val waitingTask = VolatileOption[Promise[() => Unit]]()
+    private val waitingTask = VolatileOption[Promise[Runnable]]()
     
     private var nextTask = initialTask
     
@@ -137,7 +135,7 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
             else
             {
                 // Otherwise performs the task (caches errors)
-                Try(next.get()).failure.foreach(errorHandler)
+                Try(next.get.run()).failure.foreach(errorHandler)
                 
                 // Takes the next task right away, if one is available
                 nextTask = getWaitingTask()
@@ -155,7 +153,7 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
      * @param task the task to be performed
      * @return whether this thread accepted the task
      */
-    def offer(task: () => Unit) = 
+    def offer(task: Runnable) = 
     {
         // Only accepts new tasks if not busy already
         if (!ended.isSet)
