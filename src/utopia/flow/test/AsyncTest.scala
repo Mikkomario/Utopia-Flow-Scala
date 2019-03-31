@@ -1,5 +1,6 @@
 package utopia.flow.test
 
+import utopia.flow.util.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 
 import scala.concurrent.Promise

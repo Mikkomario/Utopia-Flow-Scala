@@ -1,13 +1,9 @@
 package utopia.flow.async
 
-import scala.language.implicitConversions
-
 import scala.concurrent.Future
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.Try
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.FiniteDuration
 
 /**
 * This object contains extensions for asynchronous / concurrent classes
@@ -28,15 +24,4 @@ object AsyncExtensions
 	     */
 	    def waitFor(timeout: Duration = Duration.Inf) = Try(Await.ready(f, timeout).value.get).flatten
 	}
-	
-	/**
-	 * Converts a java duration to a scala duration
-	 */
-	implicit def javaDurationToScalaDuration(duration: java.time.Duration) = 
-	        FiniteDuration(duration.toNanos(), TimeUnit.NANOSECONDS);
-	
-	/**
-	 * Converts a finite scala duration to a java duration
-	 */
-	implicit def scalaDurationToJavaDuration(duration: FiniteDuration) = java.time.Duration.ofNanos(duration.toNanos)
 }

@@ -1,9 +1,13 @@
 package utopia.flow.util
 
+import scala.language.implicitConversions
+
 import java.time.Instant
 import java.time.temporal.TemporalAmount
 import java.time.ZoneId
 import java.time.Duration
+import scala.concurrent.duration.FiniteDuration
+import java.util.concurrent.TimeUnit
 
 /**
 * This object contains some extensions for java's time classes
@@ -38,6 +42,16 @@ object TimeExtensions
 	     * Finds the difference (duration) between the two time instances
 	     */
 	    def -(time: Instant) = Duration.between(time, i)
+	    
+	    /**
+	     * Checks whether this instant comes before the specified instant
+	     */
+	    def <(other: Instant) = i.isBefore(other)
+	    
+	    /**
+	     * Checks whether this instant comes after the specified instant
+	     */
+	    def >(other: Instant) = i.isAfter(other)
 	}
 	
 	implicit class ExtendedDuration(val d: Duration) extends AnyVal
@@ -47,4 +61,21 @@ object TimeExtensions
 	     */
 	    def toPreciseMillis = d.toNanos() / 1000000.0
 	}
+	
+	/**
+	 * Converts a java duration to a scala duration
+	 */
+	implicit def javaDurationToScalaDuration(duration: java.time.Duration) = 
+	        FiniteDuration(duration.toNanos(), TimeUnit.NANOSECONDS);
+	
+	/**
+	 * Converts a java duration option to scala duration
+	 */
+	implicit def javaDurationOptionToScalaDuration(duration: Option[java.time.Duration]) = 
+	        duration.map(javaDurationToScalaDuration).getOrElse(scala.concurrent.duration.Duration.Inf)
+	
+	/**
+	 * Converts a finite scala duration to a java duration
+	 */
+	implicit def scalaDurationToJavaDuration(duration: FiniteDuration) = java.time.Duration.ofNanos(duration.toNanos)
 }
