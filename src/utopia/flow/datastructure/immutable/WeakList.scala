@@ -35,6 +35,8 @@ class WeakList[A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends 
     override def foreach[U](f: A => U) = refs.foreach { _.get.foreach(f) }
     
     protected[this] def newBuilder = new WeakListBuilder()
+
+
 }
 
 class WeakListBuilder[A <: AnyRef] extends Builder[A, WeakList[A]]
