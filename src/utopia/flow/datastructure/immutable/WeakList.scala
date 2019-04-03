@@ -1,15 +1,30 @@
 package utopia.flow.datastructure.immutable
 
+import scala.collection.generic.CanBuildFrom
 import scala.ref.WeakReference
-import scala.collection.immutable.Traversable
-import scala.collection.Iterable
-import scala.collection.IterableLike
-import scala.collection.mutable.Builder
+import scala.collection.{IterableLike, mutable}
 import scala.collection.immutable.VectorBuilder
 
 object WeakList
 {
-    def apply[A <: AnyRef]() = new WeakList[A](Vector())    
+    def apply[A <: AnyRef]() = new WeakList[A](Vector())
+    
+    def apply[A <: AnyRef](item: A) = new WeakList(Vector(WeakReference(item)))
+    
+    def apply[A <: AnyRef](first: A, second: A, more: A*) =
+    {
+        val items: Vector[A] = Vector(first, second) ++ more
+        new WeakList[A](items.map { WeakReference(_) })
+    }
+    
+    // IMPLICIT --------------------
+    
+    /**
+      * Implicit canBuildFrom for this class
+      * @tparam A type of item contained in the final list
+      * @return A can build from that will build weak lists of target type
+      */
+    implicit def canBuildFrom[A <: AnyRef]: CanBuildFrom[WeakList[_], A, WeakList[A]] = new WeakListCanBuildFrom[A]()
 }
 
 /**
@@ -19,7 +34,7 @@ object WeakList
 * @author Mikko Hilpinen
 * @since 31.3.2019
 **/
-class WeakList[A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends IterableLike[A, WeakList[A]]
+class WeakList[+A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends IterableLike[A, WeakList[A]]
 {
     // COMPUTED    -----------------
     
@@ -28,18 +43,33 @@ class WeakList[A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends 
     
     // IMPLEMENTED    --------------
     
+    override def seq = this
+    
     def iterator = refs.view.flatMap { _.get }.iterator
     
-    def seq = this
+    override def foreach[U](f: A => U) { refs.foreach { _.get.foreach(f) } }
     
-    override def foreach[U](f: A => U) = refs.foreach { _.get.foreach(f) }
+    override protected[this] def newBuilder = new WeakListBuilder[A]()
     
-    protected[this] def newBuilder = new WeakListBuilder()
-
-
+    
+    // OPERATORS    ----------------------
+    
+    /**
+      * @param item new item
+      * @tparam B Type of resulting list
+      * @return A new list with the specified item added (weakly referenced)
+      */
+    def :+[B >: A <: AnyRef](item: B) = new WeakList(refs :+ WeakReference(item))
+    
+    /**
+      * @param items new items
+      * @tparam B Type of resulting list
+      * @return A new list with specified items added (weakly referenced)
+      */
+    def ++[B >: A <: AnyRef](items: TraversableOnce[B]) = new WeakList(refs ++ items.map { WeakReference(_) })
 }
 
-class WeakListBuilder[A <: AnyRef] extends Builder[A, WeakList[A]]
+class WeakListBuilder[A <: AnyRef] extends mutable.Builder[A, WeakList[A]]
 {
     // ATTRIBUTES    ---------------------
     
@@ -53,8 +83,17 @@ class WeakListBuilder[A <: AnyRef] extends Builder[A, WeakList[A]]
         builder += WeakReference(elem)
         this
     }
-    
-    def clear() = builder.clear()
+	
+    def clear() { builder.clear() }
     
     def result() = new WeakList(builder.result())
+    
+    
+}
+
+class WeakListCanBuildFrom[A <: AnyRef] extends CanBuildFrom[WeakList[_], A, WeakList[A]]
+{
+    override def apply(from: WeakList[_]) = apply()
+    
+    override def apply() = new WeakListBuilder[A]()
 }

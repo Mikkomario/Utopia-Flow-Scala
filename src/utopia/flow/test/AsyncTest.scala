@@ -3,12 +3,12 @@ package utopia.flow.test
 import utopia.flow.util.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 
-import scala.concurrent.Promise
+import scala.concurrent.{ExecutionContext, Future}
 import utopia.flow.async.ThreadPool
-import java.util.concurrent.TimeUnit
-import scala.concurrent.Future
+
 import utopia.flow.util.WaitUtils
 import java.time.Duration
+
 import utopia.flow.async.VolatileList
 
 /**
@@ -17,7 +17,7 @@ import utopia.flow.async.VolatileList
 object AsyncTest extends App
 {
     // Creates the thread pool and the execution context
-    implicit val context = new ThreadPool("test-main", 3, 6, 
+    implicit val context: ExecutionContext = new ThreadPool("test-main", 3, 6,
             Duration.ofSeconds(2), e => e.printStackTrace()).executionContext;
     
     val starts = VolatileList[Int]()
