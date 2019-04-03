@@ -1,16 +1,43 @@
-package utopia.flow.datastructure.immutable
+package utopia.flow.collection
 
 import scala.collection.generic.CanBuildFrom
-import scala.ref.WeakReference
-import scala.collection.{IterableLike, mutable}
 import scala.collection.immutable.VectorBuilder
+import scala.collection.{IterableLike, mutable}
+import scala.ref.WeakReference
 
 object WeakList
 {
+	/**
+	  * Creates a new empty weak list
+	  * @tparam A The type of items in the list
+	  * @return A new empty list
+	  */
     def apply[A <: AnyRef]() = new WeakList[A](Vector())
-    
+	
+	/**
+	  * Creates a new weak list with a single item
+	  * @param item Target item
+	  * @tparam A Type of item
+	  * @return A weak list with a single item
+	  */
     def apply[A <: AnyRef](item: A) = new WeakList(Vector(WeakReference(item)))
-    
+	
+	/**
+	  * Creates a new weak list with multiple items
+	  * @param items The items that will be added
+	  * @tparam A The type of items
+	  * @return A new weak list with specified items
+	  */
+	def apply[A <: AnyRef](items: TraversableOnce[A]) = new WeakList(items.map { WeakReference(_) }.toVector)
+	
+	/**
+	  * Creates a new weak list with multiple items
+	  * @param first The first item
+	  * @param second The second item
+	  * @param more More items
+	  * @tparam A Type of items
+	  * @return A new weak list with provided items
+	  */
     def apply[A <: AnyRef](first: A, second: A, more: A*) =
     {
         val items: Vector[A] = Vector(first, second) ++ more
@@ -37,7 +64,10 @@ object WeakList
 class WeakList[+A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends IterableLike[A, WeakList[A]]
 {
     // COMPUTED    -----------------
-    
+	
+	/**
+	  * @return A Strongly referenced version of this list
+	  */
     def strong = refs.flatMap { _.get }
     
     
@@ -45,7 +75,7 @@ class WeakList[+A <: AnyRef](private val refs: Vector[WeakReference[A]]) extends
     
     override def seq = this
     
-    def iterator = refs.view.flatMap { _.get }.iterator
+    override def iterator = refs.view.flatMap { _.get }.iterator
     
     override def foreach[U](f: A => U) { refs.foreach { _.get.foreach(f) } }
     
@@ -78,17 +108,15 @@ class WeakListBuilder[A <: AnyRef] extends mutable.Builder[A, WeakList[A]]
     
     // IMPLEMENTED    --------------------
     
-    def +=(elem: A): WeakListBuilder.this.type = 
+    override def +=(elem: A): WeakListBuilder.this.type =
     {
         builder += WeakReference(elem)
         this
     }
 	
-    def clear() { builder.clear() }
+    override def clear() { builder.clear() }
     
-    def result() = new WeakList(builder.result())
-    
-    
+    override def result() = new WeakList(builder.result())
 }
 
 class WeakListCanBuildFrom[A <: AnyRef] extends CanBuildFrom[WeakList[_], A, WeakList[A]]

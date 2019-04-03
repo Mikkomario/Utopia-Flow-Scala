@@ -2,7 +2,7 @@ package utopia.flow.test
 
 import java.time.Duration
 
-import utopia.flow.datastructure.immutable.WeakList
+import utopia.flow.collection.WeakList
 import utopia.flow.util.WaitUtils
 
 /**

@@ -5,11 +5,10 @@ import utopia.flow.async.AsyncExtensions._
 
 import scala.concurrent.{ExecutionContext, Future}
 import utopia.flow.async.ThreadPool
-
 import utopia.flow.util.WaitUtils
 import java.time.Duration
 
-import utopia.flow.async.VolatileList
+import utopia.flow.collection.VolatileList
 
 /**
  * This app tests some asynchronous functions

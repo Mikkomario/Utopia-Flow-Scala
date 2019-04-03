@@ -2,10 +2,12 @@ package utopia.flow.async
 
 import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.CollectionExtensions._
-
 import java.util.concurrent.Executor
+
+import utopia.flow.collection.VolatileList
 import utopia.flow.util.Counter
 import utopia.flow.util.WaitUtils
+
 import scala.concurrent.Promise
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration

@@ -1,6 +1,11 @@
-package utopia.flow.async
+package utopia.flow.collection
 
+import utopia.flow.async.Volatile
 import utopia.flow.util.CollectionExtensions._
+
+import scala.collection.generic.CanBuildFrom
+import scala.collection.immutable.VectorBuilder
+import scala.collection.mutable
 
 object VolatileList
 {
@@ -14,6 +19,8 @@ object VolatileList
      */
     def apply[T](item: T) = new VolatileList[T](Vector(item))
     
+	def apply[T](items: TraversableOnce[T]) = new VolatileList(items.toVector)
+	
     /**
      * Creates a new list with multiple items
      */
@@ -25,7 +32,7 @@ object VolatileList
 * @author Mikko Hilpinen
 * @since 28.3.2019
 **/
-class VolatileList[T](list: Vector[T]) extends Volatile(list) with Seq[T]
+class VolatileList[T] private(list: Vector[T]) extends Volatile(list) with mutable.SeqLike[T, VolatileList[T]]
 {
     // IMPLEMENTED    ---------------
     
@@ -34,6 +41,18 @@ class VolatileList[T](list: Vector[T]) extends Volatile(list) with Seq[T]
 	def apply(idx: Int) = get(idx)
 	
 	def length: Int = get.length
+	
+	override def update(idx: Int, elem: T): Unit = update { _.updated(idx, elem) }
+	
+	override protected def newBuilder = new VolatileListBuilder[T]()
+	
+	override def seq = get
+	
+	override def transform(f: T => T) =
+	{
+		update { _.map(f) }
+		this
+	}
 	
 	
 	// OPERATORS    ----------------
@@ -92,4 +111,31 @@ class VolatileList[T](list: Vector[T]) extends Volatile(list) with Seq[T]
 	    
 	    }.getOrElse(None -> items)
 	}
+}
+
+class VolatileListBuilder[A] extends mutable.Builder[A, VolatileList[A]]
+{
+	// ATTRIBUTES    ---------------------
+	
+	private val builder = new VectorBuilder[A]()
+	
+	
+	// IMPLEMENTED    --------------------
+	
+	override def +=(elem: A): VolatileListBuilder.this.type =
+	{
+		builder += elem
+		this
+	}
+	
+	override def clear() { builder.clear() }
+	
+	override def result() = VolatileList(builder.result())
+}
+
+class VolatileListCanBuildFrom[A] extends CanBuildFrom[VolatileList[_], A, VolatileList[A]]
+{
+	override def apply(from: VolatileList[_]) = apply()
+	
+	override def apply() = new VolatileListBuilder[A]()
 }
