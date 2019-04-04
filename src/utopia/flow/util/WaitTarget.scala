@@ -23,22 +23,22 @@ object WaitTarget
     /**
      * This waitTarget always waits a specified duration (unless broken)
      */
-    case class WaitDuration(val duration: Duration, val breaksOnNotify: Boolean = true) extends WaitTarget
+    case class WaitDuration(duration: Duration, breaksOnNotify: Boolean = true) extends WaitTarget
     {
         protected val targetTime = Some(Left(duration))
         
-        def breakable: WaitDuration = if (breaksOnNotify) this else WaitDuration(duration, true)
+        def breakable: WaitDuration = if (breaksOnNotify) this else WaitDuration(duration)
     }
     
     /**
      * This waitTarget waits until a specified time instant (unless broken). Once that 
      * time instant is reached, no waiting is done anymore
      */
-    case class Until(val time: Instant, val breaksOnNotify: Boolean = true) extends WaitTarget
+    case class Until(time: Instant, breaksOnNotify: Boolean = true) extends WaitTarget
     {
         protected val targetTime = Some(Right(time))
         
-        def breakable: Until = if (breaksOnNotify) this else Until(time, true)
+        def breakable: Until = if (breaksOnNotify) this else Until(time)
     }
 }
 
@@ -80,11 +80,11 @@ sealed trait WaitTarget
     /**
      * the duration of this target or None if this target had infinite duration
      */
-    def toFiniteDuration = targetTime.map { _ match 
+    def toFiniteDuration = targetTime.map
     {
         case Left(duration) => duration
         case Right(time) => time - Instant.now()
-    }}
+    }
     
     /**
      * The duration of this target. May be infinite
@@ -94,11 +94,11 @@ sealed trait WaitTarget
     /**
      * @return the ending time of this target, after which no waiting is done
      */
-    def endTime = targetTime.map { _ match 
+    def endTime = targetTime.map
     {
         case Left(duration) => Instant.now() + duration
         case Right(time) => time
-    }}
+    }
     
     /**
      * Whether this wait target is specified by wait duration
@@ -109,8 +109,6 @@ sealed trait WaitTarget
      * Whether this wait target is specified by end time
      */
     def endTimeIsSpecified = targetTime.exists { _.isRight }
-    
-    // TODO: To wait
     
     
     // OTHER    -----------------
@@ -139,7 +137,7 @@ sealed trait WaitTarget
                     // Exceptions are ignored
                     Try
                     {
-                        lock.wait(waitDuration.toMillis(), waitDuration.getNano / 1000)
+                        lock.wait(waitDuration.toMillis, waitDuration.getNano / 1000)
                         
                         if (breaksOnNotify)
                             waitCompleted = true
@@ -155,7 +153,7 @@ sealed trait WaitTarget
             {
                 while (!waitCompleted)
                 {
-                    // Waits until notfified, exceptions are ignored
+                    // Waits until notified, exceptions are ignored
                     Try
                     {
                         lock.wait()

@@ -67,8 +67,10 @@ class Volatile[T](@volatile private var value: T)
     
     /**
      * Locks the value in this container from outside sources during the operation. Use with caution.
+      * @tparam U The result type of the operation
+      * @return the result of the operation
      */
-    def lock(operation: T => Unit) = this.synchronized { operation(value) }
+    def lock[U](operation: T => U) = this.synchronized { operation(value) }
     
     /**
      * Reads the current value of this volatile container and then changes it

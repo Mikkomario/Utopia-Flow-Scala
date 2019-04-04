@@ -6,10 +6,8 @@ import java.util.concurrent.Executor
 
 import utopia.flow.collection.VolatileList
 import utopia.flow.util.Counter
-import utopia.flow.util.WaitUtils
 
 import scala.concurrent.Promise
-import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
@@ -27,7 +25,7 @@ class ThreadPool(val name: String, coreSize: Int, val maxSize: Int, val maxIdleD
     
     private val indexCounter = new Counter(1)
     // Creates the core threads from the very beginning
-    private val threads = new VolatileList(Vector.fill(coreSize)(WorkerThread.core(nextCoreName(), errorHandler, () => nextQueueTask)))
+    private val threads = VolatileList(Vector.fill(coreSize)(WorkerThread.core(nextCoreName(), errorHandler, () => nextQueueTask())))
     private val queue = VolatileList[Runnable]()
     
     /**
@@ -161,7 +159,17 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
         if (!ended.isSet)
         {
             // If this thread is waiting for another task, provides it
-            waitingTask.get.map { p => if (p.isCompleted) false else { p.success(task); true } } getOrElse false
+            waitingTask.lock
+            {
+                opt =>
+                    if (opt.exists { _.isCompleted })
+                    {
+                        opt.get.success(task)
+                        true
+                    }
+                    else
+                        false
+            }
         }
         else
             false

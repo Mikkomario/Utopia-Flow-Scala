@@ -17,7 +17,7 @@ object AsyncTest extends App
 {
     // Creates the thread pool and the execution context
     implicit val context: ExecutionContext = new ThreadPool("test-main", 3, 6,
-            Duration.ofSeconds(2), e => e.printStackTrace()).executionContext;
+            Duration.ofSeconds(2), e => e.printStackTrace()).executionContext
     
     val starts = VolatileList[Int]()
     val ends = VolatileList[Int]()

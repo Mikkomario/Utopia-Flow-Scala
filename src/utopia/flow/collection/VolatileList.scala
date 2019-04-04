@@ -25,6 +25,12 @@ object VolatileList
      * Creates a new list with multiple items
      */
     def apply[T](first: T, second: T, more: T*) = new VolatileList(Vector(first, second) ++ more)
+	
+	/**
+	  * @tparam A The target type
+	  * @return A can build from for Volatile lists of target type
+	  */
+	def canBuildFrom[A]: CanBuildFrom[VolatileList[_], A, VolatileList[A]] = new VolatileListCanBuildFrom[A]()
 }
 
 /**
@@ -32,7 +38,7 @@ object VolatileList
 * @author Mikko Hilpinen
 * @since 28.3.2019
 **/
-class VolatileList[T] private(list: Vector[T]) extends Volatile(list) with mutable.SeqLike[T, VolatileList[T]]
+class VolatileList[T] private(list: Vector[T]) extends Volatile(list) with mutable.SeqLike[T, VolatileList[T]] with mutable.Seq[T]
 {
     // IMPLEMENTED    ---------------
     
@@ -46,7 +52,7 @@ class VolatileList[T] private(list: Vector[T]) extends Volatile(list) with mutab
 	
 	override protected def newBuilder = new VolatileListBuilder[T]()
 	
-	override def seq = get
+	override def seq = this
 	
 	override def transform(f: T => T) =
 	{
