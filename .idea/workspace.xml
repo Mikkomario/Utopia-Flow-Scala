@@ -2,265 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="Finished refactoring volatile list">
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/META-INF/Utopia-Flow-Scala.kotlin_module" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Async$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Async.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/AsyncExtensions$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/AsyncExtensions$RichFuture$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/AsyncExtensions$RichFuture.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/AsyncExtensions.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Breakable.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/CloseHook$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/CloseHook.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Loop$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Loop.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/SimpleLoop.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/ThreadPool.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Volatile$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/Volatile.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/VolatileFlag.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/VolatileOption$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/VolatileOption.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/WorkerThread$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/async/WorkerThread.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/VolatileList$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/VolatileList.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/VolatileListBuilder.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/VolatileListCanBuildFrom.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/WeakList$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/WeakList.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/WeakListBuilder.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/collection/WeakListCanBuildFrom.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Constant.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/GraphEdge.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Model$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Model.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/ModelDeclaration.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/PropertyDeclaration$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/PropertyDeclaration.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Tree$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Tree.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Value$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/immutable/Value.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/GraphNode.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Lazy.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Model$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Model.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Pointer$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Pointer.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Tree.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/mutable/Variable.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/Model.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/NoSuchAttributeException$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/NoSuchAttributeException.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/Node$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/Node.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/Property.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/datastructure/template/Tree.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/AnyType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/AnyType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/BasicValueCaster$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/BasicValueCaster.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/BooleanType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/BooleanType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/Conversion$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/Conversion.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionHandler$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionHandler$ConversionRoute$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionHandler$ConversionRoute.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionHandler$ConversionStep$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionHandler$ConversionStep.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionHandler.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability$DANGEROUS$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability$DATA_LOSS$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability$MEANING_LOSS$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability$NO_CONVERSION$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability$PERFECT$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ConversionReliability.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DataType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DataType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DataTypeException$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DataTypeException.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationConstantGenerator$$anonfun$$lessinit$greater$1.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationConstantGenerator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationConstantGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationPropertyGenerator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationPropertyGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationVariableGenerator$$anonfun$$lessinit$greater$1.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationVariableGenerator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DeclarationVariableGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DoubleType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/DoubleType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/EnvironmentNotSetupException$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/EnvironmentNotSetupException.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/FloatType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/FloatType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/FromModelFactory.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/InstantType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/InstantType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/IntType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/IntType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LocalDateTimeType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LocalDateTimeType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LocalDateType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LocalDateType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LocalTimeType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LocalTimeType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LongType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/LongType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ModelConvertible.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ModelType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ModelType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/PropertyGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimpleConstantGenerator$$anonfun$$lessinit$greater$1.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimpleConstantGenerator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimpleConstantGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimplePropertyGenerator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimplePropertyGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimpleVariableGenerator$$anonfun$$lessinit$greater$1.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimpleVariableGenerator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SimpleVariableGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/StringType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/StringType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/SuperTypeCaster.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueCastException$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueCastException.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueCaster.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfBoolean.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfDouble.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfFloat.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfInstant.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfInt.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfLocalDate.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfLocalDateTime.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfLocalTime.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfLong.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfString.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions$ValueOfVector.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConversions.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/ValueConvertible.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/VectorType$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/generic/VectorType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ArrayEnd$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ArrayEnd.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ArrayStart$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ArrayStart.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Assignment$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Assignment.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/BasicJSONValueConverter$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/BasicJSONValueConverter.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/DocumentEnd$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/DocumentEnd.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ElementEnd$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ElementEnd.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ElementStart$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ElementStart.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONConvertible.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONReadEvent.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONReader$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONReader$InvalidFormatException.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONReader.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONValueConverter$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/JSONValueConverter.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ObjectEnd$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ObjectEnd.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ObjectStart$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ObjectStart.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Quote$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Quote.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Separator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Separator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Text$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/Text.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/UnfinishedElement.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ValueConverter.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/ValueConverterManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlElement$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlElement.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlReadEvent.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlReader$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlReader.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlWriter$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/parse/XmlWriter.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/AsyncTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/AsyncTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/AsyncTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/DataTypeTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/DataTypeTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/DataTypeTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/GraphTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/GraphTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/JSONTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/JSONTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/JSONTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelConvertibleTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelConvertibleTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelConvertibleTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelDeclarationTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelDeclarationTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelDeclarationTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ModelTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/TestModel$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/TestModel.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/TreeNodeTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/TreeNodeTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ValueAccessorTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ValueAccessorTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/ValueAccessorTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/WeakListTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/WeakListTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/WeakListTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/XmlTest$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/XmlTest$delayedInit$body.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/test/XmlTest.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/AutoClose$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/AutoClose$ExtendedCloseable$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/AutoClose$ExtendedCloseable.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/AutoClose.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$MultiMapConvertible$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$MultiMapConvertible.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$RichGenSeqLike$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$RichGenSeqLike.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$RichTry$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$RichTry.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$RichTupleList$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions$RichTupleList.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/CollectionExtensions.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/Counter$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/Counter.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/Equatable.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/Generator$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/Generator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/NullSafe$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/NullSafe$NullOption$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/NullSafe$NullOption.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/NullSafe.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/RichComparable$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/RichComparable$ExtendedComparable.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/RichComparable.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/SimpleGenerator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/SingleWait.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/TimeExtensions$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/TimeExtensions$ExtendedDuration$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/TimeExtensions$ExtendedDuration.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/TimeExtensions$ExtendedInstant$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/TimeExtensions$ExtendedInstant.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/TimeExtensions.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget$Until$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget$Until.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget$UntilNotified$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget$WaitDuration$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget$WaitDuration.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitTarget.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitUtils$.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Utopia-Flow-Scala/utopia/flow/util/WaitUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -273,17 +15,7 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -321,39 +53,18 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="width" value="2543" />
-    <option name="height" value="2111" />
+    <option name="x" value="-12" />
+    <option name="width" value="2544" />
+    <option name="height" value="2112" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane" />
       <pane id="Scope" />
       <pane id="PackagesPane" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="flow" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -380,9 +91,22 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.AsyncTest">
+  <component name="RunManager" selected="Application.CollectionTest">
     <configuration name="AsyncTest" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="utopia.flow.test.AsyncTest" />
+      <module name="Utopia-Flow-Scala" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="utopia.flow.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CollectionTest" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="utopia.flow.test.CollectionTest" />
       <module name="Utopia-Flow-Scala" />
       <extension name="coverage">
         <pattern>
@@ -418,6 +142,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.CollectionTest" />
         <item itemvalue="Application.AsyncTest" />
         <item itemvalue="Application.WeakListTest" />
         <item itemvalue="Scala Console.Scala Console" />
@@ -474,9 +199,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13439363" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13547875" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -495,7 +219,6 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.32949308" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.22915043" />
-      <window_info anchor="right" x="0" y="0" width="593" height="1215" id="Documentation" side_tool="true" weight="0.32962227" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24970178" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -504,6 +227,7 @@
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
+      <window_info anchor="right" x="0" y="0" width="593" height="1215" id="Documentation" order="8" side_tool="true" weight="0.32962227" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
@@ -566,13 +290,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/WeakList.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="12" column="6" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/WeakList.scala" />
     <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.8-sources.jar!/scala/collection/SeqLike.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4441">

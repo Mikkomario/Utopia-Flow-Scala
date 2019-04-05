@@ -42,6 +42,17 @@ object CollectionExtensions
         def failure = t.failed.toOption
     }
     
+    implicit class RichTraversable[A](val t: Traversable[A]) extends AnyVal
+    {
+        /**
+          * Maps items until a concrete result is found, then returns that result
+          * @param map A mapping function that maps to either Some or None
+          * @tparam B The map target type
+          * @return The first item that was mapped to Some. None if all items were mapped to None.
+          */
+        def findMap[B](map: A => Option[B]) = t.view.map(map).find { _.isDefined }.flatten
+    }
+    
     /**
      * This implicit class is used for extending collection map conversion
      */
