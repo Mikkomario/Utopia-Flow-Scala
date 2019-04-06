@@ -2,7 +2,7 @@ package utopia.flow.async
 
 import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.CollectionExtensions._
-import java.util.concurrent.Executor
+import java.util.concurrent.{Executor, TimeUnit}
 
 import utopia.flow.collection.VolatileList
 import utopia.flow.util.Counter
@@ -18,8 +18,8 @@ import scala.concurrent.ExecutionContext
 * @author Mikko Hilpinen
 * @since 28.3.2019
 **/
-class ThreadPool(val name: String, coreSize: Int, val maxSize: Int, val maxIdleDuration: FiniteDuration, 
-        val errorHandler: Throwable => Unit) extends Executor
+class ThreadPool(val name: String, coreSize: Int = 5, val maxSize: Int = 250, val maxIdleDuration: FiniteDuration = Duration(1, TimeUnit.MINUTES),
+                 val errorHandler: Throwable => Unit = e => e.printStackTrace()) extends Executor
 {
     // ATTRIBUTES    ---------------------
     
