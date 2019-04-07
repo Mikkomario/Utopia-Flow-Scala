@@ -14,4 +14,9 @@ trait Breakable
      * @return a furure of the completion of this operation
      */
 	def stop(): Future[Unit]
+	
+	/**
+	  * Registers this breakable item to stop once / before the JVM closes
+	  */
+	def registerToStopOnceJVMCloses() = CloseHook += this
 }
