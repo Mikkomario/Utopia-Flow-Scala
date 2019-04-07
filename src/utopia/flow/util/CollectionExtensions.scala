@@ -13,6 +13,24 @@ import scala.util.Try
 **/
 object CollectionExtensions
 {
+    implicit class RichSeq[A](val s: Seq[A]) extends AnyVal
+    {
+        /**
+          * Same as apply except returns None on non-existing indices
+          * @param index Target index
+          * @return Value from index or None if no such index exists
+          */
+        def getOption(index: Int) = if (s.isDefinedAt(index)) Some(s(index)) else None
+        
+        /**
+          * Same as apply except returns a default value on non-existing indices
+          * @param index Target index
+          * @param default Default value
+          * @return Value from index or default value if no such index exists
+          */
+        def getOrElse(index: Int, default: => A) = if (s.isDefinedAt(index)) s(index) else default
+    }
+    
     implicit class RichGenSeqLike[T, Repr](val seq: GenSeqLike[T, Repr]) extends AnyVal
     {
         /**
