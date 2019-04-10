@@ -1,8 +1,17 @@
 package utopia.flow.datastructure.mutable
 
-import scala.Vector
 import utopia.flow.datastructure.template
 import utopia.flow.datastructure.immutable
+
+object Tree
+{
+    def apply[T](content: T, children: Vector[Tree[T]] = Vector()) = new Tree(content, children)
+    
+    def apply[T](content: T, child: Tree[T]) = new Tree(content, Vector(child))
+    
+    def apply[T](content: T, firstC: Tree[T], secondC: Tree[T], more: Tree[T]*) = new Tree(content,
+        Vector(firstC, secondC) ++ more)
+}
 
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
@@ -12,11 +21,11 @@ import utopia.flow.datastructure.immutable
  * @author Mikko Hilpinen
  * @since 1.11.2016
  */
-class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
+class Tree[T](var content: T, initialChildren: Vector[Tree[T]] = Vector()) extends template.Tree[T, Tree[T]]
 {
     // ATTRIBUTES    -----------------
     
-    private var _children = Vector[Tree[T]]()
+    private var _children = initialChildren
     
     
     // COMP. PROPERTIES    -----------
@@ -25,22 +34,18 @@ class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
      * Creates an immutable copy of this tree
      * @return An immutable copy of this tree
      */
-    def immutableCopy = immutable.Tree.copy[T, Tree[T]](this)
+    def immutableCopy: immutable.Tree[T] = immutable.Tree(content, children.map { _.immutableCopy })
     
     
     // IMPLEMENTED PROPERTIES    -----
     
     def children = _children
     
-    
-    // CONSTRUCTOR OVERLOAD    -------
-    
     /**
-     * Creates a new node with existing child nodes
-     * @param content The content assigned to this node
-     * @param children The children directly under this node
-     */
-    def this(content: T, children: Tree[T]*) = {this(content); _children ++= children}
+      * @param content Content for the child node
+      * @return A new node
+      */
+    override protected def makeNode(content: T) = new Tree(content)
     
     
     // OPERATORS    -----------------
@@ -61,9 +66,7 @@ class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
             true
         }
         else
-        {
             false
-        }
     }
     
     /**
@@ -83,7 +86,7 @@ class Tree[T](var content: T) extends template.Tree[T, Tree[T]]
     /**
      * Clears the node, removing any nodes below it
      */
-    def clear() = _children = Vector[Tree[T]]()
+    def clear() = _children = Vector()
     
     /**
      * Removes a node from the direct children under this node

@@ -10,12 +10,11 @@ import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.ModelConvertible
 import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
-import utopia.flow.util.Equatable
 import scala.collection.immutable.VectorBuilder
 
 object XmlElement extends FromModelFactory[XmlElement]
 {
-    def apply(model: template.Model[Property]) = 
+    def apply(model: template.Model[Property]): Option[XmlElement] =
     {
         // If the name is not provided by user, it is read from the model
         model("name").string.map(XmlElement.apply(_, model))
@@ -42,36 +41,30 @@ object XmlElement extends FromModelFactory[XmlElement]
         // There may be some unused / non-standard attributes in the model
         val unspecifiedAttributes = model.attributes.filter(att => 
             att.name != valueAttribute.map(_.name).getOrElse("text") && att.name != "attributes" && 
-            att.name != "children" && att.name != "name");
+            att.name != "children" && att.name != "name")
         
         // Children are either read from 'children' attribute or from the unused attributes
-        val specifiedChildren = model.findExisting("children").map(_.value.vectorOr().flatMap(
-                _.model).flatMap(XmlElement(_)));
+        val specifiedChildren = model.findExisting("children").map(_.value.getVector.flatMap(
+                _.model).flatMap(XmlElement(_)))
         val children = specifiedChildren.getOrElse
         {
             // Expects model type but parses other types as well
-            val modelChildren = unspecifiedAttributes.flatMap(att => 
-            {
-                val modelValue = att.value.model
-                modelValue.map((att.name, _))
-            }).map(p => XmlElement(p._1, p._2))
+            val modelChildren = unspecifiedAttributes.flatMap(att => att.value.model.map { (att.name, _) }).map {
+                case (attName, attValue) => XmlElement(attName, attValue) }
             
             // Other types are parsed into simple xml elements
-            val nonModelChildren = unspecifiedAttributes.filterNot(att => 
-                modelChildren.exists(_.name == att.name)).map(att => 
-                new XmlElement(att.name, att.value));
+            val nonModelChildren = unspecifiedAttributes.filterNot { att => modelChildren.exists {
+                _.name == att.name } }.map { att => new XmlElement(att.name, att.value) }
             
             modelChildren ++ nonModelChildren
         }
         
         // Attributes are either read from 'attributes' attribute or from the unused attributes
-        val specifiedAttributes = model.findExisting("attributes").map(_.value.modelOr())
+        val specifiedAttributes = model.findExisting("attributes").map { _.value.getModel }
         val attributes = specifiedAttributes.getOrElse
         {
             if (specifiedChildren.isDefined)
-            {
-                new Model(unspecifiedAttributes.map(att => new Constant(att.name, att.value)))
-            }
+                new Model(unspecifiedAttributes.map { att => new Constant(att.name, att.value) })
             else
             {
                 // If unused attributes were parsed into children, doesn't parse them into attributes
@@ -88,9 +81,8 @@ object XmlElement extends FromModelFactory[XmlElement]
  * @author Mikko Hilpinen
  * @since 13.1.2017 (v1.3)
  */
-class XmlElement(val name: String, val value: Value = Value.empty(StringType), 
-        val attributes: Model[Constant] = Model(Vector()), val children: Seq[XmlElement] = Vector()) 
-        extends ModelConvertible with Equatable
+case class XmlElement(name: String, value: Value = Value.empty(StringType), attributes: Model[Constant] = Model(Vector()),
+                      children: Seq[XmlElement] = Vector()) extends ModelConvertible
 {
     // COMPUTED PROPERTIES    ------------------
     
@@ -100,30 +92,22 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
     def text = value.string
     override def toModel: Model[Constant] = 
     {
-        val atts = new VectorBuilder[Tuple2[String, Value]]
+        val atts = new VectorBuilder[(String, Value)]
         atts += ("name" -> name)
         
         if (!value.isEmpty)
-        {
             atts += ("value" -> value)
-        }
         
         // Children are only included if necessary
-        if (!children.isEmpty)
-        {
+        if (children.nonEmpty)
             atts += ("children" -> children.map(_.toModel).toVector)
-        }
         
         // Attributes are also only included if necessary
         if (!attributes.isEmpty)
-        {
             atts += ("attributes" -> attributes)
-        }
         
         Model(atts.result())
     }
-    
-    override def properties = Vector(name, value, attributes, children)
     
     /**
      * Prints an xml string from this element. Character data is represented as is.
@@ -147,7 +131,7 @@ class XmlElement(val name: String, val value: Value = Value.empty(StringType),
     
     // Eg. 'att1="abc" att2="3"'. None if empty
     private def attributesString = attributes.attributes.map(a => 
-            s"${a.name}=${"\""}${a.value.stringOr()}${"\""}").reduceOption(_ + " " + _);
+            s"${a.name}=${"\""}${a.value.stringOr()}${"\""}").reduceOption(_ + " " + _)
     
     
     // OPERATORS    ----------------------------

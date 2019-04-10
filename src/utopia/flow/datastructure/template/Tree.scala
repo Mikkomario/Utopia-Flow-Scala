@@ -1,21 +1,28 @@
 package utopia.flow.datastructure.template
 
+import utopia.flow.util.CollectionExtensions._
+
 /**
  * Tree nodes form individual trees. They can also be used as subtrees in other tree nodes. Like 
  * other nodes, treeNodes contain / wrap certain type of content. A tree node can never contain 
  * itself below itself.
- * @param content The contents of this node
  * @author Mikko Hilpinen
  * @since 1.11.2016
  */
-trait Tree[T, ChildType <: Tree[T, ChildType]] extends Node[T]
+trait Tree[T, NodeType <: Tree[T, NodeType]] extends Node[T]
 {
-    // ATTRIBUTES    -----------------
+    // ABSTRACT   --------------------
     
     /**
      * The child nodes directly under this node
      */
-    def children: Vector[ChildType]
+    def children: Vector[NodeType]
+    
+    /**
+      * @param content Content for the child node
+      * @return A new node
+      */
+    protected def makeNode(content: T): NodeType
     
     
     // COMPUTED PROPERTIES    --------
@@ -23,7 +30,7 @@ trait Tree[T, ChildType <: Tree[T, ChildType]] extends Node[T]
     /**
      * All nodes below this node, in no specific order
      */
-    def nodesBelow: Vector[ChildType] = children ++ children.flatMap { child => child.nodesBelow }
+    def nodesBelow: Vector[NodeType] = children ++ children.flatMap { child => child.nodesBelow }
     
     /**
      * The size of this tree. In other words, the number of nodes below this node
@@ -42,32 +49,50 @@ trait Tree[T, ChildType <: Tree[T, ChildType]] extends Node[T]
     def depth: Int = children.foldLeft(0)((maxDepth, child) => math.max(maxDepth, 1 + child.depth))
     
     
+    // IMPLEMENTED  ----------------
+    
+    
+    
+    
     // OPERATORS    ----------------
     
+    override def toString: String =
+    {
+        if (isEmpty)
+            s"{content: $content}"
+        else
+            s"{content: $content, children: [${ children.map { _.toString }.reduce { _ + ", " + _ } }]}"
+    }
+    
     /**
-     * Finds a child directly under this node that has the provided content
-     * @param content The searched content of the child
-     * @returns The first child with the provided content or None if there is no direct child with
-     * such content
-     */
-    def apply(content: T) = children.find { _.content == content }
+      * Finds or generates a node directly under this one that has the provided content
+      * @param content The searched content
+      * @return Either an existing node or a made-up one
+      */
+    def apply(content: T) = get(content) getOrElse makeNode(content)
     
     
     // OTHER METHODS    ------------
     
-    def find(filter: ChildType => Boolean): Option[ChildType] =
-    {
-        children.foldLeft(children.find(filter))({(found, child) => 
-            if (found.isDefined) {found}
-            else {child.find(filter)}
-        })
-    }
+    /**
+      * Finds a child directly under this node that has the provided content
+      * @param content The searched content of the child
+      * @return The first child with the provided content or None if there is no direct child with
+      * such content
+      */
+    def get(content: T) = children.find { _.content == content }
+    
+    /**
+      * Performs a search over the whole tree structure
+      * @param filter A predicate for finding a node
+      * @return The first child that satisfies the predicate. None if no such child was found.
+      */
+    def find(filter: NodeType => Boolean): Option[NodeType] = children.find(filter) orElse children.findMap { _.find(filter) }
     
     /**
      * Checks whether a node exists below this node
      * @param node A node that may exist below this node
      * @return Whether the provided node exists below this node
      */
-    def contains(node: Tree[_, _]): Boolean = { children.contains(node) || 
-            children.find({ child => child.contains(node) }).isDefined }
+    def contains(node: Tree[_, _]): Boolean = { children.contains(node) || children.exists { _.contains(node) } }
 }

@@ -1,51 +1,45 @@
 package utopia.flow.test
 
 import utopia.flow.datastructure.mutable.Tree
-import utopia.flow.datastructure.immutable
 
-object TreeNodeTest
+object TreeNodeTest extends App
 {
-    def main(args: Array[String]): Unit = 
-    {
-        val root = new Tree(1)
-        val bottomNode = new Tree(4)
-        root += new Tree(2, new Tree(3, bottomNode), new Tree(5))
-        val secondChild = new Tree(6)
-        root += secondChild
-        
-        basicCheck(root)
-        
-        // Creates an immutable copy of the tree
-        val copy = root.immutableCopy
-        assert(copy != root)
-        basicCheck(copy)
-        
-        assert(root.nodesBelow.contains(bottomNode))
-        assert(root.contains(bottomNode))
-        assert(root.contains(secondChild))
-        
-        root.removeChild(secondChild)
-        assert(root.children.size == 1)
-        
-        root -= bottomNode
-        assert(root.depth == 2)
-        
-        root.clear()
-        assert(root.isEmpty)
-        
-        // Tests immutable treenode equality
-        val copy2 = immutable.Tree.copy[Int, immutable.Tree[Int]](copy)
-        assert(copy == copy2)
-        assert(copy2 == copy)
-        
-        println("Success")
-    }
-    
-    private def basicCheck(tree: utopia.flow.datastructure.template.Tree[_, _]) = 
+    private def basicCheck(tree: utopia.flow.datastructure.template.Tree[_, _]) =
     {
         assert(tree.children.size == 2)
         assert(!tree.isEmpty)
         assert(tree.size == 5)
         assert(tree.depth == 3)
     }
+    
+    val root = Tree(1)
+    val bottomNode = Tree(4)
+    root += Tree(2, Tree(3, bottomNode), Tree(5))
+    val secondChild = Tree(6)
+    root += secondChild
+    
+    basicCheck(root)
+    println(root)
+    
+    assert(root(2)(3).children.size == 1)
+    assert(root(5).children.isEmpty)
+    
+    // Creates an immutable copy of the tree
+    val copy = root.immutableCopy
+    basicCheck(copy)
+    
+    assert(root.nodesBelow.contains(bottomNode))
+    assert(root.contains(bottomNode))
+    assert(root.contains(secondChild))
+    
+    root.removeChild(secondChild)
+    assert(root.children.size == 1)
+    
+    root -= bottomNode
+    assert(root.depth == 2)
+    
+    root.clear()
+    assert(root.isEmpty)
+    
+    println("Success")
 }

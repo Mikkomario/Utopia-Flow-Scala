@@ -61,7 +61,7 @@ object XmlTest extends App
         {
             reader.toNextChildWithName("c")
             reader.readElement().get
-        });
+        })
     
     println(parsed3.get.toXml)
     println(parsed3.get.toJSON)

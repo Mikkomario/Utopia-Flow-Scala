@@ -1,8 +1,6 @@
 package utopia.flow.datastructure.immutable
 
 import utopia.flow.datastructure.template.Node
-import utopia.flow.util.Equatable
-import scala.Vector
 import utopia.flow.generic.BooleanType
 import utopia.flow.generic.ConversionHandler
 import utopia.flow.generic.DataType
@@ -11,7 +9,6 @@ import utopia.flow.generic.FloatType
 import utopia.flow.generic.IntType
 import utopia.flow.generic.LongType
 import utopia.flow.generic.StringType
-import utopia.flow.generic.ValueCastException
 import java.time.Instant
 import utopia.flow.generic.InstantType
 import utopia.flow.generic.VectorType
@@ -31,70 +28,22 @@ object Value
     /**
      * Creates a new empty value that represents / mimics the provided data type
      */
-    def empty(dataType: DataType = AnyType) = new Value(None, dataType)
-    
-    /**
-     * Wraps a string into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(s: String) = new Value(Some(s), StringType)
-    /**
-     * Wraps an integer into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(i: Int) = new Value(Some(i), IntType)
-    /**
-     * Wraps a double into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(d: Double) = new Value(Some(d), DoubleType)
-    /**
-     * Wraps a floating point number into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(f: Float) = new Value(Some(f), FloatType)
-    /**
-     * Wraps a long number into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(l: Long) = new Value(Some(l), LongType)
-    /**
-     * Wraps a boolean into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(b: Boolean) = new Value(Some(b), BooleanType)
-    /**
-     * Wraps an instant into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(time: Instant) = new Value(Some(time), InstantType)
-    /**
-     * Wraps a value vector into a value
-     */
-    @deprecated("Replaced with the ValueConvertible trait. Import ValueConversions._ for implicit conversions", "v1.2")
-    def of(v: Vector[Value]) = new Value(Some(v), VectorType)
-    /**
-     * Wraps a model into a value
-     */
-    @deprecated("Replaced with Model.toValue which is implicit", "v1.2")
-    def of(m: Model[Constant]) = new Value(Some(m), ModelType)
+    def empty(dataType: DataType = AnyType) = Value(None, dataType)
 }
 
 /**
  * Values can wrap an object value and associate it with a certain data type. Values can be cast 
  * to different data types. They are immutable.
  */
-class Value(val content: Option[Any], val dataType: DataType) extends Node[Option[Any]] with Equatable with JSONConvertible
+case class Value(content: Option[Any], dataType: DataType) extends Node[Option[Any]] with JSONConvertible
 {
     // INITIAL CODE    ---------
     
     // The content must be of correct type, if defined
-    require(content.forall { dataType.isInstance(_) }, s"$content is not of type $dataType")
+    require(content.forall(dataType.isInstance), s"$content is not of type $dataType")
     
     
     // COMP. PROPERTIES    -----
-    
-    override def properties = Vector(content, dataType)
     
     override def toJSON = JSONValueConverter(this).getOrElse("null")
     
@@ -129,7 +78,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
      * @param propertyName The name of the requested property
      * @return The value of the requested property 
      */
-    def apply(propertyName: String) = modelOr()(propertyName)
+    def apply(propertyName: String) = getModel(propertyName)
     
     /**
      * Finds a value from this value as if this value was a vector
@@ -139,15 +88,8 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
      */
     def apply(index: Int) = 
     {
-        val vector = vectorOr()
-        if (index < 0 || index >= vector.length)
-        {
-            Value.empty()
-        }
-        else
-        {
-            vector(index)
-        }
+        val vector = getVector
+        if (index < 0 || index >= vector.length) Value.empty() else vector(index)
     }
     
     
@@ -156,7 +98,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     /**
      * If this value is empty, returns the default value. If this value is defined, returns this value.
      */
-    def orElse(default: => Value) = if (isDefined) this else default;
+    def orElse(default: => Value) = if (isDefined) this else default
     
     /**
      * Checks whether this value is of the specified data type
@@ -180,9 +122,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
      * Returns the contents of this value, casted to the desired type range
      * @param ofType The targeted data type
      * @return The value's contents as an instance of the provided type
-     * @throws ValueCastException If the value content's couldn't be cast to the desired type
      */
-    @throws(classOf[ValueCastException])
     def objectValue(ofType: DataType) = withType(ofType).content
     
     /**
@@ -246,7 +186,7 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
     def model = objectValue(ModelType).map { _.asInstanceOf[Model[Constant]]}
     
     /**
-     * The contents of this value casted to a string, or if that fails, the default value ''
+     * The contents of this value casted to a string, or if that fails, the default value
      */
     def stringOr(default: => String = "") = string.getOrElse(default)
     
@@ -307,4 +247,64 @@ class Value(val content: Option[Any], val dataType: DataType) extends Node[Optio
      * model)
      */
     def modelOr(default: => Model[Constant] = new Model(Vector[Constant]())) = model.getOrElse(default)
+    
+    /**
+      * The contents of this value casted to a string, or if that fails, an empty string
+      */
+    def getString = stringOr()
+    
+    /**
+      * The contents of this value casted to an integer, or if that fails, 0
+      */
+    def getInt = intOr()
+    
+    /**
+      * The contents of this value casted to a double, or if that fails, 0.0
+      */
+    def getDouble = doubleOr()
+    
+    /**
+      * The contents of this value casted to a float, or if that fails, 0
+      */
+    def getFloat = floatOr()
+    
+    /**
+      * The contents of this value casted to a long, or if that fails, 0
+      */
+    def getLong = longOr()
+    
+    /**
+      * The contents of this value casted to a boolean, or if that fails, false
+      */
+    def getBoolean = booleanOr()
+    
+    /**
+      * The contents of this value casted to an instant, or if that fails, current instant
+      */
+    def getInstant = instantOr()
+    
+    /**
+      * The current contents of this value as a local date or current date
+      */
+    def getLocalDate = localDateOr()
+    
+    /**
+      * The current contents of this value as a local time or current time
+      */
+    def getLocalTime = localTimeOr()
+    
+    /**
+      * The current contents of this value as a local date time or current time
+      */
+    def getLocalDateTime = localDateTimeOr()
+    
+    /**
+      * The contents of this value casted to a vector, or if that fails, empty value vector
+      */
+    def getVector = vectorOr()
+    
+    /**
+      * The contents of this value casted to a model, or if that fails, empty model
+      */
+    def getModel = modelOr()
 }
