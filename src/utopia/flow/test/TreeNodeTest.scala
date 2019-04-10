@@ -4,7 +4,7 @@ import utopia.flow.datastructure.mutable.Tree
 
 object TreeNodeTest extends App
 {
-    private def basicCheck(tree: utopia.flow.datastructure.template.Tree[_, _]) =
+    private def basicCheck(tree: utopia.flow.datastructure.template.TreeLike[_, _]) =
     {
         assert(tree.children.size == 2)
         assert(!tree.isEmpty)
