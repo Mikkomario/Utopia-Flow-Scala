@@ -67,7 +67,7 @@ trait TreeLike[A, NodeType <: TreeLike[A, NodeType]] extends Node[A]
       * @param content The searched content
       * @return Either an existing node or a made-up one
       */
-    def apply(content: A) = get(content) getOrElse makeNode(content)
+    def /(content: A) = get(content) getOrElse makeNode(content)
     
     
     // OTHER METHODS    ------------

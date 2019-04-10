@@ -2,14 +2,12 @@ package utopia.flow.parse
 
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.datastructure.template
-
-import utopia.flow.datastructure.immutable.Value
+import utopia.flow.datastructure.immutable.{Constant, Model, TreeLike, Value}
 import utopia.flow.generic.StringType
-import utopia.flow.datastructure.immutable.Model
-import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.ModelConvertible
 import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
+
 import scala.collection.immutable.VectorBuilder
 
 object XmlElement extends FromModelFactory[XmlElement]
@@ -82,7 +80,7 @@ object XmlElement extends FromModelFactory[XmlElement]
  * @since 13.1.2017 (v1.3)
  */
 case class XmlElement(name: String, value: Value = Value.empty(StringType), attributes: Model[Constant] = Model(Vector()),
-                      children: Seq[XmlElement] = Vector()) extends ModelConvertible
+                      override val children: Vector[XmlElement] = Vector()) extends TreeLike[String, XmlElement] with ModelConvertible
 {
     // COMPUTED PROPERTIES    ------------------
     
@@ -134,15 +132,23 @@ case class XmlElement(name: String, value: Value = Value.empty(StringType), attr
             s"${a.name}=${"\""}${a.value.stringOr()}${"\""}").reduceOption(_ + " " + _)
     
     
+    // IMPLEMENTED  ----------------------------
+    
+    override protected def makeNode(content: String, children: Vector[XmlElement]) = XmlElement(name = content,
+        children = children)
+    
+    override def content = name
+    
+    
     // OPERATORS    ----------------------------
     
-    /**
+    /*
      * Finds a child under this element with the provided name. If there is no such child, creates 
      * a substitute element so that the method can be chained together
      * @param childName the name of the searched child (case-insensitive)
      * @return the searched child or a substitute element
      */
-    def /(childName: String) = childWithName(childName).getOrElse(new XmlElement(childName))
+    // def /(childName: String) = childWithName(childName).getOrElse(new XmlElement(childName))
     
     
     // OTHER METHODS    ------------------------

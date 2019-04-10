@@ -1,6 +1,5 @@
 package utopia.flow.datastructure.mutable
 
-import utopia.flow.datastructure.template
 import utopia.flow.datastructure.immutable
 
 object Tree
@@ -21,7 +20,7 @@ object Tree
  * @author Mikko Hilpinen
  * @since 1.11.2016
  */
-class Tree[T](var content: T, initialChildren: Vector[Tree[T]] = Vector()) extends template.TreeLike[T, Tree[T]]
+class Tree[A](var content: A, initialChildren: Vector[Tree[A]] = Vector()) extends TreeLike[A, Tree[A]]
 {
     // ATTRIBUTES    -----------------
     
@@ -34,10 +33,12 @@ class Tree[T](var content: T, initialChildren: Vector[Tree[T]] = Vector()) exten
      * Creates an immutable copy of this tree
      * @return An immutable copy of this tree
      */
-    def immutableCopy: immutable.Tree[T] = immutable.Tree(content, children.map { _.immutableCopy })
+    def immutableCopy: immutable.Tree[A] = immutable.Tree(content, children.map { _.immutableCopy })
     
     
     // IMPLEMENTED PROPERTIES    -----
+    
+    override protected def setChildren(newChildren: Vector[Tree[A]]) = _children = newChildren
     
     def children = _children
     
@@ -45,53 +46,5 @@ class Tree[T](var content: T, initialChildren: Vector[Tree[T]] = Vector()) exten
       * @param content Content for the child node
       * @return A new node
       */
-    override protected def makeNode(content: T) = new Tree(content)
-    
-    
-    // OPERATORS    -----------------
-    
-    /**
-     * Adds a treeNode directly under this node. The node won't be added if a) it already exists as 
-     * a direct child of this node or b) This node exists under the provided node
-     * @param child The node that is added under this node
-     * @return Whether the node was successfully added under this node
-     */
-    def +=(child: Tree[T]) =
-    {   
-        // Makes sure the child doesn't already exist in the direct children
-        // And that this node won't end up under a child node
-        if (!children.contains(child) && !child.contains(this))
-        {
-            _children :+= child
-            true
-        }
-        else
-            false
-    }
-    
-    /**
-     * Removes a node from this tree. If it appears in multiple locations, all occurrences will be 
-     * removed
-     * @param node The node that is removed from under this node
-     */
-    def -=(node: Tree[T]): Unit = 
-    {
-        removeChild(node)
-        children.foreach { child => child -= node }
-    }
-    
-    
-    // OTHER METHODS    ------------
-    
-    /**
-     * Clears the node, removing any nodes below it
-     */
-    def clear() = _children = Vector()
-    
-    /**
-     * Removes a node from the direct children under this node
-     * @param child The node that is removed from under this node
-     */
-    def removeChild(child: Tree[T]) = _children = _children.filterNot { 
-            existingChild => existingChild == child }
+    override protected def makeNode(content: A) = new Tree(content)
 }

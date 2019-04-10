@@ -21,8 +21,8 @@ object TreeNodeTest extends App
     basicCheck(root)
     println(root)
     
-    assert(root(2)(3).children.size == 1)
-    assert(root(5).children.isEmpty)
+    assert((root/2/3).children.size == 1)
+    assert((root/5).children.isEmpty)
     
     // Creates an immutable copy of the tree
     val copy = root.immutableCopy

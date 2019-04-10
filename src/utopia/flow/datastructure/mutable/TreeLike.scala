@@ -1,6 +1,6 @@
 package utopia.flow.datastructure.mutable
 
-import utopia.flow.datastructure.{immutable, template}
+import utopia.flow.datastructure.template
 
 
 /**
