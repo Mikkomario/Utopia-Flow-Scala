@@ -1,9 +1,7 @@
 package utopia.flow.util
 
-import collection.mutable
-
+import collection.{SeqLike, mutable}
 import scala.collection.generic.CanBuildFrom
-import scala.collection.GenSeqLike
 import scala.util.Try
 
 /**
@@ -31,20 +29,45 @@ object CollectionExtensions
         def getOrElse(index: Int, default: => A) = if (s.isDefinedAt(index)) s(index) else default
     }
     
-    implicit class RichGenSeqLike[T, Repr](val seq: GenSeqLike[T, Repr]) extends AnyVal
+    implicit class RichSeqLike[A, Repr](val seq: SeqLike[A, Repr]) extends AnyVal
     {
         /**
          * Finds the index of the first item that matches the predicate
          * @param find a function for finding the correct item
          * @return The index of the item in this seq or None if no such item was found
          */
-        def indexWhereOption(find: T => Boolean) = 
+        def indexWhereOption(find: A => Boolean) =
         {
             val result = seq.indexWhere(find)
             if (result < 0)
                 None
             else
                 Some(result)
+        }
+    
+        /**
+          * Filters a seq so that only distinct values remain. Uses a special function to determine equality
+          * @param equals A function that determines whether two values are equal
+          * @param cbf A canbuildfrom (implicit) to build the final collection
+          * @tparam To The type of final collection
+          * @return A collection with only distinct values (when considering the provided 'equals' function)
+          */
+        def distinctWith[To](equals: (A, A) => Boolean)(implicit cbf: CanBuildFrom[_, A, To]) =
+        {
+            val builder = cbf.apply()
+            val collected = mutable.HashSet[A]()
+            
+            seq.foreach
+            {
+                item =>
+                    if (!collected.exists { equals(_, item) })
+                    {
+                        collected += item
+                        builder += item
+                    }
+            }
+            
+            builder.result()
         }
     }
     
