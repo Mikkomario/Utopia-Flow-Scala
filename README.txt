@@ -2,29 +2,29 @@ UTOPIA FLOW --------------------------------
 
 v1.4  --------------------------------------
 
-New Features
-------------
+    New Features
+    ------------
 
-ThreadPool class for creating an asynchronous ExecutionContext
+        ThreadPool class for creating an asynchronous ExecutionContext
 
-Breakable tasks and loops for asynchronous operations
+        Breakable tasks and loops for asynchronous operations
 
-Extensions to Future
+        Extensions to Future
 
-Volatile classes as safe multithreaded collections
+        Volatile classes as safe multithreaded collections
 
-CloseHook for ShutDownHook implementation
+        CloseHook for ShutDownHook implementation
 
 
-Updates & Changes
------------------
+    Updates & Changes
+    -----------------
 
-Package structure changed
+        Package structure changed
 
-Tree refactored
+        Tree refactored
 
-Deprecated functions removed from Value. Value is now a case class
+        Deprecated functions removed from Value. Value is now a case class
 
-getX methods added to Value
+        getX methods added to Value
 
-Template version of GraphNode and GraphEdge added. Graph classes refactored.
+        Template version of GraphNode and GraphEdge added. Graph classes refactored.
