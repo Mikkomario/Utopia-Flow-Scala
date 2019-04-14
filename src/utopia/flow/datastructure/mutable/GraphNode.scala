@@ -48,7 +48,7 @@ class GraphNode[N, E](var content: N) extends template.GraphNode[N, E, GraphNode
     def setConnection(node: Node, edgeContent: E) =
     {
         if (isDirectlyConnectedTo(node))
-            disconnect(node)
+            disconnectDirect(node)
         
         connect(node, edgeContent)
     }
@@ -58,5 +58,11 @@ class GraphNode[N, E](var content: N) extends template.GraphNode[N, E, GraphNode
      * contain edges towards this node afterwards.
      * @param node The node that is disconnected from this node
      */
-    def disconnect(node: AnyNode) = leavingEdges = leavingEdges.filterNot(edge => edge.end == node)
+    def disconnectDirect(node: AnyNode) = leavingEdges = leavingEdges.filterNot(edge => edge.end == node)
+    
+    /**
+      * Disconnects every node in this graph from the specified node
+      * @param node A node
+      */
+    def disconnectAll(node: AnyNode) = foreach { _.disconnectDirect(node) }
 }

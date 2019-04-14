@@ -1,5 +1,7 @@
 package utopia.flow.datastructure.template
 
+import utopia.flow.util.CollectionExtensions._
+
 /**
  * Graph nodes contain content and are connected to other graph nodes via edges
  * @author Mikko Hilpinen
@@ -142,20 +144,48 @@ trait GraphNode[N, E, GNode <: GraphNode[N, E, GNode, Edge], Edge <: GraphEdge[N
 	  * @param other Another node
 	  * @return Whether this node is at all connected to the specified node
 	  */
-	def isConnectedTo(other: AnyNode): Boolean = isConnectedTo(other, Set())
+	def isConnectedTo(other: AnyNode) = traverseWhile { _.isDirectlyConnectedTo(other) }
 	
-	private def isConnectedTo(other: AnyNode, visitedNodes: Set[GNode]): Boolean =
+	/**
+	  * Traverses this graph until the provided operation returns true
+	  * @param operation An operation performed on each node until it returns true
+	  * @return Whether the operation ever returned true
+	  */
+	def traverseWhile(operation: GNode => Boolean) = traverseUntil
 	{
-		// Checks for direct connections first
-		val directContains = isDirectlyConnectedTo(other)
+		n =>
+			val result = operation(n)
+			if (result) Some(result) else None
+	} getOrElse false
+	
+	/**
+	  * Traverses this graph until a node is found that produces a result
+	  * @param operation An operation performed on each node until a suitable one is found
+	  * @tparam B Operation result type
+	  * @return Final operation result. None if operation returned None on all nodes
+	  */
+	def traverseUntil[B](operation: GNode => Option[B]): Option[B] = traverseUntil(operation, Set())
+	
+	private def traverseUntil[B](operation: GNode => Option[B], traversedNodes: Set[GNode]): Option[B] =
+	{
+		val nodes = traversedNodes + me
 		
-		if (directContains)
-			true
-		else
-		{
-			// If no direct connections were found, searches deeper, never traversing a node twice
-			val newVisitedNodes = visitedNodes + me
-			endNodes.diff(newVisitedNodes).exists { _.isConnectedTo(other, newVisitedNodes) }
-		}
+		// Performs the operation on self first
+		// If that didn't yield a result, tries children instead
+		operation(me).orElse(endNodes.diff(nodes).findMap { _.traverseUntil(operation, nodes) })
+	}
+	
+	/**
+	  * Performs an operation on all of the nodes in this graph
+	  * @param operation An operation
+	  * @tparam U Arbitary result type
+	  */
+	def foreach[U](operation: GNode => U): Unit = foreach(operation, Set())
+	
+	private def foreach[U](operation: GNode => U, traversedNodes: Set[GNode]): Unit =
+	{
+		val nodes = traversedNodes + me
+		operation(me)
+		endNodes.diff(nodes).foreach { _.foreach(operation, nodes) }
 	}
 }

@@ -1,7 +1,6 @@
 package utopia.flow.test
 
 import utopia.flow.datastructure.mutable.GraphNode
-import scala.collection.mutable.ListBuffer
 
 /**
  * This test tests the features implemented in graph, graphNode and graphEdge
@@ -36,13 +35,13 @@ object GraphTest
         assert(node1.routesTo(node5).size == 2)
         
         // The shortest route should be 1 -> 4 -> 5
-        assert(node1.shortestRouteTo(node5).get.toVector.size == 2)
+        assert(node1.shortestRouteTo(node5).get.size == 2)
         // The cheapest route (weights considered) should be 1 -> 2 -> 3 -> 5
         val cheapestRoute = node1.cheapestRouteTo(node5, edge => edge.content)
-        assert(cheapestRoute.get.toVector.size == 3)
+        assert(cheapestRoute.get.size == 3)
         
         // After disconnecting node 5 from node 4. Only one route should remain
-        node4.disconnect(node5)
+        node4.disconnectDirect(node5)
         assert(node1.routesTo(node5).size == 1)
         
         print("Success")
