@@ -1,15 +1,15 @@
 package utopia.flow.datastructure.immutable
 
-import utopia.flow.datastructure.mutable.GraphNode
-import utopia.flow.datastructure.template.Node
+import utopia.flow.datastructure.template
+import utopia.flow.datastructure.template.GraphNode
 
 /**
  * Graph edges are used for connecting two nodes and storing data. Edges are immutable.
  * @author Mikko Hilpinen
  * @since 28.10.2016
  */
-class GraphEdge[NodeContent, EdgeContent](val content: EdgeContent, 
-        val end: GraphNode[NodeContent, EdgeContent]) extends Node[EdgeContent]
+case class GraphEdge[N, E, GNode <: GraphNode[N, E, GNode, _]](override val content: E, override val end: GNode)
+    extends template.GraphEdge[N, E, GNode]
 {
     // OTHER METHODS    ----------
     
@@ -17,11 +17,11 @@ class GraphEdge[NodeContent, EdgeContent](val content: EdgeContent,
      * Creates a new edge that has different content
      * @param content The contents of the new edge
      */
-    def withContent(content: EdgeContent) = new GraphEdge(content, end)
+    def withContent(content: E) = GraphEdge[N, E, GNode](content, end)
     
     /**
      * Creates a new edge that has a different end node
      * @param node The node the new edge points towards
      */
-    def pointingTo[T](node: GraphNode[T, EdgeContent]) = new GraphEdge(content, node)
+    def pointingTo[B, G <: GraphNode[B, E, G, _]](node: G): GraphEdge[B, E, G] = GraphEdge(content, node)
 }

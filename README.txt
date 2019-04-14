@@ -1,6 +1,6 @@
 UTOPIA FLOW --------------------------------
 
-v1.3.4  ------------------------------------
+v1.4  --------------------------------------
 
 New Features
 ------------
@@ -26,3 +26,5 @@ Tree refactored
 Deprecated functions removed from Value. Value is now a case class
 
 getX methods added to Value
+
+Template version of GraphNode and GraphEdge added. Graph classes refactored.
