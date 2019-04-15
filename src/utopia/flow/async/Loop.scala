@@ -31,7 +31,7 @@ trait Loop extends Runnable with Breakable
     /**
      * The lock this loop should use whenever waiting
      */
-    protected val waitLock = new AnyRef()
+    val waitLock = new AnyRef()
     
     private val breakFlag = new VolatileFlag()
     private val startedFlag = new VolatileFlag()
