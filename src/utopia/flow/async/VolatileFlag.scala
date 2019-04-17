@@ -35,17 +35,17 @@ class VolatileFlag extends Volatile[Boolean](false)
     /**
      * If this flag is not set, performs the operation. Locks this flag while the operation runs.
      */
-    def doIfNotSet(action: () => Unit) = lock { if (_) action() }
+    def doIfNotSet[U](action: => U) = lock { status => if (!status) action }
     
     /**
      * If this flag is not set, performs the operation and then sets this flag. 
      * Locks this flag during the operation.
      */
-    def runAndSet[T](action: () => T) = update
+    def runAndSet[U](action: => U) = update
     {
         status => 
             if (!status)
-                action()
+                action
             true
     }
 }
