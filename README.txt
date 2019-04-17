@@ -28,3 +28,5 @@ v1.4  --------------------------------------
         getX methods added to Value
 
         Template version of GraphNode and GraphEdge added. Graph classes refactored.
+
+        BugFix to Counter class
