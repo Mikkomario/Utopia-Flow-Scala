@@ -62,7 +62,7 @@ object XmlElement extends FromModelFactory[XmlElement]
         val attributes = specifiedAttributes.getOrElse
         {
             if (specifiedChildren.isDefined)
-                new Model(unspecifiedAttributes.map { att => new Constant(att.name, att.value) })
+                Model.withConstants(unspecifiedAttributes.map { att => new Constant(att.name, att.value) })
             else
             {
                 // If unused attributes were parsed into children, doesn't parse them into attributes

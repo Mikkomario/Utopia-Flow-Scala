@@ -246,7 +246,7 @@ case class Value(content: Option[Any], dataType: DataType) extends Node[Option[A
      * The contents of this value casted to a model, or if that fails, the default value (empty
      * model)
      */
-    def modelOr(default: => Model[Constant] = new Model(Vector[Constant]())) = model.getOrElse(default)
+    def modelOr(default: => Model[Constant] = Model.empty) = model.getOrElse(default)
     
     /**
       * The contents of this value casted to a string, or if that fails, an empty string

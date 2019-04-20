@@ -8,7 +8,7 @@ import utopia.flow.util.Equatable
  * This is a simple implementation of a property generator trait. The generator uses a default 
  * value and a certain property constructor.
  */
-abstract class SimplePropertyGenerator[T <: Property](val createProperty: (String, Value) => T, 
+abstract class SimplePropertyGenerator[+T <: Property](val createProperty: (String, Value) => T,
         val defaultValue: Value = Value.empty()) extends PropertyGenerator[T]
 {
     // IMPLEMENTED    ------------

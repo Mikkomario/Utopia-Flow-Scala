@@ -86,3 +86,5 @@ v1.4  --------------------------------------
         Template version of GraphNode and GraphEdge added. Graph classes refactored.
 
         BugFix to Counter class
+
+        Model constructors updated
