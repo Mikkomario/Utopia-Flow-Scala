@@ -1,18 +1,17 @@
 package utopia.flow.datastructure.template
 
 import utopia.flow.datastructure.immutable.Value
-import java.util.NoSuchElementException
 import utopia.flow.parse.JSONConvertible
 
 /**
  * Models are used for storing named values
  * @author Mikko Hilpinen
  * @since 26.11.2016
- * @param Attribute The type of the properties stored within this model
+ * @tparam Attribute The type of the properties stored within this model
  */
 trait Model[+Attribute <: Property] extends JSONConvertible
 {
-    // ATTRIBUTES    --------------
+    // ABSTRACT    --------------
     
     /**
      * The attributes stored in this model. The key is the attribute's name (lower case), 
@@ -20,13 +19,23 @@ trait Model[+Attribute <: Property] extends JSONConvertible
      */
     def attributeMap: Map[String, Attribute]
     
+    /**
+      * Generates a new attribute with the provided name
+      * @param attName The name of the new attribute
+      * @return The new attribute
+      */
+    protected def generateAttribute(attName: String): Attribute
+    
     
     // COMP. PROPERTIES    --------
     
     override def toString = toJSON
     
-    override def toJSON = if (isEmpty) "{}" else '{' + attributes.map { _.toJSON }.reduceLeft { _ + ", " + _ } + '}'
+    override def toJSON = if (isEmpty) "{}" else '{' + attributes.map { _.toJSON }.mkString(", ") + '}'
     
+    /**
+      * @return The attributes of this model
+      */
     def attributes = attributeMap.values.toVector
     
     /**
@@ -44,16 +53,6 @@ trait Model[+Attribute <: Property] extends JSONConvertible
      * defined attributes actually contain a value or not.
      */
     def isEmpty = attributeMap.isEmpty
-    
-    
-    // TRAIT METHODS    -----------
-    
-    /**
-     * Generates a new attribute with the provided name
-     * @param attName The name of the new attribute
-     * @return The new attribute
-     */
-    protected def generateAttribute(attName: String): Attribute
     
     
     // OPERATORS    ---------------
@@ -82,6 +81,12 @@ trait Model[+Attribute <: Property] extends JSONConvertible
      * @return The attribute from this model (possibly generated)
      */
     def get(attName: String) = findExisting(attName).getOrElse(generateAttribute(attName))
+    
+    /**
+     * Whether this model contains an existing attribute for the specified attribute name
+     * @param attName the name of the attribute
+     */
+    def contains(attName: String) = attributeMap.contains(attName.toLowerCase())
     
     /**
      * Converts and unwraps this model's attributes into a map format

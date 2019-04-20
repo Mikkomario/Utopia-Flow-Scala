@@ -9,7 +9,7 @@ import utopia.flow.parse.JSONReader
  * The factory may make assumptions about the type of model data and may give more sensible results 
  * with other models than with others.
  */
-trait FromModelFactory[T]
+trait FromModelFactory[+T]
 {
     // ABSTRACT METHODS    ----------------------
     

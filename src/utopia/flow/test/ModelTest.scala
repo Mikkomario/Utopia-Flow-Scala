@@ -3,10 +3,7 @@ package utopia.flow.test
 import utopia.flow.generic.SimpleVariableGenerator
 import utopia.flow.datastructure.immutable
 import utopia.flow.datastructure.mutable
-import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DataType
-import utopia.flow.generic.ConversionHandler
-import utopia.flow.generic.StringType
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.SimpleConstantGenerator
 
@@ -15,9 +12,6 @@ import utopia.flow.generic.ValueConversions._
 object ModelTest extends App
 {
     DataType.setup()
-    
-    //println(ConversionHandler)
-    //println(DataType)
     
     // Tests variable creation
     val generator2 = new SimpleVariableGenerator(0)
@@ -28,7 +22,7 @@ object ModelTest extends App
     
     // Tests models
     // 1) Model with no default value
-    val model1 = new mutable.Model()
+    val model1 = mutable.Model()
     model1("Test") = 2
     model1("Another") = "Hello"
     
@@ -42,21 +36,21 @@ object ModelTest extends App
     
     // 2) model with default value
     val model2 = new mutable.Model(generator2)
-    assert(!model2.findExisting("Test").isDefined)
+    assert(model2.findExisting("Test").isEmpty)
     assert(model2("Test").content.get == 0)
     
     // 3) immutable model with no default value
     val constants = Vector(new Constant("Test1", 1), new Constant("Test2", 2))
-    val model3 = new immutable.Model(constants)
+    val model3 = immutable.Model.withConstants(constants)
     
     assert(model3.attributeGenerator == model3.attributeGenerator)
     assert(model3.attributeGenerator == new SimpleConstantGenerator())
     
-    assert(model3 == new immutable.Model(constants))
+    assert(model3 == immutable.Model.withConstants(constants))
     assert(model3.attributes.size == 2)
     assert(model3("Test1").content.get == 1)
     
-    val mutableModel2 = new mutable.Model()
+    val mutableModel2 = mutable.Model()
     mutableModel2("Test1") = 1
     mutableModel2("Test2") = 2
     assert(mutableModel2.immutableCopy() == model3)

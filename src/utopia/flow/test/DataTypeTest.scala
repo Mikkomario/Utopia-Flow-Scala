@@ -6,23 +6,35 @@ import utopia.flow.generic.StringType
 import utopia.flow.generic.ConversionReliability
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DoubleType
-import utopia.flow.generic.BooleanType
 import java.time.Instant
+
 import utopia.flow.datastructure.immutable.Model
-import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.ConversionHandler
+
 import scala.collection.immutable.HashSet
 import utopia.flow.generic.IntType
-
 import utopia.flow.generic.ValueConversions._
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.LocalDateTime
+
+import utopia.flow.datastructure.mutable.GraphNode
 import utopia.flow.generic.InstantType
 import utopia.flow.generic.LocalDateTimeType
 
 object DataTypeTest extends App
 {
+    val testNode = new GraphNode[String, Int]("Test1")
+    val testNode2 = new GraphNode[String, Int]("Test2")
+    val testNode3 = new GraphNode[String, Int]("Test3")
+    testNode2.setConnection(testNode3, 3)
+    testNode.setConnection(testNode2, 2)
+    
+    assert(testNode.isDirectlyConnectedTo(testNode2))
+    assert(testNode.isConnectedTo(testNode3))
+    assert((testNode/Vector(2, 3)).nonEmpty)
+    assert(testNode.routesTo(testNode3).size == 1)
+    
     DataType.setup()
     DataType.values.foreach { println(_) }
     
@@ -44,7 +56,7 @@ object DataTypeTest extends App
     val lTime = LocalTime.now().toValue
     val lDT = LocalDateTime.now().toValue
     val vector = Vector(i, d, f, l).toValue
-    val model = new Model(Vector(new Constant("attributeName", i))).toValue
+    val model = Model("attributeName", i).toValue
     
     /*
     DataType.values.foreach { fromType => DataType.values.foreach { toType => 
@@ -53,34 +65,34 @@ object DataTypeTest extends App
         println(s"Route cost $fromType to $toType: " + ConversionHandler.costOfRoute(fromType, toType)) } }
     */
     
-    assert(str.doubleOr() == 123.45)
-    assert(str.intOr() == 123)
-    assert(str.longOr() == 123)
-    assert(str.booleanOr() == false)
+    assert(str.getDouble == 123.45)
+    assert(str.getInt == 123)
+    assert(str.getLong == 123)
+    assert(!str.getBoolean)
     assert(str.string == str.content)
-    assert(str2.booleanOr() == true)
+    assert(str2.getBoolean)
     
-    assert(i.doubleOr() == 213)
-    assert(i.booleanOr() == true)
-    assert(i.longOr() == 213)
-    assert(i.stringOr() == "213")
+    assert(i.getDouble == 213)
+    assert(i.getBoolean)
+    assert(i.getLong == 213)
+    assert(i.getString == "213")
     
-    assert(d.intOr() == 123)
-    assert(d.booleanOr() == true)
-    assert(d.longOr() == 123)
+    assert(d.getInt == 123)
+    assert(d.getBoolean)
+    assert(d.getLong == 123)
     
-    assert(f.intOr() == 123)
-    assert(f.longOr() == 123)
-    assert(f.booleanOr() == true)
+    assert(f.getInt == 123)
+    assert(f.getLong == 123)
+    assert(f.getBoolean)
     
-    assert(l.doubleOr() == 9999999999.0)
-    assert(l.booleanOr() == true)
+    assert(l.getDouble == 9999999999.0)
+    assert(l.getBoolean)
     
-    assert(b.intOr() == 1)
-    assert(b.stringOr() == "true")
-    assert(b.doubleOr() == 1.0)
+    assert(b.getInt == 1)
+    assert(b.getString == "true")
+    assert(b.getDouble == 1.0)
     
-    assert(time.longOr() > 0)
+    assert(time.getLong > 0)
     
     val timeToString = time.toString()
     val timeStringToTime = timeToString.instantOr()

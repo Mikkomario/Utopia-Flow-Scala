@@ -11,7 +11,6 @@ import utopia.flow.generic.IntType
 import utopia.flow.generic.ModelType
 
 import utopia.flow.generic.ValueConversions._
-import utopia.flow.generic.VectorType
 
 object JSONTest extends App
 {
@@ -41,8 +40,8 @@ object JSONTest extends App
     assertJSON(time, s"${time.longOr()}")
     assertJSON(b, "true")
     assertJSON(v, "[null, true, 123]")
-    assertJSON(Vector(), "[]")
-    assertJSON(new Model(Vector()), "{}")
+    assertJSON(Vector[Value](), "[]")
+    assertJSON(Model.empty, "{}")
     
     // Tests Property writing next
     val prop1 = new Constant("test1", i)
@@ -53,7 +52,7 @@ object JSONTest extends App
     assert(prop1.toJSON == "\"test1\": 123")
     
     // Tests / prints model writing
-    val model = new Model(Vector(prop1, prop2, prop3))
+    val model = Model.withConstants(Vector(prop1, prop2, prop3))
     println(model.toJSON)
     
     // Tests value reading
@@ -81,7 +80,7 @@ object JSONTest extends App
     val prop5 = new Constant("test5", model)
     val prop6 = new Constant("test6", time)
     
-    val model2 = new Model(Vector(prop4, prop5, prop6))
+    val model2 = Model.withConstants(Vector(prop4, prop5, prop6))
     
     println(model2)
     
@@ -106,7 +105,7 @@ object JSONTest extends App
     // Tests model parsing with empty vector values
     println()
     println("Testing empty vectors and models")
-    val model4 = Model(Vector("vec" -> Vector(), "normal" -> "a"))
+    val model4 = Model(Vector("vec" -> Vector[Value](), "normal" -> "a"))
     
     println(model4)
     val parsed = JSONReader.parseSingle(model4.toJSON).get

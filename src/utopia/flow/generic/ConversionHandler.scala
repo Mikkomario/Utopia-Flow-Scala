@@ -2,7 +2,6 @@ package utopia.flow.generic
 
 import utopia.flow.datastructure.mutable.GraphNode
 import utopia.flow.generic.ConversionReliability.NO_CONVERSION
-import scala.collection.immutable.HashMap
 import scala.collection.mutable
 import utopia.flow.datastructure.immutable.Value
 
@@ -20,9 +19,8 @@ object ConversionHandler
     
     // ATTRIBUTES    -------------------
     
-    private var conversionGraph = HashMap[DataType, ConversionNode]()
-    
-    private val optimalRoutes = mutable.HashMap[Tuple2[DataType, DataType], Option[ConversionRoute]]()
+    private val conversionGraph = mutable.HashMap[DataType, ConversionNode]()
+    private val optimalRoutes = mutable.HashMap[(DataType, DataType), Option[ConversionRoute]]()
     
     
     // OTHER METHODS    ----------------
@@ -44,19 +42,13 @@ object ConversionHandler
     {
         // An empty value doens't need to be modified
         if (value.isEmpty)
-        {
             Some(Value.empty(toType))
-        }
         // If value is already of desired type, doesn't need to cast
         else if (value isOfType toType)
-        {
             Some(value)
-        }
         // Finds the possible ways to cast the value to the target type or any target sub type
         else
-        {
-            _cast(value, toType.subTypes :+ toType)    
-        }
+            _cast(value, toType.subTypes :+ toType)
     }
     
     /**
@@ -69,19 +61,13 @@ object ConversionHandler
     {
         // If there are no target types, no value can be produced
         if (targetTypes.isEmpty)
-        {
             None
-        }
         // Empty values needn't be modified
         else if (value.isEmpty)
-        {
             Some(Value.empty(targetTypes.head))
-        }
         // Checks if the value already is of any of the types
-        else if (targetTypes.exists { value.dataType isOfType _ })
-        {
+        else if (targetTypes.exists(value.dataType.isOfType))
             Some(value)
-        }
         else
         {
             // The targeted data types include the provided types, plus each of their sub types
@@ -91,25 +77,20 @@ object ConversionHandler
         }
     }
     
-    private def _cast(value: Value, targetTypes: Traversable[DataType]) = 
+    private def _cast(value: Value, targetTypes: Traversable[DataType]) =
     {
         val routes = targetTypes.flatMap { optimalRouteTo(value.dataType, _) }
             
         // Only works if at least a single conversion was found
         if (routes.isEmpty)
-        {
             None
-        }
         else
         {
             // Casts the value using the optimal route / target type
-            routes.reduceLeft { 
-                (route1, route2) => if (route2.cost < route1.cost) route2 else route1 }(value)
+            val bestRoute = routes.minBy { _.cost }
+            bestRoute(value)
         }
     }
-    
-    //def routeString(from: DataType, to: DataType) = optimalRouteTo(from, to).fold("No route")(_.toString())
-    //def costOfRoute(from: DataType, to: DataType) = optimalRouteTo(from, to).fold(9999)(_.cost)
     
     private def addConversion(conversion: Conversion, caster: ValueCaster) =
     {
@@ -121,58 +102,57 @@ object ConversionHandler
         val targetNode = nodeForType(conversion.target)
         
         // Creates a new connection if one doesn't exist yet
+        // Also, if new conversion is better or as good, replaces the existing connection
         val existingConnection = sourceNode.edgeTo(targetNode)
-        if (!existingConnection.isDefined)
-        {
-            sourceNode.connect(targetNode, ConversionStep(caster, conversion))
-        }
-        // Otherwise overwrites an existing connection if the new one is better or equally good
-        else if (conversion.reliability >= existingConnection.get.content.reliability)
-        {
+        
+        if (existingConnection.forall { _.content.reliability <= conversion.reliability })
             sourceNode.setConnection(targetNode, ConversionStep(caster, conversion))
-        }
     }
     
-    private def nodeForType(dataType: DataType) = conversionGraph.getOrElse(dataType, {
-            val node = new ConversionNode(dataType)
-            conversionGraph = conversionGraph.updated(dataType, node)
-            node
-        });
+    // Finds existing node or creates a new one
+    private def nodeForType(dataType: DataType) = conversionGraph.getOrElseUpdate(dataType,
+        new ConversionNode(dataType))
     
     private def optimalRouteTo(sourceType: DataType, targetType: DataType) = 
-        optimalRoutes.getOrElseUpdate(Tuple2(sourceType, targetType), {
-            val route = nodeForType(sourceType).cheapestRouteTo(nodeForType(targetType), { _.content.cost } )
-            if (route.isDefined) Some(ConversionRoute(route.get.map( { _.content } ))) else None
-        });
+        optimalRoutes.getOrElseUpdate(sourceType -> targetType,
+            {
+                val route = nodeForType(sourceType).cheapestRouteTo(nodeForType(targetType), { _.content.cost } )
+                route.map { r => ConversionRoute(r.map { _.content }) }
+            })
     
     
     // NESTED CLASSES    ---------------
     
-    private case class ConversionRoute(val steps: Seq[ConversionStep])
+    private case class ConversionRoute(steps: Seq[ConversionStep])
     {
         // COMPUTED PROPERTIES    -----
         
-        lazy val cost = steps.foldLeft(0)((totalCost, step) => totalCost + step.cost)
+        lazy val cost = steps.foldLeft(0) { _ + _.cost }
         
-        lazy val reliability = steps.foldLeft(NO_CONVERSION: ConversionReliability)(
-                (minReliability, step) => ConversionReliability.min(minReliability, step.reliability));
+        lazy val reliability =
+        {
+            if (steps.isEmpty)
+                NO_CONVERSION
+            else
+                steps.map { _.reliability }.min
+        }
         
         
         // IMPLEMENTED METHODS    -----
         
-        override def toString = if (steps.isEmpty) "Empty route" else steps.tail.foldLeft(
-                steps.head.conversion.toString())((str, step) => str + " => " + step.conversion.toString())
+        override def toString = if (steps.isEmpty) "Empty route" else steps.drop(1).foldLeft(
+                steps.head.conversion.toString)((str, step) => str + " => " + step.conversion.toString)
         
         
         // OPERATORS    ---------------
                 
         // Casts the value through each of the steps
         @throws(classOf[DataTypeException])
-        def apply(value: Value) = steps.foldLeft(Some(value): Option[Value])((value, step) => 
-            value.flatMap { step(_) })
+        def apply(value: Value) = steps.foldLeft(Some(value): Option[Value]){
+            (value, step) => value.flatMap { step(_) } }
     }
     
-    private case class ConversionStep(val caster: ValueCaster, val conversion: Conversion)
+    private case class ConversionStep(caster: ValueCaster, conversion: Conversion)
     {
         // COMP. PROPS    -----------
         

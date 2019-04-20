@@ -2,6 +2,7 @@ package utopia.flow.datastructure.immutable
 
 import utopia.flow.datastructure.template.Property
 import utopia.flow.util.Equatable
+import utopia.flow.datastructure.mutable.Variable
 
 /**
  * Constants are named properties whose value can't be changed
@@ -15,6 +16,14 @@ class Constant(val name: String, val value: Value) extends Property with Equatab
     override def dataType = value.dataType
     
     override def properties = Vector(name, value)
+    
+    
+    // COMPUTED    -----------------
+    
+    /**
+     * Converts this constant to a variable
+     */
+    def toVariable = new Variable(name, value)
     
     
     // OTHER METHODS    ------------

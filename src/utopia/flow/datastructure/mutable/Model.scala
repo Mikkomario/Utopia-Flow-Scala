@@ -8,33 +8,44 @@ import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.SimpleConstantGenerator
 import scala.collection.immutable.HashMap
+import utopia.flow.datastructure.template.Property
 
 object Model
 {
+    /**
+      * @return An empty model
+      */
+    def apply() = new Model(new SimpleVariableGenerator())
+    
     /**
      * Creates a new model with existing set of attributes.
      * @param content The attribute name value pairs used for generating the model's attributes
      * @param generator The attribute generator
      * @return A generated model
      */
-    def apply[Attribute <: Variable](content: Traversable[(String, Value)], 
-            generator: PropertyGenerator[Attribute] = new SimpleVariableGenerator()) = 
+    def apply[Attribute <: Variable](content: TraversableOnce[(String, Value)], generator: PropertyGenerator[Attribute]) =
     {
         val model = new Model(generator)
         content.foreach { case (name, value) => model(name) = value }
         model
-    }    
+    }
+    
+    /**
+      * Creates a new model with existing set of attributes.
+      * @param content The attribute name value pairs used for generating the model's attributes
+      * @return A generated model
+      */
+    def apply(content: TraversableOnce[(String, Value)]): Model[Variable] = apply(content, new SimpleVariableGenerator())
 }
 
 /**
  * This is a mutable implementation of the Model template
  * @author Mikko Hilpinen
  * @since 27.11.2016
- * @param Attribute The type of attribute stored within this model
+ * @tparam Attribute The type of attribute stored within this model
  * @param attributeGenerator The variable generator used for generating new values on this model
  */
-class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Attribute] = 
-        new SimpleVariableGenerator()) extends template.Model[Attribute]
+class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Attribute]) extends template.Model[Attribute]
 {
     // ATTRIBUTES    --------------
     
@@ -52,7 +63,7 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     /**
      * Updates the value of a single attribute within this model
      * @param attName The name of the updated attribute
-     * @value The value assigned to the attribute
+     * @param value The value assigned to the attribute
      */
     def update(attName: String, value: Value) = 
     {
@@ -60,6 +71,17 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
         if (existing.isDefined) existing.get.value = value else generateAttribute(attName, Some(value))
         Unit
     }
+    
+    /**
+     * Updates the value of a single attribute within this model
+     * @param property a name value pair that will be updated or added
+     */
+    def update(property: Property): Unit = update(property.name, property.value)
+    
+    /**
+     * Updates values of multiple attributes in this model
+     */
+    def update(data: template.Model[Property]): Unit = data.attributes.foreach(update)
     
     /**
      * Adds a new attribute to this model. If an attribute with the same name already exists, it 
@@ -88,8 +110,13 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      * @param generator The attribute generator used by the new model. Default is a simple constant 
      * generator that generates instances of Constant
      */
-    def immutableCopy[T <: Constant](generator: PropertyGenerator[T] = new SimpleConstantGenerator()) = 
+    def immutableCopy[T <: Constant](generator: PropertyGenerator[T]) =
         new immutable.Model(attributes.map { att => generator(att.name, Some(att.value)) }, generator)
+    
+    /**
+      * Creates an immutable version of this model by using the provided attribute generator
+      */
+    def immutableCopy(): immutable.Model[Constant] = immutableCopy(new SimpleConstantGenerator())
     
     protected def generateAttribute(attName: String, value: Option[Value]) = 
     {

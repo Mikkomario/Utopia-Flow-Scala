@@ -6,37 +6,18 @@ package utopia.flow.generic
  * @since 7.11.2016
  * @param cost The cost of this conversion (in some arbitrary relative units)
  */
-sealed abstract class ConversionReliability(val cost: Int)
+sealed abstract class ConversionReliability(val cost: Int) extends Ordered[ConversionReliability]
 {
     // OPERATORS    -----------
-    
-    /**
-     * Checks whether this conversion reliability is higher (better) than the other
-     * @param other The reliability this one is compared against
-     * @return Whether this reliability is higher than the other
-     */
-    def > (other: ConversionReliability) = cost < other.cost
-    
-    /**
-     * Checks whether this conversion reliability is lower (worse) than the other
-     * @param other The reliability this one is compared against
-     * @return Whether this reliability is lower than the other
-     */
-    def < (other: ConversionReliability) = cost > other.cost
-    
-    /**
-     * Checks whether this conversion reliability is higher than or equal to the other
-     * @param other The reliability this one is compared against
-     * @return Whether this reliability is higher than or equal to the other
-     */
-    def >= (other: ConversionReliability) = !(this < other)
-    
-    /**
-     * Checks whether this conversion reliability is lower than or equal to the other
-     * @param other The reliability this one is compared against
-     * @return Whether this reliability is lower than or equal to the other
-     */
-    def <= (other: ConversionReliability) = !(this > other)
+	
+	override def compare(that: ConversionReliability) = that.cost - this.cost
+	
+	
+	// OTHER	----------------
+	
+	def min(other: ConversionReliability) = if (this <= other) this else other
+	
+	def max(other: ConversionReliability) = if (this >= other) this else other
 }
 
 object ConversionReliability
@@ -81,6 +62,7 @@ object ConversionReliability
      * @param second The second reliability
      * @return The smallest / weakest of the two reliabilities
      */
+	@deprecated("Please use instance level min / max", "v1.4")
     def min(first: ConversionReliability, second: ConversionReliability) = if (first <= second) first else second
     
     /**
@@ -89,5 +71,6 @@ object ConversionReliability
      * @param second The second reliability
      * @return The largest / strongest of the two reliabilities
      */
+	@deprecated("Please use instance level min / max", "v1.4")
     def max(first: ConversionReliability, second: ConversionReliability) = if (first >= second) first else second
 }

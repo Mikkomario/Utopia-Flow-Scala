@@ -7,8 +7,9 @@ import utopia.flow.generic.DoubleType
 import utopia.flow.generic.LongType
 import utopia.flow.generic.IntType
 import utopia.flow.datastructure.immutable.Model
-
 import utopia.flow.generic.ValueConversions._
+
+import scala.collection.immutable.VectorBuilder
 import scala.util.Try
 
 /**
@@ -37,7 +38,7 @@ object JSONReader
         }
         catch 
         {
-            case e: InvalidFormatException => None
+            case _: InvalidFormatException => None
         }
     }
     
@@ -66,7 +67,7 @@ object JSONReader
         catch 
         {
             // Exception is ignored, parsing is stopped
-            case e: InvalidFormatException => Unit
+            case _: InvalidFormatException => Unit
         }
         
         objects.toVector
@@ -80,7 +81,7 @@ object JSONReader
     
     private def parseObject(json: String, objStartIndex: Int) = 
     {   
-        val properties = new ListBuffer[Constant]()
+        val properties = new VectorBuilder[Constant]()
         var index = objStartIndex
         
         // Parses values until it stops at object end marker
@@ -91,19 +92,18 @@ object JSONReader
             
             nextEvent._1 match 
             {
-                case Quote => 
-                {
+                case Quote =>
                     // Parses the property
                     val parsedProperty = parseProperty(json, nextEvent._2)
                     index = parsedProperty._2
                     properties += parsedProperty._1 // NB: Previously checked if value was empty
-                }
+                    
                 // Doesn't parse the property and doesn't continue the loop
                 case _ => index = nextEvent._2
             }
         }
         
-        Tuple2(new Model(properties), index)
+        Model.withConstants(properties.result()) -> index
     }
     
     private def parseProperty(json: String, propertyStartIndex: Int) = 
@@ -118,10 +118,10 @@ object JSONReader
         val assignment = next(json, nameEndIndex + 1, Assignment)
         
         // Parses the property value
-        val parsedValue = parsePropertyValue(json, assignment._2 + 1)
+        val (parsedValue, nextIndex) = parsePropertyValue(json, assignment._2 + 1)
         
         // Returns the parsed property + the end marker index
-        Tuple2(new Constant(propertyName, parsedValue._1), parsedValue._2)
+        new Constant(propertyName, parsedValue) -> nextIndex
     }
     
     // Ends at the next separator or container (array or object) end. Never inside content.
@@ -129,24 +129,21 @@ object JSONReader
     {
         // Finds either a) start of object, b) start of array, 
         // c) end marker (separator, end object, end array)
-        val nextEvent = findNext(json, propertyStartIndex, ObjectStart, ArrayStart, ObjectEnd, 
-                ArrayEnd, Separator);
+        val nextEvent = findNext(json, propertyStartIndex, ObjectStart, ArrayStart, ObjectEnd, ArrayEnd, Separator)
         
         if (nextEvent.isDefined)
         {
             nextEvent.get._1 match 
             {
                 // case object: Parses the object and wraps it into a value
-                case ObjectStart => 
-                {
+                case ObjectStart =>
                     val nextObject = parseObject(json, nextEvent.get._2)
                     (nextObject._1, nextObject._2 + 1) // +1 to escape content range
-                }
-                case ArrayStart => 
-                {
+                
+                case ArrayStart =>
                     val nextArray = parseArray(json, nextEvent.get._2)
                     (nextArray._1, nextArray._2 + 1) // +1 to escape content range
-                }
+                
                 case _ => (parseSimpleValue(json.substring(propertyStartIndex, nextEvent.get._2)), 
                         nextEvent.get._2)
             }
@@ -163,16 +160,15 @@ object JSONReader
     {
         // Checks first if the array is empty
         val firstArrayEndIndex = findNext(json, arrayStartIndex, ArrayEnd).map(_._2)
-        val onlySpacesInArray = firstArrayEndIndex.exists(endIndex => 
-            json.substring(arrayStartIndex + 1, endIndex).trim().isEmpty());
+        val onlySpacesInArray = firstArrayEndIndex.exists(endIndex => json.substring(arrayStartIndex + 1, endIndex).trim().isEmpty)
         
         if (onlySpacesInArray)
         {
-            Tuple2(Vector(), firstArrayEndIndex.get)
+            Vector() -> firstArrayEndIndex.get
         }
         else
         {
-            val buffer = new ListBuffer[Value]()
+            val buffer = new VectorBuilder[Value]()
             var index = arrayStartIndex
             
             // Parses values until it stops at array end marker
@@ -183,7 +179,7 @@ object JSONReader
                 buffer += parsedValue._1 // NB: Previously checked that value is defined
             }
             
-            Tuple2(buffer.toVector, index)
+            buffer.result() -> index
         }
     }
     
@@ -193,7 +189,7 @@ object JSONReader
         
         // Values may be empty in some special cases
         // also, 'null' (without quotations) is a synonym for empty value
-        if (trimmed.isEmpty() || trimmed.equalsIgnoreCase("null"))
+        if (trimmed.isEmpty || trimmed.equalsIgnoreCase("null"))
         {
             Value.empty()
         }
@@ -244,9 +240,7 @@ object JSONReader
     private def findNext(json: String, startIndex: Int, events: JSONReadEvent*) = 
     {
         if (events.isEmpty)
-        {
             None
-        }
         else
         {
             var best: Option[JSONReadEvent] = None
@@ -262,7 +256,7 @@ object JSONReader
                 }
             }
             
-            if (best.isDefined) Some(Tuple2(best.get, bestIndex.get)) else None
+            if (best.isDefined) Some(best.get -> bestIndex.get) else None
         }
     }
     

@@ -2,10 +2,10 @@ package utopia.flow.datastructure.immutable
 
 import utopia.flow.datastructure.template
 import utopia.flow.util.Equatable
-import utopia.flow.generic.PropertyGenerator
 import utopia.flow.generic.SimpleConstantGenerator
 import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.mutable
+import utopia.flow.datastructure.mutable.Variable
 import utopia.flow.generic.SimpleVariableGenerator
 import utopia.flow.generic.ValueConvertible
 import utopia.flow.generic.ModelType
@@ -17,21 +17,56 @@ object Model
     /**
      * An empty model with a simple constant generator
      */
-    val empty = Model(Vector())
+    val empty = Model.withConstants(Vector())
     
     
     // OPERATORS    --------------------
     
     /**
+      * Creates a new model that uses constants and a basic attribute generator
+      * @param constants The constants for the model
+      * @return A new model
+      */
+    def withConstants(constants: Traversable[Constant]) = new Model(constants, new SimpleConstantGenerator())
+    
+    /**
      * Creates a new model with input format that is more friendly to literals
      * @param content The attribute name value pairs used for generating the model's attributes
-     * @param generator The attribute generator that will generate the attributes 
-     * (simple constant generator used by default)
+     * @param generator The attribute generator that will generate the attributes
      * @return The newly generated model
      */
     def apply[Attribute <: Constant](content: Traversable[(String, Value)], 
-            generator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) = 
+            generator: PropertyGenerator[Attribute]) =
             new Model(content.map { case (name, value) => generator(name, Some(value)) }, generator)
+    
+    /**
+      * Creates a new model
+      * @param content A list of name-value pairs that will be used as attributes
+      * @return A new model with specified attributes
+      */
+    def apply(content: Traversable[(String, Value)]): Model[Constant] = apply(content, new SimpleConstantGenerator())
+    
+    /**
+      * @param attName Attribute name
+      * @param value Attribute value
+      * @return Creates a new model with only single attribute
+      */
+    def apply(attName: String, value: Value): Model[Constant] = apply(Vector(attName -> value))
+    
+    /**
+      * @param attName Attribute name
+      * @param value Attribute value (will be converted)
+      * @return Creates a new model with only single attribute
+      */
+    def apply(attName: String, value: ValueConvertible): Model[Constant] = apply(attName, value.toValue)
+    
+    /**
+      * @param first First name-value pair
+      * @param second Second name-value pair
+      * @param more More name-value pairs
+      * @return A new model with all specified name-value pairs as attributes
+      */
+    def apply(first: (String, Value), second: (String, Value), more: (String, Value)*): Model[Constant] = apply(Vector(first, second) ++ more)
     
     /**
      * Converts a map of valueConvertible elements into a model format. The generator the model 
@@ -42,8 +77,16 @@ object Model
      * @return The newly generated model
      */
     def fromMap[Attribute <: Constant, C1](content: Map[String, C1], 
-            generator: PropertyGenerator[Attribute] = new SimpleConstantGenerator())(implicit f: C1 => ValueConvertible) = 
+            generator: PropertyGenerator[Attribute])(implicit f: C1 => ValueConvertible) =
             new Model(content.map { case (name, value) => generator(name, Some(value.toValue)) }, generator)
+    
+    /**
+      * Converts a map of valueConvertible elements into a model format.
+      * @param content The map that is converted to model attributes
+      * @return The newly generated model
+      */
+    def fromMap[C1](content: Map[String, C1])(implicit f: C1 => ValueConvertible): Model[Constant] =
+        fromMap(content, new SimpleConstantGenerator())
 }
 
 /**
@@ -52,9 +95,8 @@ object Model
  * @author Mikko Hilpinen
  * @since 29.11.2016
  */
-class Model[+Attribute <: Constant](content: Traversable[Attribute], 
-        val attributeGenerator: PropertyGenerator[Attribute] = new SimpleConstantGenerator()) extends 
-        template.Model[Attribute] with Equatable with ValueConvertible
+class Model[+Attribute <: Constant](content: Traversable[Attribute], val attributeGenerator: PropertyGenerator[Attribute])
+    extends template.Model[Attribute] with Equatable with ValueConvertible
 {
     // ATTRIBUTES    --------------
     
@@ -89,8 +131,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model with the provided attributes added
      */
-    def ++[B >: Attribute <: Constant](attributes: Traversable[B]) = 
-            withAttributes(this.attributes ++ attributes);
+    def ++[B >: Attribute <: Constant](attributes: TraversableOnce[B]) = withAttributes(this.attributes ++ attributes)
     
     /**
      * Creates a new model that contains the attributes from both of the models. The new model 
@@ -101,8 +142,7 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model without the provided attribute
      */
-    def -[B >: Attribute <: Constant](attribute: B) = new Model(attributes.filterNot { 
-            _ == attribute}, attributeGenerator)
+    def -[B >: Attribute <: Constant](attribute: B) = new Model(attributes.filterNot { _ == attribute }, attributeGenerator)
     
     /**
      * Creates a new model without an attribute with the provided name (case-insensitive)
@@ -127,14 +167,14 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
     /**
      * Creates a new model with the same generator but different attributes
      */
-    def withAttributes[B >: Attribute <: Constant](attributes: Traversable[B]) = 
-            new Model[B](attributes, attributeGenerator);
+    def withAttributes[B >: Attribute <: Constant](attributes: Traversable[B]) =
+            new Model[B](attributes, attributeGenerator)
     
     /**
      * Creates a new model with the same attributes but a different attribute generator
      */
     def withGenerator[B >: Attribute <: Constant](generator: PropertyGenerator[B]) = 
-            new Model[B](attributes, generator);
+            new Model[B](attributes, generator)
     
     /**
      * Creates a copy of this model with filtered attributes
@@ -152,11 +192,16 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute],
      * @param generator The property generator used for creating the properties of the new model
      * @return A mutable copy of this model using the provided property generator
      */
-    def mutableCopy[T <: mutable.Variable](generator: PropertyGenerator[T] = new SimpleVariableGenerator()) = 
+    def mutableCopy[T <: mutable.Variable](generator: PropertyGenerator[T]) =
     {
         val copy = new mutable.Model(generator)
         attributes.foreach { att => copy(att.name) = att.value }
         
         copy
     }
+    
+    /**
+      * @return A mutable copy of this model
+      */
+    def mutableCopy(): mutable.Model[Variable] = mutableCopy(new SimpleVariableGenerator())
 }

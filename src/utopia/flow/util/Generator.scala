@@ -13,7 +13,7 @@ object Generator
 * @author Mikko Hilpinen
 * @since 12.5.2018
 **/
-trait Generator[T]
+trait Generator[+T]
 {
     // ABSTRACT    ------------------
     
@@ -28,7 +28,7 @@ trait Generator[T]
 	/**
 	 *  An infinite iterator for this generator
 	 */
-	def iterator = Iterator.continually(next)
+	def iterator = Iterator.continually(next())
 }
 
 private class SimpleGenerator[T](startValue: T, val increase: T => T) extends Generator[T]

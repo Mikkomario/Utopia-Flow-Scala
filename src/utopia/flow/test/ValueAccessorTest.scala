@@ -1,6 +1,5 @@
 package utopia.flow.test
 
-import utopia.flow.datastructure.immutable.Value
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.generic.DataType
@@ -22,11 +21,11 @@ object ValueAccessorTest extends App
     val prop3 = new Constant("boolean", b)
     val prop4 = new Constant("vector", v)
     
-    val model1 = new Model(Vector(prop1, prop2, prop3))
+    val model1 = Model.withConstants(Vector(prop1, prop2, prop3))
     
     val prop5 = new Constant("model", model1)
     
-    val model2 = new Model(Vector(prop4, prop5))
+    val model2 = Model.withConstants(Vector(prop4, prop5))
     
     // Prints the model for reference
     println(model2)

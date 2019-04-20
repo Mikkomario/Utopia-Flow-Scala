@@ -20,6 +20,8 @@ class Counter(private val firstValue: Int, private val increment: Int = 1) exten
         val result = nextNumber
         if (nextNumber > Int.MaxValue - increment)
             nextNumber = firstValue
+        else
+            nextNumber += 1
             
         result
     }
