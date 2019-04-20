@@ -48,6 +48,11 @@ trait TreeLike[A, NodeType <: TreeLike[A, NodeType]] extends Node[A]
      */
     def depth: Int = children.foldLeft(0)((maxDepth, child) => math.max(maxDepth, 1 + child.depth))
     
+    /**
+      * @return The leaf nodes anywhere <b>under</b> this node. Leaves are nodes that do not have any children
+      */
+    def leaves: Vector[NodeType] = children.flatMap { c => if (c.isEmpty) Vector(c) else c.leaves }
+    
     
     // IMPLEMENTED  ----------------
     
