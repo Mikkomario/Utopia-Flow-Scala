@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="utopia-flow">
+    <output-path>$PROJECT_DIR$/out/artifacts/utopia_flow</output-path>
+    <root id="archive" name="utopia-flow.jar">
+      <element id="module-output" name="Utopia-Flow-Scala" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
