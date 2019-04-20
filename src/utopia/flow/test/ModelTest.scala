@@ -13,9 +13,6 @@ object ModelTest extends App
 {
     DataType.setup()
     
-    //println(ConversionHandler)
-    //println(DataType)
-    
     // Tests variable creation
     val generator2 = new SimpleVariableGenerator(0)
     
