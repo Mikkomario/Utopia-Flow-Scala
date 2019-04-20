@@ -2,6 +2,8 @@ package utopia.flow.datastructure.template
 
 import utopia.flow.util.CollectionExtensions._
 
+import scala.collection.immutable.VectorBuilder
+
 /**
  * Graph nodes contain content and are connected to other graph nodes via edges
  * @author Mikko Hilpinen
@@ -38,6 +40,16 @@ trait GraphNode[N, E, GNode <: GraphNode[N, E, GNode, Edge], Edge <: GraphEdge[N
      */
     def endNodes = leavingEdges.map { _.end }
 	
+	/**
+	  * @return All nodes accessible from this node, including this node
+	  */
+	def allNodes =
+	{
+		val buffer = new VectorBuilder[GNode]()
+		foreach(buffer.+=)
+		buffer.result().toSet
+	}
+	
 	
 	// OPERATORS	-----------------
 	
@@ -65,6 +77,15 @@ trait GraphNode[N, E, GNode <: GraphNode[N, E, GNode, Edge], Edge <: GraphEdge[N
 			current
 		}
 	}
+	
+	/**
+	  * Traverses a deep path that consists of edges between nodes
+	  * @param first The first edge to traverse
+	  * @param second The second edge to traverse
+	  * @param more More edges
+	  * @return The node(s) at the end of the path
+	  */
+	def /(first: E, second: E, more: E*): Set[GNode] = this / (Vector(first, second) ++ more)
     
     
     // OTHER METHODS    ------------
