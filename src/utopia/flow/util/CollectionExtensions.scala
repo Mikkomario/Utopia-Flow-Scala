@@ -94,6 +94,31 @@ object CollectionExtensions
         def findMap[B](map: A => Option[B]) = t.view.map(map).find { _.isDefined }.flatten
     }
     
+    implicit class RichMap[K, V](val m: Map[K, V]) extends AnyVal
+    {
+        /**
+          * Merges this map with another map. If value is present only in one map, it is preserved as is.
+          * @param another Another map
+          * @param merge A merge function used when both maps contain a value
+          * @tparam V2 The resulting value type
+          * @return A map with merged values
+          */
+        def mergedWith[V2 >: V](another: Map[K, V2], merge: (V, V2) => V2) =
+        {
+            val myKeys = m.keySet
+            val theirKeys = another.keySet
+            val onlyInMe = myKeys.diff(theirKeys)
+            val onlyInThem = theirKeys.diff(myKeys)
+            val inBoth = myKeys.intersect(theirKeys)
+            
+            val myPart = onlyInMe.map { k => k -> m(k) }.toMap
+            val theirPart = onlyInThem.map { k => k -> another(k) }.toMap
+            val ourPart = inBoth.map { k => k -> merge(m(k), another(k)) }.toMap
+            
+            myPart ++ theirPart ++ ourPart
+        }
+    }
+    
     /**
      * This implicit class is used for extending collection map conversion
      */
