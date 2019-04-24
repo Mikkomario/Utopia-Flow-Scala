@@ -54,6 +54,13 @@ Available Extensions
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
+v1.4.1  ------------------------------------
+
+    New Features
+    ------------
+
+        Map merge feature added to CollectionExtensions
+
 
 v1.4  --------------------------------------
 
