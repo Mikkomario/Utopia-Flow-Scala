@@ -92,6 +92,34 @@ object CollectionExtensions
           * @return The first item that was mapped to Some. None if all items were mapped to None.
           */
         def findMap[B](map: A => Option[B]) = t.view.map(map).find { _.isDefined }.flatten
+    
+        /**
+          * Finds the maximum value in this traversable
+          * @param cmp Ordering (implicit)
+          * @tparam B Ordering type
+          * @return Maximum item or None if this traversable was empty
+          */
+        def maxOption[B >: A](implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.max(cmp))
+        }
+        
+        /**
+          * Finds the minimum value in this traversable
+          * @param cmp Ordering (implicit)
+          * @tparam B Ordering type
+          * @return Minimum item or None if this traversable was empty
+          */
+        def minOption[B >: A](implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.min(cmp))
+        }
     }
     
     implicit class RichMap[K, V](val m: Map[K, V]) extends AnyVal
