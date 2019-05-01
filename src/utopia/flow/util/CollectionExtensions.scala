@@ -46,6 +46,21 @@ object CollectionExtensions
         }
     
         /**
+          * Finds the index of the specified item
+          * @param item Searched item
+          * @tparam B Item type
+          * @return The index of specified item or none if no such index was found
+          */
+        def optionIndexOf[B >: A](item: B) =
+        {
+            val result = seq.indexOf(item)
+            if (result >= 0)
+                Some(result)
+            else
+                None
+        }
+    
+        /**
           * Filters a seq so that only distinct values remain. Uses a special function to determine equality
           * @param equals A function that determines whether two values are equal
           * @param cbf A canbuildfrom (implicit) to build the final collection
