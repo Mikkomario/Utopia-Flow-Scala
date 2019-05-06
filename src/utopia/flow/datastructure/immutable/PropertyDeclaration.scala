@@ -1,22 +1,68 @@
 package utopia.flow.datastructure.immutable
 
 import utopia.flow.generic.DataType
-import utopia.flow.util.Equatable
+
+object PropertyDeclaration
+{
+    /**
+      * Creates a new declaration
+      * @param name Property name
+      * @param dataType Property data type (primary)
+      * @param defaultValue The default value set for the property (default = None)
+      * @return A new property declaration
+      */
+    def apply(name: String, dataType: DataType, defaultValue: Option[Value]): PropertyDeclaration =
+        PropertyDeclarationImpl(name, dataType, defaultValue)
+    
+    /**
+      * Creates a new declaration
+      * @param name Property name
+      * @param dataType Property data type (primary)
+      * @param defaultValue The default value set for the property
+      * @return A new property declaration
+      */
+    def apply(name: String, dataType: DataType, defaultValue: Value): PropertyDeclaration = apply(name, dataType,
+        Some(defaultValue))
+    
+    /**
+      * Creates a new declaration
+      * @param name Property name
+      * @param dataType Property data type (primary)
+      * @return A new property declaration
+      */
+    def apply(name: String, dataType: DataType): PropertyDeclaration = apply(name, dataType, None)
+    
+    /**
+      * Creates a new declaration
+      * @param name Property name
+      * @param defaultValue The default value set for the property
+      * @return A new property declaration
+      */
+    def apply(name: String, defaultValue: Value): PropertyDeclaration = apply(name, defaultValue.dataType, defaultValue)
+}
 
 /**
  * Property declarations are used for defining and instantiating model properties
  * @author Mikko Hilpinen
  * @since 1.12.2016
  */
-class PropertyDeclaration(val name: String, val dataType: DataType, 
-        val defaultValue: Option[Value] = None) extends Equatable
+trait PropertyDeclaration extends Equals
 {
-    // COMP. PROPERTIES    ------------
+    // ABSTRACT -----------------------
     
-    def properties: Vector[Any] = Vector(name, dataType, defaultValue)
-    
-    
-    // CONSTRUCTOR OVERLOAD    --------
-    
-    def this(name: String, defaultValue: Value) = this(name, defaultValue.dataType, Some(defaultValue))
+    /**
+      * @return The name for this property
+      */
+    def name: String
+    /**
+      * @return Primary data type for the value in this property
+      */
+    def dataType: DataType
+    /**
+      * @return A default value for this property
+      */
+    def defaultValue: Option[Value]
 }
+
+private case class PropertyDeclarationImpl(override val name: String, override val dataType: DataType,
+                                           override val defaultValue: Option[Value]) extends PropertyDeclaration
