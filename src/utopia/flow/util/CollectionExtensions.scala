@@ -1,6 +1,6 @@
 package utopia.flow.util
 
-import collection.{SeqLike, mutable}
+import collection.{SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
 import scala.util.Try
 
@@ -134,6 +134,21 @@ object CollectionExtensions
                 None
             else
                 Some(t.min(cmp))
+        }
+    }
+    
+    implicit class RichTraversableLike[A, Repr](val t: TraversableLike[A, Repr]) extends AnyVal
+    {
+        /**
+          * Divides the items in this traversable into two groups, based on boolean result
+          * @param f A function that separates the items
+          * @param cbf An implicit can build from
+          * @return The 'false' group, followed by the 'true' group
+          */
+        def divideBy(f: A => Boolean)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            val groups = t.groupBy(f)
+            groups.getOrElse(false, cbf.apply().result()) -> groups.getOrElse(true, cbf.apply().result())
         }
     }
     

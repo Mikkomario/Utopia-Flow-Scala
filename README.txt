@@ -61,6 +61,8 @@ v1.4.1  ------------------------------------
 
         Map merge feature added to CollectionExtensions
 
+        divideBy added to CollectionExtensions
+
 
 v1.4  --------------------------------------
 
