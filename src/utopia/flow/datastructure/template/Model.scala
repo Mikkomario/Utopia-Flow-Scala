@@ -62,7 +62,7 @@ trait Model[+Attribute <: Property] extends JSONConvertible
      * @param attName The name of the attribute from which the value is taken
      * @return The value of the attribute with the provided name
      */
-    def apply(attName: String) = get(attName).value
+    def apply(attName: String): Value = get(attName).value
     
     
     // OTHER METHODS    -----------
