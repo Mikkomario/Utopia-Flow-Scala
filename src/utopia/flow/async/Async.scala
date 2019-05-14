@@ -34,7 +34,7 @@ object Async
 	/**
 	 * Repeats a background process forever
 	 * @param interval the repeat interval
-	 * @operation the operation that will be repeated
+	 * @param operation the operation that will be repeated
 	 */
 	def repeatForever(interval: Duration, operation: () => Unit)(implicit ec: ExecutionContext) = 
 	{
