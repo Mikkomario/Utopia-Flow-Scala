@@ -59,9 +59,11 @@ v1.4.1  ------------------------------------
     New Features
     ------------
 
-        Map merge feature added to CollectionExtensions
+        CollectionExtensions updated
+            - Map merge feature added
+            - divideBy added
 
-        divideBy added to CollectionExtensions
+        replace and findAndReplace added to immutable TreeLike
 
 
 v1.4  --------------------------------------
