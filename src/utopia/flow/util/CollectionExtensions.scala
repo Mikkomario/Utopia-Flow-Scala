@@ -1,6 +1,6 @@
 package utopia.flow.util
 
-import collection.{SeqLike, TraversableLike, mutable}
+import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
 import scala.util.Try
 
@@ -152,6 +152,22 @@ object CollectionExtensions
         }
     }
     
+    implicit class RichIterableLike[A, Repr](val t: IterableLike[A, Repr]) extends AnyVal
+    {
+        /**
+          * Iterates through the items in this iterable along with another iterable's items. Will stop when either
+          * iterable runs out of items
+          * @param another Another iterable
+          * @param f A function that handles the items
+          * @param bf A can build from (implicit)
+          * @tparam B The type of another iterable's items
+          * @tparam U Arbitrary result type
+          */
+        def foreachWith[B, U](another: GenIterable[B])(f: (A, B) => U)
+                                      (implicit bf: CanBuildFrom[Repr, (A, B), Traversable[(A, B)]]) =
+            t.zip(another).foreach { p => f(p._1, p._2) }
+    }
+    
     implicit class RichMap[K, V](val m: Map[K, V]) extends AnyVal
     {
         /**
@@ -195,7 +211,7 @@ object CollectionExtensions
     /**
      * This extension allows tuple lists to be transformed into multi maps directly
      */
-    implicit class RichTupleList[K, V](val list: TraversableOnce[Tuple2[K, V]]) extends AnyVal
+    implicit class RichTupleList[K, V](val list: TraversableOnce[(K, V)]) extends AnyVal
     {
         def toMultiMap[Values]()(implicit cbfv: CanBuildFrom[Nothing, V, Values]): Map[K, Values] = 
         {

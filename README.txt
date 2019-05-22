@@ -62,6 +62,7 @@ v1.4.1  ------------------------------------
         CollectionExtensions updated
             - Map merge feature added
             - divideBy added
+            - foreachWith added for simultaneous iterations
 
         Trees updated
             - replace and findAndReplace added to immutable TreeLike
