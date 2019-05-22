@@ -53,6 +53,11 @@ trait TreeLike[A, NodeType <: TreeLike[A, NodeType]] extends Node[A]
       */
     def leaves: Vector[NodeType] = children.flatMap { c => if (c.isEmpty) Vector(c) else c.leaves }
     
+    /**
+      * @return All content within this node and the nodes under
+      */
+    def allContent = content +: nodesBelow.map { _.content }
+    
     
     // IMPLEMENTED  ----------------
     

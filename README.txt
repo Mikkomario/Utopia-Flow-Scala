@@ -63,7 +63,9 @@ v1.4.1  ------------------------------------
             - Map merge feature added
             - divideBy added
 
-        replace and findAndReplace added to immutable TreeLike
+        Trees updated
+            - replace and findAndReplace added to immutable TreeLike
+            - allContent added to TreeLike
 
 
 v1.4  --------------------------------------
