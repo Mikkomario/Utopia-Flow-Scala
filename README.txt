@@ -67,6 +67,19 @@ v1.4.1  ------------------------------------
             - replace and findAndReplace added to immutable TreeLike
             - allContent added to TreeLike
 
+        AsyncExtensions updated
+            - Traversable items containing futures can now be treated like a future themselves with
+            waitFor, waitForSuccesses, future and futureSuccesses
+
+        ActionQueue added
+            - Allows sequential completion of multiple operations
+            - Variable width allows control over how many actions are performed simultaneously
+
+    Bugfixes
+    -----------
+
+        Major bugfix in ThreadPool, which didn't queue actions correctly
+
 
 v1.4  --------------------------------------
 

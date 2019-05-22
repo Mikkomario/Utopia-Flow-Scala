@@ -162,7 +162,7 @@ private class WorkerThread(name: String, val maxIdleDuration: Duration, initialT
             waitingTask.lock
             {
                 opt =>
-                    if (opt.exists { _.isCompleted })
+                    if (opt.exists { !_.isCompleted })
                     {
                         opt.get.success(task)
                         true
