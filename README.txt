@@ -76,6 +76,9 @@ v1.4.1  ------------------------------------
             - Allows sequential completion of multiple operations
             - Variable width allows control over how many actions are performed simultaneously
 
+        Pointers with events added + property change events added to mutable models
+            - Now you can listen to changes within a model or a pointer by adding a listener to it
+
     Bugfixes
     -----------
 

@@ -138,6 +138,18 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     // OTHER METHODS    -----------
     
     /**
+      * Adds a new listener to this model
+      * @param listener A listener that will receive property changed events
+      */
+    def addListener(listener: PropertyChangeListener) = listeners :+= listener
+    
+    /**
+      * removes a listener from this model
+      * @param listener A listener that will no longer receive property changed events from this model
+      */
+    def removeListener(listener: Any) = listeners = listeners.filterNot { _ == listener }
+    
+    /**
      * Creates an immutable version of this model by using the provided attribute generator
      * @param generator The attribute generator used by the new model. Default is a simple constant 
      * generator that generates instances of Constant
