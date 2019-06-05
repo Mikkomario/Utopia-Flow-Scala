@@ -1,9 +1,10 @@
 package utopia.flow.async
 
-import java.time.Duration
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import utopia.flow.util.WaitUtils
+
+import scala.concurrent.duration.Duration
 
 /**
 * This object provides utility tools for asynchronous processes
@@ -20,7 +21,7 @@ object Async
      * @param operation the operation that will be performed
      * @return a future for the end of the repeat process
      */
-	def repeat(interval: Duration, checkContinue: () => Boolean, operation: () => Unit)(implicit ec: ExecutionContext) = Future 
+	def repeat(interval: Duration, checkContinue: () => Boolean, operation: () => Unit)(implicit ec: ExecutionContext) = Future
 	{
 	    val lock = new AnyRef()
 	    do

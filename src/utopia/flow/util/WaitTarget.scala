@@ -1,10 +1,9 @@
 package utopia.flow.util
 
 import utopia.flow.util.TimeExtensions._
-
-import java.time.Duration
 import java.time.Instant
-import scala.concurrent.duration
+
+import scala.concurrent.duration.Duration
 import scala.util.Try
 
 object WaitTarget
@@ -14,7 +13,7 @@ object WaitTarget
      */
     case object UntilNotified extends WaitTarget
     {
-        protected val targetTime = None
+        protected val targetTime = Left(Duration.Inf)
         val breaksOnNotify = true
         
         def breakable = this
@@ -25,7 +24,7 @@ object WaitTarget
      */
     case class WaitDuration(duration: Duration, breaksOnNotify: Boolean = true) extends WaitTarget
     {
-        protected val targetTime = Some(Left(duration))
+        protected val targetTime = Left(duration)
         
         def breakable: WaitDuration = if (breaksOnNotify) this else WaitDuration(duration)
     }
@@ -36,7 +35,7 @@ object WaitTarget
      */
     case class Until(time: Instant, breaksOnNotify: Boolean = true) extends WaitTarget
     {
-        protected val targetTime = Some(Right(time))
+        protected val targetTime = Right(time)
         
         def breakable: Until = if (breaksOnNotify) this else Until(time)
     }
@@ -52,7 +51,7 @@ sealed trait WaitTarget
 {
     // ABSTRACT    --------------
     
-    protected def targetTime: Option[Either[Duration, Instant]]
+    protected def targetTime: Either[Duration, Instant]
     
     /**
      * Whether waits will stop once this wait target is notified
@@ -70,7 +69,7 @@ sealed trait WaitTarget
     /**
      * Whether this wait target has a maximum duration
      */
-    def isInfinite = targetTime.isEmpty
+    def isInfinite = targetTime.left.exists { !_.isFinite() }
     
     /**
      * Whether this wait target only stops when the lock is notified
@@ -80,35 +79,40 @@ sealed trait WaitTarget
     /**
      * the duration of this target or None if this target had infinite duration
      */
-    def toFiniteDuration = targetTime.map
+    def toFiniteDuration = toDuration.finite
+    
+    /**
+     * The duration of this target. May be infinite
+     */
+    def toDuration: Duration = targetTime match
     {
         case Left(duration) => duration
         case Right(time) => time - Instant.now()
     }
     
     /**
-     * The duration of this target. May be infinite
-     */
-    def toDuration: duration.Duration = toFiniteDuration
-    
-    /**
      * @return the ending time of this target, after which no waiting is done
      */
-    def endTime = targetTime.map
+    def endTime = targetTime match
     {
-        case Left(duration) => Instant.now() + duration
-        case Right(time) => time
+        case Left(duration) => duration.finite.map { Instant.now() + _ }
+        case Right(time) => Some(time)
     }
     
     /**
      * Whether this wait target is specified by wait duration
      */
-    def durationIsSpecified = targetTime.exists { _.isLeft }
+    def durationIsSpecified = targetTime.isLeft
+    
+    /**
+      * @return Whether this wait target is specified by a finite wait duration
+      */
+    def finiteDurationIsSpecified = targetTime.left.exists { _.isFinite }
     
     /**
      * Whether this wait target is specified by end time
      */
-    def endTimeIsSpecified = targetTime.exists { _.isRight }
+    def endTimeIsSpecified = targetTime.isRight
     
     
     // OTHER    -----------------

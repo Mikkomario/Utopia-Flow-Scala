@@ -3,9 +3,10 @@ package utopia.flow.async
 import scala.concurrent.Promise
 import utopia.flow.util.WaitTarget
 import utopia.flow.util.WaitUtils
-import java.time.Duration
 import utopia.flow.util.WaitTarget.WaitDuration
+
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
 
 object Loop
 {

@@ -1,7 +1,6 @@
 package utopia.flow.test
 
-import java.time.Duration
-
+import utopia.flow.util.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 import utopia.flow.async.{ActionQueue, ThreadPool}
 import utopia.flow.util.WaitUtils
@@ -28,7 +27,7 @@ object ActionQueueTest extends App
 	val random = new Random()
 	val completionsBuffer = new VectorBuilder[Future[Unit]]()
 	
-	def task() = WaitUtils.wait(Duration.ofMillis(100), new AnyRef())
+	def task() = WaitUtils.wait(100.millis, new AnyRef())
 	
 	println("Starting tasks")
 	
@@ -37,7 +36,7 @@ object ActionQueueTest extends App
 	{
 		completionsBuffer += queue.push { task() }
 		generatedItems += 1
-		WaitUtils.wait(Duration.ofMillis(random.nextInt(10)), genLock)
+		WaitUtils.wait(random.nextInt(10).millis, genLock)
 	}
 	
 	// Checks the completions

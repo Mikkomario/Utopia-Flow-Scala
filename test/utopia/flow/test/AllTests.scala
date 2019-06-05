@@ -13,6 +13,7 @@ object AllTests extends App
 		test.main(Array())
 	}
 	
+	run(TimeNumberTest)
 	run(DataTypeTest)
 	run(CollectionTest)
 	run(CounterTest)

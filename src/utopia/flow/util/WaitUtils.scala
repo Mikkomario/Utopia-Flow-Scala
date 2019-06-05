@@ -4,7 +4,6 @@ import utopia.flow.util.TimeExtensions._
 
 import java.time.Instant
 import java.time.Duration
-import scala.concurrent.duration.FiniteDuration
 import utopia.flow.util.WaitTarget.WaitDuration
 import utopia.flow.util.WaitTarget.UntilNotified
 import utopia.flow.util.WaitTarget.Until
@@ -30,7 +29,7 @@ object WaitUtils
     /**
      * Waits for a certain amount of time (blocking), then releases the lock
      */
-    def wait(duration: FiniteDuration, lock: AnyRef): Unit = wait(WaitDuration(duration), lock)
+    def wait(duration: scala.concurrent.duration.Duration, lock: AnyRef): Unit = wait(WaitDuration(duration), lock)
     
     /**
      * Waits until the lock is notified

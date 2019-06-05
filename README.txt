@@ -46,7 +46,8 @@ Available Extensions
 
     utopia.flow.util.TimeExtensions
         - Functional additions to java.time classes
-        - Conversion between java.time.Duration and scala.concurrent.Duration
+        - Conversion between java.time.Duration and scala.concurrent.duration.Duration
+        - Easy creation of scala.concurrent.duration.FiniteDuration by using numeric extension
 
     utopia.flow.async.AsyncExtensions
         - Utility update to Future
@@ -54,7 +55,7 @@ Available Extensions
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
-v1.4.1  ------------------------------------
+v1.5  ------------------------------------
 
     New Features
     ------------
@@ -78,6 +79,14 @@ v1.4.1  ------------------------------------
 
         Pointers with events added + property change events added to mutable models
             - Now you can listen to changes within a model or a pointer by adding a listener to it
+
+        Easier duration creation added through importing TimeExtensions._
+            - You can now write 3.seconds, 5.millis etc.
+
+    Changes & Updates
+    -----------------
+
+        java.time.Duration usage changed to scala.concurrent.duration.Duration
 
     Bugfixes
     -----------
