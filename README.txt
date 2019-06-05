@@ -64,6 +64,7 @@ v1.5  ------------------------------------
             - Map merge feature added
             - divideBy added
             - foreachWith added for simultaneous iterations
+            - Repeating iterations added
 
         Trees updated
             - replace and findAndReplace added to immutable TreeLike

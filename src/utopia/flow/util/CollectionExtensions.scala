@@ -166,6 +166,12 @@ object CollectionExtensions
         def foreachWith[B, U](another: GenIterable[B])(f: (A, B) => U)
                                       (implicit bf: CanBuildFrom[Repr, (A, B), Traversable[(A, B)]]) =
             t.zip(another).foreach { p => f(p._1, p._2) }
+    
+        /**
+          * @return An iterator that keeps repeating over and over (iterator continues infinitely or until this
+          *         collection is empty)
+          */
+        def repeatingIterator(): Iterator[A] = new RepeatingIterator[A](t)
     }
     
     implicit class RichMap[K, V](val m: Map[K, V]) extends AnyVal
@@ -216,6 +222,31 @@ object CollectionExtensions
         def toMultiMap[Values]()(implicit cbfv: CanBuildFrom[Nothing, V, Values]): Map[K, Values] = 
         {
             new MultiMapConvertible(list).toMultiMap(_._1, _._2)
+        }
+    }
+    
+    private class RepeatingIterator[A](val c: IterableLike[A, _]) extends Iterator[A]
+    {
+        // ATTRIBUTES   -----------------
+        
+        private var currentIterator: Option[Iterator[A]] = None
+        
+        
+        // IMPLEMENTED  -----------------
+        
+        override def hasNext = iterator().hasNext
+    
+        override def next() = iterator().next()
+        
+        
+        // OTHER    -------------------
+        
+        private def iterator() =
+        {
+            if (currentIterator.forall { !_.hasNext } )
+                currentIterator = Some(c.iterator)
+    
+            currentIterator.get
         }
     }
 }
