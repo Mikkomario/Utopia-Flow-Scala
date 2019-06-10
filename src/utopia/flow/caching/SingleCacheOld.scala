@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
   * @since 7.6.2019, v1.5+
   * @tparam A The type of cached item
   */
-trait SingleCache[A]
+trait SingleCacheOld[A]
 {
 	// ATTRIBUTES	------------------
 	
