@@ -23,6 +23,7 @@ object AllTests extends App
 	run(ModelDeclarationTest)
 	run(ModelTest)
 	run(ModelConvertibleTest)
+	run(CacheTest)
 	run(JSONTest)
 	run(XmlTest)
 	run(VolatileTest)

@@ -30,6 +30,10 @@ Main Features
         - Loop and Breakable traits for looping, asynchronous operations, as well as support for shutdown hooks
         - WaitFor -simplification of Future waiting available through extension
 
+    Data Caching
+        - utopia.flow.caching package contains various tools for caching a single or multiple pieces of data either
+        temporarily or permanently, asynchronously or synchronously
+
 
 Usage Notes
 -----------
@@ -50,7 +54,7 @@ Available Extensions
         - Easy creation of scala.concurrent.duration.FiniteDuration by using numeric extension
 
     utopia.flow.async.AsyncExtensions
-        - Utility update to Future
+        - Utility updates to Future
 
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
@@ -73,6 +77,7 @@ v1.5  ------------------------------------
         AsyncExtensions updated
             - Traversable items containing futures can now be treated like a future themselves with
             waitFor, waitForSuccesses, future and futureSuccesses
+            - Additional support for Future[Try[...]]
 
         ActionQueue added
             - Allows sequential completion of multiple operations
@@ -83,6 +88,19 @@ v1.5  ------------------------------------
 
         Easier duration creation added through importing TimeExtensions._
             - You can now write 3.seconds, 5.millis etc.
+
+        Added classes for caching data
+            - Single caches for caching single items
+                - ClearableSingleCache for flushable caching
+                - ExpiringSingleCache for temporary caching
+                - SingleTryCache for caching with failures, where failed attempts will be cached only temporarily
+                - SingleAsyncCache for requesting data asynchronously
+            - Other caches for caching multiple items in key-value pairs
+                - Cache for very simple caching
+                - ExpiringCache for temporary caching
+                - TryCache for caching with error handling (including temporary option)
+                - AsyncCache for asynchronous caching (including temporary option)
+                - ReleasingCache for weak caching
 
     Changes & Updates
     -----------------

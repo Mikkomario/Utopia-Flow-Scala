@@ -1,6 +1,7 @@
 package utopia.flow.caching.multi
 
 import scala.collection.immutable.HashMap
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.ref.WeakReference
 
 object ReleasingCache
@@ -14,6 +15,17 @@ object ReleasingCache
 	  */
 	def apply[Key, Value <: AnyRef](cache: ExpiringCacheLike[Key, Value]): ReleasingCache[Key, Value] =
 		new ReleasingCacheImpl[Key, Value](cache)
+	
+	/**
+	  * Creates a new releasing cache
+	  * @param releaseAfterDuration The duration after which the resource is released
+	  * @param request A function for requesting resources
+	  * @tparam Key The type of key used in this cache
+	  * @tparam Value The type of cached value
+	  * @return A cache that strongly refers to the item for releaseAfterDuration and then weakly refers to the item
+	  */
+	def apply[Key, Value <: AnyRef](releaseAfterDuration: FiniteDuration)(request: Key => Value): ReleasingCache[Key, Value] =
+		apply(ExpiringCache.apply(releaseAfterDuration)(request))
 }
 
 /**
@@ -43,7 +55,7 @@ trait ReleasingCache[Key, Value <: AnyRef] extends CacheLike[Key, Value]
 	override def apply(key: Key) =
 	{
 		// Expires old values first
-		source.clearExpiredData()
+		releaseExpiredData()
 		
 		// Tries to use a cached or a weakly cached value
 		cached(key).getOrElse
@@ -54,6 +66,34 @@ trait ReleasingCache[Key, Value <: AnyRef] extends CacheLike[Key, Value]
 			newValue
 		}
 	}
+	
+	
+	// OTHER	------------------
+	
+	/**
+	  * Releases expired strong references
+	  */
+	def releaseExpiredData() = source.clearExpiredData()
+	
+	/**
+	  * Clears all strong references, expired or not
+	  */
+	def clearStrongReferences() = source.clear()
+	
+	/**
+	  * Clears all references, both strong and weak, expired and non-expired
+	  */
+	def clearAllReferences() =
+	{
+		clearStrongReferences()
+		weakRefs = HashMap()
+	}
+	
+	/**
+	  * @param key A key
+	  * @return Whether there is currently a strong reference to the specified key
+	  */
+	def isStronglyReferenced(key: Key) = source.isValueCached(key)
 }
 
 private class ReleasingCacheImpl[Key, Value <: AnyRef](protected val source: ExpiringCacheLike[Key, Value])

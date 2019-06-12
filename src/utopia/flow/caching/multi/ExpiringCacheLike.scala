@@ -35,4 +35,9 @@ trait ExpiringCacheLike[-Key, +Value] extends MultiCacheLike[Key, Value, Expirin
 	  * Clears all expired values from this cache
 	  */
 	def clearExpiredData() = currentCaches.foreach { _.clearIfExpired() }
+	
+	/**
+	  * Clears all values from this cache, expired or not
+	  */
+	def clear() = currentCaches.foreach { _.clear() }
 }

@@ -5,7 +5,7 @@ package utopia.flow.caching.single
   * @author Mikko Hilpinen
   * @since 10.6.2019, v1.5+
   */
-trait ExpiringSingleCacheLike[+A] extends SingleCacheLike[A]
+trait ExpiringSingleCacheLike[+A] extends ClearableSingleCacheLike[A]
 {
 	/**
 	  * @return Whether the currently held data has already expired

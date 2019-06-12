@@ -4,9 +4,10 @@ import java.time.Instant
 
 import utopia.flow.async.ThreadPool
 import utopia.flow.async.AsyncExtensions._
-import utopia.flow.caching.multi.{AsyncCache, Cache, ExpiringCache, TryCache}
+import utopia.flow.caching.multi.{AsyncCache, Cache, ExpiringCache, ReleasingCache, TryCache}
 import utopia.flow.util.TimeExtensions._
 import utopia.flow.caching.single.{ClearableSingleCache, ExpiringSingleCache, SingleAsyncCache, SingleTryCache}
+import utopia.flow.datastructure.mutable.Pointer
 import utopia.flow.util.WaitUtils
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -189,7 +190,46 @@ object CacheTest extends App
 	val result6 = asyncCache(3)
 	val result7 = asyncCache(-3)
 	
-	// TODO: Continue testing
+	assert(asyncCache.isValueCached(3))
+	assert(asyncCache.isValueCached(-3))
+	assert(result6.waitForResult().isSuccess)
+	assert(result7.waitForResult().isFailure)
+	assert(cacheRequests == 2)
+	
+	WaitUtils.wait(failureTime, waitLock)
+	
+	assert(asyncCache.isValueCached(3))
+	assert(!asyncCache.isValueCached(-3))
+	assert(asyncCache(3).isCompleted)
+	assert(!asyncCache(-3).isCompleted)
+	assert(asyncCache.isValueCached(-3))
+	
+	WaitUtils.wait(asyncRequestTime, waitLock)
+	
+	assert(asyncCache.isValueCached(3))
+	assert(asyncCache.isValueCached(-3))
+	assert(asyncCache(-3).isCompleted)
+	assert(cacheRequests == 3)
+	
+	// Releasing cache
+	cacheRequests = 0
+	val releasing = ReleasingCache[Int, Pointer[Int]](failureTime) { i => cacheRequests += 1; Pointer(i + cacheRequests) }
+	
+	val result8 = releasing(1)
+	releasing(2)
+	
+	assert(!releasing.isValueCached(0))
+	assert(releasing.isValueCached(1))
+	assert(releasing.isValueCached(2))
+	assert(releasing.isStronglyReferenced(1))
+	assert(releasing.isStronglyReferenced(2))
+	
+	WaitUtils.wait(failureTime * 1.1, waitLock)
+	releasing.releaseExpiredData()
+	
+	assert(!releasing.isStronglyReferenced(1))
+	assert(!releasing.isStronglyReferenced(2))
+	assert(releasing.isValueCached(1))
 	
 	println("Success!")
 }

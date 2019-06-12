@@ -72,6 +72,8 @@ trait ExpiringSingleCache[+A] extends ExpiringSingleCacheLike[A]
 	override def cached = if (isDataExpired) None else cache.cached
 	
 	def clearIfExpired() = if (isDataExpired) cache.clear()
+	
+	override def clear() = cache.clear()
 }
 
 private class ExpiringSingleCacheImpl[+A](protected val cacheDuration: FiniteDuration,
