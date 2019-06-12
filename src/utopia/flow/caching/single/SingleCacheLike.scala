@@ -1,4 +1,4 @@
-package utopia.flow.caching
+package utopia.flow.caching.single
 
 /**
   * Single cache -like items cache values when first requested

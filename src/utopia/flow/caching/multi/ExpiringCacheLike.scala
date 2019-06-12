@@ -1,11 +1,13 @@
-package utopia.flow.caching
+package utopia.flow.caching.multi
+
+import utopia.flow.caching.single.ExpiringSingleCacheLike
 
 /**
   * This cache holds values which expire after a while
   * @author Mikko Hilpinen
   * @since 10.6.2019, v1.5+
   */
-trait ExpiringCacheLike[-Key, +Value] extends CacheLike[Key, Value]
+trait ExpiringCacheLike[-Key, +Value] extends MultiCacheLike[Key, Value, ExpiringSingleCacheLike[Value]]
 {
 	// ABSTRACT	--------------------
 	
@@ -13,12 +15,6 @@ trait ExpiringCacheLike[-Key, +Value] extends CacheLike[Key, Value]
 	  * @return The currently used caches
 	  */
 	protected def currentCaches: Traversable[ExpiringSingleCacheLike[Value]]
-	
-	/**
-	  * @param key A key
-	  * @return A suitable cache for the key
-	  */
-	protected def cacheForKey(key: Key): ExpiringSingleCacheLike[Value]
 	
 	
 	// IMPLEMENTED	----------------
@@ -29,7 +25,7 @@ trait ExpiringCacheLike[-Key, +Value] extends CacheLike[Key, Value]
 		clearExpiredData()
 		
 		// Retrieves current data
-		cacheForKey(key)()
+		super.apply(key)
 	}
 	
 	

@@ -1,4 +1,4 @@
-package utopia.flow.caching
+package utopia.flow.caching.single
 
 /**
   * This is a template trait for expiring single caches

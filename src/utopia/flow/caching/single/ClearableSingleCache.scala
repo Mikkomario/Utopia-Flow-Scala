@@ -1,4 +1,15 @@
-package utopia.flow.caching
+package utopia.flow.caching.single
+
+object ClearableSingleCache
+{
+	/**
+	  * Creates a new clearable single cache
+	  * @param request A function for requesting the item
+	  * @tparam A The type of item returned
+	  * @return A new cache that may be cleared
+	  */
+	def apply[A](request: => A) = new ClearableSingleCache[A](() => request)
+}
 
 /**
   * This single item cache may be cleared

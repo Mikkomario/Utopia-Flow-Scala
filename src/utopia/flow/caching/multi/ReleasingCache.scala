@@ -1,4 +1,4 @@
-package utopia.flow.caching
+package utopia.flow.caching.multi
 
 import scala.collection.immutable.HashMap
 import scala.ref.WeakReference
@@ -8,7 +8,7 @@ import scala.ref.WeakReference
   * @author Mikko Hilpinen
   * @since 10.6.2019, v1.5+
   */
-trait ReleasingCache[Key, Value] extends CacheLike[Key, Value]
+trait ReleasingCache[Key, Value <: AnyRef] extends CacheLike[Key, Value]
 {
 	// ATTRIBUTES	---------------
 	
@@ -38,7 +38,7 @@ trait ReleasingCache[Key, Value] extends CacheLike[Key, Value]
 		{
 			// But may have to request a new value
 			val newValue = source(key)
-			weakRefs += key -> WeakReference(newValue)
+			weakRefs += (key -> WeakReference(newValue))
 			newValue
 		}
 	}

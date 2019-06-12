@@ -1,12 +1,12 @@
-package utopia.flow.caching
+package utopia.flow.caching.single
 
 import java.time.Instant
 
 import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.TimeExtensions._
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 /**

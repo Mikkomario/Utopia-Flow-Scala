@@ -1,4 +1,4 @@
-package utopia.flow.caching
+package utopia.flow.caching.multi
 
 import scala.collection.immutable.HashMap
 
@@ -22,7 +22,7 @@ class Cache[Key, Value](private val request: Key => Value) extends CacheLike[Key
 			cachedItems(key)
 		else
 		{
-			val value = request()
+			val value = request(key)
 			cachedItems += key -> value
 			value
 		}

@@ -1,5 +1,16 @@
 package utopia.flow.datastructure.mutable
 
+object Lazy
+{
+    /**
+      * Creates a new lazy
+      * @param make A function that makes the value (call by name)
+      * @tparam T The type of cached item
+      * @return A new lazy container
+      */
+    def apply[T](make: => T) = new Lazy(() => make)
+}
+
 /**
 * This is a mutable version of a lazy variable, meaning that the value may be changed and reset. 
 * The lazy caches the results of a function on the first call and after calls following a reset.
@@ -38,7 +49,7 @@ class Lazy[T](val generator: () => T)
     
     // IMPLEMENTED    ---------------
     
-    override def toString() = current.map(c => s"Lazy($c)") getOrElse "Lazy"
+    override def toString = current.map(c => s"Lazy($c)") getOrElse "Lazy"
     
     
     // OTHER    ---------------------
