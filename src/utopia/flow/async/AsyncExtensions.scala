@@ -20,9 +20,44 @@ object AsyncExtensions
 	    /**
 	     * Waits for the result of this future (blocks) and returns it once it's ready
 	     * @param timeout the maximum wait duration. If timeout is reached, a failure will be returned
-	     * @return The result of the future. A failure if the future failed or if timeout was reached
+	     * @return The result of the future. A failure if this future failed or if timeout was reached
 	     */
 	    def waitFor(timeout: Duration = Duration.Inf) = Try(Await.ready(f, timeout).value.get).flatten
+		
+		/**
+		  * @return Whether this future was already completed successfully
+		  */
+		def isSuccess = f.isCompleted && f.waitFor().isSuccess
+		
+		/**
+		  * @return Whether this future has already failed
+		  */
+		def isFailure = f.isCompleted && f.waitFor().isFailure
+		
+		/**
+		  * @return The current result of this future. None if not completed yet
+		  */
+		def current = if (f.isCompleted) Some(waitFor()) else None
+	}
+	
+	implicit class TryFuture[A](val f: Future[Try[A]]) extends AnyVal
+	{
+		/**
+		  * Waits for the result of this future (blocks) and returns it once it's ready
+		  * @param timeout the maximum wait duration. If timeout is reached, a failure will be returned
+		  * @return The result of the future. A failure if this future failed, if timeout was reached or if result was a failure
+		  */
+		def waitForResult(timeout: Duration = Duration.Inf): Try[A] = f.waitFor(timeout).flatten
+		
+		/**
+		  * @return Whether this future already contains a success result
+		  */
+		def containsSuccess = f.isCompleted && waitForResult().isSuccess
+		
+		/**
+		  * @return Whether this future already contains a failure result
+		  */
+		def containsFailure = f.isCompleted && waitForResult().isFailure
 	}
 	
 	implicit class ManyFutures[A](val futures: TraversableOnce[Future[A]]) extends AnyVal

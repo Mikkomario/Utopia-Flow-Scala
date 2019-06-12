@@ -7,6 +7,19 @@ import utopia.flow.util.TimeExtensions._
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success, Try}
 
+object SingleTryCache
+{
+	/**
+	  * Creates a new single try cache
+	  * @param failCacheDuration The duration which a failed result will be cached
+	  * @param makeRequest A function for making a new request (call by name)
+	  * @tparam A The type of function result on success
+	  * @return A new cache
+	  */
+	def apply[A](failCacheDuration: FiniteDuration)(makeRequest: => Try[A]): SingleTryCache[A] =
+		new SingleTryCacheImpl[A](failCacheDuration, () => makeRequest)
+}
+
 /**
   * This cache may succeed or fail in requesting an item. A failure will be cached only for a certain period of time
   * while a success is cached indefinitely
@@ -78,4 +91,10 @@ trait SingleTryCache[A] extends ClearableSingleCacheLike[Try[A]]
 			}
 		}
 	}
+}
+
+private class SingleTryCacheImpl[A](override protected val failCacheDuration: FiniteDuration,
+									private val makeRequest: () => Try[A]) extends SingleTryCache[A]
+{
+	override protected def request() = makeRequest()
 }

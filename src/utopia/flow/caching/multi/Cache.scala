@@ -2,6 +2,18 @@ package utopia.flow.caching.multi
 
 import scala.collection.immutable.HashMap
 
+object Cache
+{
+	/**
+	  * Creates a new cache
+	  * @param request A function for retrieving the cached value
+	  * @tparam Key The cache key type
+	  * @tparam Value The type of cached result
+	  * @return A new cache
+	  */
+	def apply[Key, Value](request: Key => Value) = new Cache[Key, Value](request)
+}
+
 /**
   * This is a simple implementation of the CacheLike trait
   * @author Mikko Hilpinen

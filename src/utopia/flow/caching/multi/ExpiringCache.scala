@@ -14,7 +14,7 @@ object ExpiringCache
 	  * @tparam Value The type of value provided through this cache
 	  * @return A new expiring cache that uses the specified caches
 	  */
-	def apply[Key <: AnyRef, Value](makeCache: Key => ExpiringSingleCacheLike[Value]) = new ExpiringCache[Key, Value](makeCache)
+	def apply[Key, Value](makeCache: Key => ExpiringSingleCacheLike[Value]) = new ExpiringCache[Key, Value](makeCache)
 	
 	/**
 	  * Creates a new expiring cache
@@ -24,7 +24,7 @@ object ExpiringCache
 	  * @tparam Value The type of value provided through this cache
 	  * @return A new expiring cache that uses the specified function
 	  */
-	def apply[Key <: AnyRef, Value](cacheDuration: FiniteDuration)(request: Key => Value) =
+	def apply[Key, Value](cacheDuration: FiniteDuration)(request: Key => Value) =
 		new ExpiringCache[Key, Value](key => ExpiringSingleCache(cacheDuration){ request(key) })
 }
 
@@ -33,7 +33,7 @@ object ExpiringCache
   * @author Mikko Hilpinen
   * @since 12.6.2019, v1.5+
   */
-class ExpiringCache[Key <: AnyRef, Value](private val makeCache: Key => ExpiringSingleCacheLike[Value])
+class ExpiringCache[Key, Value](private val makeCache: Key => ExpiringSingleCacheLike[Value])
 	extends ExpiringCacheLike[Key, Value]
 {
 	// ATTRIBUTES	--------------------

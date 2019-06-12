@@ -14,7 +14,7 @@ object MultiCache
 	  * @tparam Part The type of cache used to hold the values
 	  * @return A new multi cache
 	  */
-	def apply[Key <: AnyRef, Value, Part <: SingleCacheLike[Value]](makeCache: Key => Part) =
+	def apply[Key , Value, Part <: SingleCacheLike[Value]](makeCache: Key => Part) =
 		new MultiCache[Key, Value, Part](makeCache)
 }
 
@@ -23,7 +23,7 @@ object MultiCache
   * @author Mikko Hilpinen
   * @since 12.6.2019, v1.5+
   */
-class MultiCache[Key <: AnyRef, +Value, Part <: SingleCacheLike[Value]](private val makeCache: Key => Part)
+class MultiCache[Key, +Value, Part <: SingleCacheLike[Value]](private val makeCache: Key => Part)
 	extends MultiCacheLike[Key, Value, Part]
 {
 	// ATTRIBUTES	-------------------
