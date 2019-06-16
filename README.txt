@@ -107,6 +107,8 @@ v1.5  ------------------------------------
 
         java.time.Duration usage changed to scala.concurrent.duration.Duration
 
+        Lazy set function deprecated
+
     Bugfixes
     -----------
 

@@ -26,6 +26,7 @@ object RichComparable
 * @author Mikko Hilpinen
 * @since 17.11.2018
 **/
+//noinspection ScalaUnnecessaryParentheses
 trait RichComparable[-T] extends Comparable[T @uncheckedVariance]
 {
     /**

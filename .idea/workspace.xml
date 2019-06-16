@@ -8,13 +8,6 @@
   <component name="ChangeListManager">
     <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="writing unit test for cache classes. Also added support for Future[Try[...]]">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/caching/multi/ExpiringCacheLike.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/caching/multi/ExpiringCacheLike.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/caching/multi/ReleasingCache.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/caching/multi/ReleasingCache.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCache.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCache.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCacheLike.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCacheLike.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/utopia/flow/test/AllTests.scala" beforeDir="false" afterPath="$PROJECT_DIR$/test/utopia/flow/test/AllTests.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/utopia/flow/test/CacheTest.scala" beforeDir="false" afterPath="$PROJECT_DIR$/test/utopia/flow/test/CacheTest.scala" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,50 +20,7 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/CacheTest.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="219" column="4" lean-forward="true" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
-              <folding>
-                <element signature="e#26#50#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/AllTests.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/multi/ReleasingCache.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="936">
-              <caret line="90" column="4" lean-forward="true" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="4" />
-              <folding>
-                <element signature="e#35#76#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCacheLike.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="7" column="51" lean-forward="true" selection-start-line="7" selection-start-column="51" selection-end-line="7" selection-end-column="51" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -167,7 +117,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -231,6 +180,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -414,9 +364,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12753278" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12832737" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -542,116 +491,20 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleFutureCacheLike.scala" />
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheOld.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="16" column="28" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleCacheOld.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/CacheOld.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ClearableSingleCacheLike.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="9" column="33" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCache.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="20" column="35" lean-forward="true" selection-start-line="20" selection-start-column="35" selection-end-line="20" selection-end-column="35" />
-          <folding>
-            <element signature="e#29#53#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleTryCache.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="10" column="56" lean-forward="true" selection-start-line="10" selection-start-column="56" selection-end-line="10" selection-end-column="56" />
-          <folding>
-            <element signature="e#29#53#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheLike.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="12" column="30" lean-forward="true" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleCacheLike.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="24" column="7" lean-forward="true" selection-start-line="24" selection-start-column="7" selection-end-line="24" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/CacheLike.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringCacheLike.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="760">
-          <caret line="38" column="49" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ReleasingCache.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="31" column="8" lean-forward="true" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
-          <folding>
-            <element signature="e#29#70#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/multi/CacheOld.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1442">
-          <caret line="82" column="50" lean-forward="true" selection-start-line="82" selection-start-column="50" selection-end-line="82" selection-end-column="50" />
-          <folding>
-            <element signature="e#35#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/single/SingleCacheOld.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-400">
-          <caret line="4" column="42" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCacheOld.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="4" column="40" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheOld.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleCacheOld.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/CacheOld.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ClearableSingleCacheLike.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCache.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleTryCache.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheLike.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleCacheLike.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/CacheLike.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringCacheLike.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ReleasingCache.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/multi/CacheOld.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/single/SingleCacheOld.scala" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCacheOld.scala" />
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Lazy.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
@@ -796,10 +649,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2260">
+          <caret line="113" lean-forward="true" selection-start-line="113" selection-end-line="113" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/multi/ReleasingCache.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="936">
-          <caret line="90" column="4" lean-forward="true" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="4" />
+        <state relative-caret-position="1760">
+          <caret line="90" column="4" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="4" />
           <folding>
             <element signature="e#35#76#0" expanded="true" />
           </folding>
@@ -809,24 +669,7 @@
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/single/ExpiringSingleCacheLike.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
-          <caret line="7" column="51" lean-forward="true" selection-start-line="7" selection-start-column="51" selection-end-line="7" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2260">
-          <caret line="113" lean-forward="true" selection-start-line="113" selection-end-line="113" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/CacheTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="219" column="4" lean-forward="true" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
-          <folding>
-            <element signature="e#26#50#0" expanded="true" />
-          </folding>
+          <caret line="7" column="51" selection-start-line="7" selection-start-column="51" selection-end-line="7" selection-end-column="51" />
         </state>
       </provider>
     </entry>
@@ -834,6 +677,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="500">
           <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/CacheTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="796">
+          <caret line="219" column="4" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
+          <folding>
+            <element signature="e#26#50#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
