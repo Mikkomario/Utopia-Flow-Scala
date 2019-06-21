@@ -58,9 +58,14 @@ object TimeExtensions
 	implicit class ExtendedDuration(val d: Duration) extends AnyVal
 	{
 	    /**
-	     * The this duration as milliseconds, but with double precision
+	     * This duration as milliseconds, but with double precision
 	     */
 	    def toPreciseMillis = d.toNanos / 1000000.0
+		
+		/**
+		  * @return This duration in seconds, but with double precision
+		  */
+		def toPreciseSeconds = toPreciseMillis / 1000
 	}
 	
 	implicit class ExtendedScalaDuration(val d: duration.Duration) extends AnyVal
@@ -69,6 +74,16 @@ object TimeExtensions
 		  * @return A finite version of this duration. None for infinite durations.
 		  */
 		def finite = if (d.isFinite()) Some(FiniteDuration(d.length, d.unit)) else None
+		
+		/**
+		  * @return This duration in milliseconds, but with double precision (converted from nanoseconds)
+		  */
+		def toPreciseMillis = d.toNanos / 1000000.0
+		
+		/**
+		  * @return This duration in seconds, but with double precision (converted from nanoseconds)
+		  */
+		def toPreciseSeconds = toPreciseMillis / 1000
 	}
 	
 	implicit class TimeNumber[T](val i: T) extends AnyVal

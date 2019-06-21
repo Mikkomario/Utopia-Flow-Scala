@@ -84,6 +84,12 @@ object CollectionExtensions
             
             builder.result()
         }
+    
+        /**
+          * @return A version of this seq with consecutive items paired. Each item will be present twice in the returned
+          *         collection, except the first and the last item
+          */
+        def paired = (1 until seq.size).map { i => (seq(i - 1), seq(i)) }
     }
     
     implicit class RichTry[T](val t: Try[T]) extends AnyVal
