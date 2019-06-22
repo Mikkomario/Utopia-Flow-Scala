@@ -69,6 +69,7 @@ v1.5  ------------------------------------
             - divideBy added
             - foreachWith added for simultaneous iterations
             - Repeating iterations added
+            - Pairing and map folding added to seqs
 
         Trees updated
             - replace and findAndReplace added to immutable TreeLike

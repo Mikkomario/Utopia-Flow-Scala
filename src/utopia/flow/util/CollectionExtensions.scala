@@ -90,6 +90,31 @@ object CollectionExtensions
           *         collection, except the first and the last item
           */
         def paired = (1 until seq.size).map { i => (seq(i - 1), seq(i)) }
+    
+        /**
+          * This function works like foldLeft, except that it stores each step (including the start) into a seq
+          * @param start The starting step
+          * @param map A function for calculating the next step, takes the previous result + the next item in this seq
+          * @param cbf A canbuildfrom for final collection (implicit)
+          * @tparam B The type of steps
+          * @tparam To The type of final collection
+          * @return All of the steps mapped into a collection
+          */
+        def foldMapLeft[B, To](start: B)(map: (B, A) => B)(implicit cbf: CanBuildFrom[_, B, To]) =
+        {
+            val builder = cbf()
+            var last = start
+            builder += last
+            
+            seq.foreach
+            {
+                item =>
+                    last = map(last, item)
+                    builder += last
+            }
+            
+            builder.result()
+        }
     }
     
     implicit class RichTry[T](val t: Try[T]) extends AnyVal
