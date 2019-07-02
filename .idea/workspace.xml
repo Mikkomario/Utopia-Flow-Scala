@@ -7,6 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="writing unit test for cache classes. Also added support for Future[Try[...]]">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -20,7 +22,7 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -129,53 +131,6 @@
               <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="flow" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="flow" type="462c0819:PsiDirectoryNode" />
-              <item name="async" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="flow" type="462c0819:PsiDirectoryNode" />
-              <item name="caching" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="flow" type="462c0819:PsiDirectoryNode" />
-              <item name="caching" type="462c0819:PsiDirectoryNode" />
-              <item name="multi" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="flow" type="462c0819:PsiDirectoryNode" />
-              <item name="caching" type="462c0819:PsiDirectoryNode" />
-              <item name="single" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -188,8 +143,8 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Scala" />
   </component>
   <component name="RecentsManager">
@@ -363,9 +318,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
+    <frame x="-8" y="-8" width="2576" height="1576" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12832737" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1291733" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -380,7 +335,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32969603" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.21205822" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.32949308" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.22897196" />
@@ -411,13 +366,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/async/Volatile.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1253">
-          <caret line="67" column="7" selection-start-line="67" selection-start-column="7" selection-end-line="67" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/util/WaitTarget.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3000">
@@ -649,13 +597,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2260">
-          <caret line="113" lean-forward="true" selection-start-line="113" selection-end-line="113" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/multi/ReleasingCache.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1760">
@@ -690,13 +631,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/async/Volatile.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="1" lean-forward="true" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
   </component>
   <component name="masterDetails">
     <states>
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
-          <last-edited>utopia-flow-with-dependencies:jar</last-edited>
+          <last-edited>utopia-flow</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -720,6 +675,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
+          <last-edited>scala-sdk-2.12.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -742,6 +698,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
+          <last-edited>Utopia-Flow-Scala</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
