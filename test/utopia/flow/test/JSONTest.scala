@@ -37,7 +37,7 @@ object JSONTest extends App
     assertJSON(i, "123")
     assertJSON(d, "222.222")
     assertJSON(s, "\"Hello World!\"")
-    assertJSON(time, s"${time.longOr()}")
+    assertJSON(time, "\"" + time + "\"")
     assertJSON(b, "true")
     assertJSON(v, "[null, true, 123]")
     assertJSON(Vector[Value](), "[]")
@@ -89,7 +89,8 @@ object JSONTest extends App
     assert(readModel3.isDefined)
     println(readModel3.get)
     
-    assert(readModel3.get("test6").longOr(-1) > 0)
+    val readTime = readModel3.get("test6").instant
+    assert(readTime.contains(time.getInstant))
     assert(readModel3.get("test4").vectorOr().length == 3)
     assert(readModel3.get("test5").dataType == ModelType)
     

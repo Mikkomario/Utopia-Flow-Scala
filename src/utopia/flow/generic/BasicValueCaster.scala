@@ -1,14 +1,12 @@
 package utopia.flow.generic
 
 import scala.collection.immutable.HashSet
-import scala.annotation.switch
 import utopia.flow.generic.ConversionReliability.PERFECT
 import utopia.flow.generic.ConversionReliability.DATA_LOSS
 import utopia.flow.generic.ConversionReliability.DANGEROUS
 import utopia.flow.generic.ConversionReliability.MEANING_LOSS
 import utopia.flow.datastructure.immutable.Value
 import java.time.Instant
-import java.time.format.DateTimeParseException
 import scala.util.Try
 import java.time.ZoneId
 import java.time.LocalDate
@@ -166,13 +164,11 @@ object BasicValueCaster extends ValueCaster
     {
         value.dataType match 
         {
-            case LongType => Some(Instant.ofEpochSecond(value.longOr()))
-            case StringType => Try(Instant.parse(value.toString())).toOption
-            case LocalDateTimeType => 
-            {
-                val dateTime = value.localDateTimeOr()
+            case LongType => Some(Instant.ofEpochSecond(value.getLong))
+            case StringType => Try(Instant.parse(value.getString)).toOption
+            case LocalDateTimeType =>
+                val dateTime = value.getLocalDateTime
                 Some(dateTime.toInstant(ZoneId.systemDefault().getRules.getOffset(dateTime)))
-            }
             case _ => None
         }
     }
@@ -181,7 +177,7 @@ object BasicValueCaster extends ValueCaster
     {
         value.dataType match 
         {
-            case LocalDateTimeType => Some(value.localDateTimeOr().toLocalDate())
+            case LocalDateTimeType => Some(value.localDateTimeOr().toLocalDate)
             case StringType => Try(LocalDate.parse(value.toString())).toOption
             case _ => None
         }
@@ -191,7 +187,7 @@ object BasicValueCaster extends ValueCaster
     {
         value.dataType match 
         {
-            case LocalDateTimeType => Some(value.localDateTimeOr().toLocalTime())
+            case LocalDateTimeType => Some(value.localDateTimeOr().toLocalTime)
             case StringType => Try(LocalTime.parse(value.toString())).toOption
             case _ => None
         }
