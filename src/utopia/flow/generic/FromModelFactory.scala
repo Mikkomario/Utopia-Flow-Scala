@@ -26,5 +26,5 @@ trait FromModelFactory[+T]
      * Parses an instance from a JSON string. Returns none if either the JSON string couldn't be 
      * parsed or if the instance couldn't be parsed from read data.
      */
-    def fromJSON(json: String) = JSONReader.parseSingle(json).flatMap(apply)
+    def fromJSON(json: String) = JSONReader.parseSingle(json).toOption.flatMap(apply)
 }

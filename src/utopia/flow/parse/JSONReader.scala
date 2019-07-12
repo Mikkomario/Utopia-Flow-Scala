@@ -1,5 +1,9 @@
 package utopia.flow.parse
 
+import java.io.File
+
+import utopia.flow.util.AutoClose._
+
 import scala.collection.mutable.ListBuffer
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.datastructure.immutable.Value
@@ -10,6 +14,7 @@ import utopia.flow.datastructure.immutable.Model
 import utopia.flow.generic.ValueConversions._
 
 import scala.collection.immutable.VectorBuilder
+import scala.io.Source
 import scala.util.Try
 
 /**
@@ -20,25 +25,28 @@ import scala.util.Try
 object JSONReader
 {
     /**
+      * Parses the contents of a file into a model. Expects file to be json-formatted and to contain a single model
+      * @param jsonFile A file that contains json data
+      * @return Model parsed from the file. May fail if the file couldn't be found / read or if file contents were malformed
+      */
+    def parseFile(jsonFile: File) = Try(Source.fromFile(jsonFile).consume { _.getLines.mkString }).flatMap(parseSingle)
+    
+    /**
      * Parses a model out of JSON data. The parsing will start at the first object start ('{') and
      * end at the end of that object. Only a single model will be parsed, even if there are multiple
      * siblings available
      * @param json The JSON string
-     * @return The parsed model or None if there was no sufficient data or it was malformed.
+     * @return The parsed model. Fails if the json was malformed
      */
     def parseSingle(json: String) = 
     {
-        // Starts at the first object start
-        val objectStart = findNext(json, 0, ObjectStart)
-        
-        // Parse object contents
-        try
+        Try
         {
-            objectStart.map { case (_, index) => parseObject(json, index)._1 }
-        }
-        catch 
-        {
-            case _: InvalidFormatException => None
+            // Starts at the first object start
+            val objectStart = findNext(json, 0, ObjectStart)
+    
+            // Parse object contents
+            objectStart.map { case (_, index) => parseObject(json, index)._1 } getOrElse Model.empty
         }
     }
     
@@ -121,7 +129,7 @@ object JSONReader
         val (parsedValue, nextIndex) = parsePropertyValue(json, assignment._2 + 1)
         
         // Returns the parsed property + the end marker index
-        new Constant(propertyName, parsedValue) -> nextIndex
+        Constant(propertyName, parsedValue) -> nextIndex
     }
     
     // Ends at the next separator or container (array or object) end. Never inside content.

@@ -44,9 +44,9 @@ object JSONTest extends App
     assertJSON(Model.empty, "{}")
     
     // Tests Property writing next
-    val prop1 = new Constant("test1", i)
-    val prop2 = new Constant("test2", s)
-    val prop3 = new Constant("test3", empty)
+    val prop1 = Constant("test1", i)
+    val prop2 = Constant("test2", s)
+    val prop3 = Constant("test3", empty)
     
     assert(prop3.toJSON == "\"test3\": null")
     assert(prop1.toJSON == "\"test1\": 123")
@@ -61,13 +61,13 @@ object JSONTest extends App
     
     // Tests model reading
     val readModel1 = JSONReader.parseSingle(model.toJSON)
-    assert(readModel1.isDefined)
+    assert(readModel1.isSuccess)
     println(readModel1.get)
     // assert(readModel1 == model)
     
     val readModel2 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": 39}")
     
-    assert(readModel2.isDefined)
+    assert(readModel2.isSuccess)
     println(readModel2.get)
     
     assert(readModel2.get("name").stringOr() == "Matti")
@@ -76,9 +76,9 @@ object JSONTest extends App
     assert(readModel2 == JSONReader.parseSingle(readModel2.get.toJSON))
     
     // Tests more difficult data types
-    val prop4 = new Constant("test4", v)
-    val prop5 = new Constant("test5", model)
-    val prop6 = new Constant("test6", time)
+    val prop4 = Constant("test4", v)
+    val prop5 = Constant("test5", model)
+    val prop6 = Constant("test6", time)
     
     val model2 = Model.withConstants(Vector(prop4, prop5, prop6))
     
@@ -86,7 +86,7 @@ object JSONTest extends App
     
     val readModel3 = JSONReader.parseSingle(model2.toJSON)
     
-    assert(readModel3.isDefined)
+    assert(readModel3.isSuccess)
     println(readModel3.get)
     
     val readTime = readModel3.get("test6").instant
@@ -96,7 +96,7 @@ object JSONTest extends App
     
     // Tests value reading vs. model reading
     assert(JSONReader.parseSingle(readModel2.get.toJSON).get == readModel2.get)
-    assert(JSONReader.parseValue(readModel2.get.toJSON).get.model == readModel2)
+    assert(JSONReader.parseValue(readModel2.get.toJSON).get.getModel == readModel2.get)
     
     // This kind of setting was causing a problem earlier
     val test = Vector(1)

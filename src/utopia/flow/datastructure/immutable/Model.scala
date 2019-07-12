@@ -188,6 +188,21 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute], val attribu
     def filterNot(f: Attribute => Boolean) = withAttributes(attributes.filterNot(f))
     
     /**
+      * Renames multiple attiributes in this model
+      * @param renames The attribute name changes (old -> new)
+      * @return A copy of this model with renamed attributes
+      */
+    def renamed(renames: Traversable[(String, String)]) = withAttributes(attributes.map {
+        a => renames.find { _._1 == a.name }.map { n => a.withName(n._2) } getOrElse a })
+    
+    /**
+      * @param oldName Old attribute name
+      * @param newName New attribute name
+      * @return A copy of this model with that one attribute renamed
+      */
+    def renamed(oldName: String, newName: String): Model[Constant] = renamed(Vector(oldName -> newName))
+    
+    /**
      * Creates a mutable copy of this model
      * @param generator The property generator used for creating the properties of the new model
      * @return A mutable copy of this model using the provided property generator

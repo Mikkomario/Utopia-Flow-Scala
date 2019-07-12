@@ -120,8 +120,7 @@ object DataType
  * Any, which is the highest data type. The value defaults to Any but in some cases you want to 
  * specify a different type like Number, for example.
  */
-case class DataType(val name: String, val supportedClass: Class[_], 
-        val superType: Option[DataType] = Some(AnyType))
+case class DataType(name: String, supportedClass: Class[_], superType: Option[DataType] = Some(AnyType))
 {
     private val tree = new Tree(this)
     
@@ -129,8 +128,7 @@ case class DataType(val name: String, val supportedClass: Class[_],
     
     // The datatype interface must be set up at this point
     if (!DataType.isSetup)
-        throw new EnvironmentNotSetupException(
-                "DataType.setup() must be called before instantiating any DataType instances")
+        throw EnvironmentNotSetupException("DataType.setup() must be called before instantiating any DataType instances")
     
     // The super type should be aware of a new child
     superType.foreach { _.tree += this.tree }

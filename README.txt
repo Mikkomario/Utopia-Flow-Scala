@@ -59,6 +59,26 @@ Available Extensions
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
+
+v1.6  -------------------------------------
+
+    New Features
+    ------------
+
+        Immutable model now contains renamed-function which allows one to easily change property names.
+
+        JSONReader.parseFile(File) can now be used to parse the contents of a single json file
+
+
+    Updates & Changes
+    -----------------
+
+        Instant JSON representation is now in string format and not in long format. This might cause problems in
+        external systems, although Utopia Flow should be able to parse the values just the same.
+
+        JSONReader.parseSingle now returns Try[Model[Constant]] instead of Option[Model[Constant]]
+
+
 v1.5  ------------------------------------
 
     New Features
