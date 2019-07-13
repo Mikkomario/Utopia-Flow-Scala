@@ -125,5 +125,14 @@ object JSONTest extends App
     assert(JSONReader.parseValue("[null]").get == Vector(Value.empty()).toValue)
     assert(JSONReader.parseValue("[,]").get == Vector(Value.empty(), Value.empty()).toValue)
     
+    // Testing JSON reading when quoted portion contains json markers
+    val jsonWithQuotes = Model(Vector("Test1" -> "This portion contains, special values",
+        "Test2" -> "This one is also { tough }", "Even worse [when, array, in, property, name]" -> true)).toJSON
+    val parsed6 = JSONReader.parseSingle(jsonWithQuotes).get
+    
+    assert(parsed6("Test1").getString == "This portion contains, special values")
+    assert(parsed6("Test2").getString == "This one is also { tough }")
+    assert(parsed6("Even worse [when, array, in, property, name]").getBoolean)
+    
     println("Success!")
 }

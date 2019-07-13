@@ -54,6 +54,11 @@ trait Model[+Attribute <: Property] extends JSONConvertible
      */
     def isEmpty = attributeMap.isEmpty
     
+    /**
+      * @return Whether this model contains attributes
+      */
+    def nonEmpty = !isEmpty
+    
     
     // OPERATORS    ---------------
     

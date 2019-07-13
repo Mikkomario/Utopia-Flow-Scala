@@ -18,7 +18,7 @@ object BasicJSONValueConverter extends ValueConverter[String]
     {
         dataType match 
         {
-            case StringType => "\"" + value.getString + "\""
+            case StringType => "\"" + value.getString.replaceAll("\"", "'") + "\""
             case VectorType => s"[${value.getVector.map { _.toJSON }.mkString(", ")}]"
             case ModelType => value.getModel.toJSON
             // Handles instant type separately to format it correctly

@@ -152,7 +152,8 @@ object JSONReader
                     val nextArray = parseArray(json, nextEvent.get._2)
                     (nextArray._1, nextArray._2 + 1) // +1 to escape content range
                 
-                case _ => (parseSimpleValue(json.substring(propertyStartIndex, nextEvent.get._2)), 
+                case _ =>
+                    (parseSimpleValue(json.substring(propertyStartIndex, nextEvent.get._2)),
                         nextEvent.get._2)
             }
         }
@@ -171,9 +172,7 @@ object JSONReader
         val onlySpacesInArray = firstArrayEndIndex.exists(endIndex => json.substring(arrayStartIndex + 1, endIndex).trim().isEmpty)
         
         if (onlySpacesInArray)
-        {
             Vector() -> firstArrayEndIndex.get
-        }
         else
         {
             val buffer = new VectorBuilder[Value]()
@@ -186,7 +185,7 @@ object JSONReader
                 index = parsedValue._2
                 buffer += parsedValue._1 // NB: Previously checked that value is defined
             }
-            
+    
             buffer.result() -> index
         }
     }
@@ -245,26 +244,41 @@ object JSONReader
         findNext(json, startIndex, events: _*).getOrElse(throw new InvalidFormatException())
     }
     
-    private def findNext(json: String, startIndex: Int, events: JSONReadEvent*) = 
+    private def findNext(json: String, startIndex: Int, events: JSONReadEvent*): Option[(JSONReadEvent, Int)] =
     {
         if (events.isEmpty)
             None
         else
         {
-            var best: Option[JSONReadEvent] = None
-            var bestIndex: Option[Int] = None
-            
-            for (event <- events)
+            // Finds the first index of each event, if there is one
+            val searchResults = events.map { event => event -> json.indexOf(event.marker, startIndex) }.filter { _._2 >= 0 }
+            if (searchResults.isEmpty)
+                None
+            else
             {
-                val index = json.indexOf(event.marker, startIndex)
-                if (index >= 0 && !bestIndex.exists { _ < index })
+                // The best event is (by default) the one that has the smallest index (comes first)
+                def defaultResult = Some(searchResults.minBy { _._2 })
+                
+                // May need to discard some results if they are within quotes (not used when quotes are searched)
+                if (events.contains(Quote))
+                    defaultResult
+                else
                 {
-                    best = Some(event)
-                    bestIndex = Some(index)
+                    val firstQuoteIndex = json.indexOf(Quote.marker, startIndex)
+                    // If the next items comes before the next quote, it's valid
+                    if (firstQuoteIndex < 0 || searchResults.exists { _._2 < firstQuoteIndex })
+                        defaultResult
+                    // Otherwise has to search again after the quoted portion
+                    else
+                    {
+                        val quoteEndIndex = json.indexOf(Quote.marker, firstQuoteIndex + 1)
+                        if (quoteEndIndex < 0)
+                            None
+                        else
+                            findNext(json, quoteEndIndex + 1, events: _*)
+                    }
                 }
             }
-            
-            if (best.isDefined) Some(best.get -> bestIndex.get) else None
         }
     }
     
