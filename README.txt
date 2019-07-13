@@ -78,6 +78,8 @@ v1.6  -------------------------------------
 
         JSONReader.parseSingle now returns Try[Model[Constant]] instead of Option[Model[Constant]]
 
+        Constant is now a case class
+
 
     Fixes
     -----
