@@ -79,6 +79,13 @@ v1.6  -------------------------------------
         JSONReader.parseSingle now returns Try[Model[Constant]] instead of Option[Model[Constant]]
 
 
+    Fixes
+    -----
+
+        JSONReader now works even when string portions contain markers like ',' '{' or ']'. Also, string json conversion
+        now removes replaces double quotes " with single quotes ' to avoid parsing errors
+
+
 v1.5  ------------------------------------
 
     New Features
