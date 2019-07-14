@@ -66,6 +66,11 @@ object TimeExtensions
 		  * @return This duration in seconds, but with double precision
 		  */
 		def toPreciseSeconds = toPreciseMillis / 1000
+		
+		/**
+		  * @return Describes this duration in a suitable unit and precision
+		  */
+		def description = javaDurationToScalaDuration(d).description
 	}
 	
 	implicit class ExtendedScalaDuration(val d: duration.Duration) extends AnyVal
@@ -84,6 +89,37 @@ object TimeExtensions
 		  * @return This duration in seconds, but with double precision (converted from nanoseconds)
 		  */
 		def toPreciseSeconds = toPreciseMillis / 1000
+		
+		/**
+		  * @return Describes this duration in a suitable unit and precision
+		  */
+		def description =
+		{
+			val seconds = toPreciseSeconds
+			if (seconds < 0.1)
+			{
+				val millis = toPreciseMillis
+				if (millis < 0.1)
+					s"${d.toNanos} nanos"
+				else if (millis < 1)
+					f"$millis%1.2f millis"
+				else
+					s"${millis.toInt.toString} millis"
+			}
+			else if (seconds >= 120)
+			{
+				val hoursPart = (seconds / 3600).toInt
+				val minutesPart = ((seconds % 3600) / 60).toInt
+				val secondsPart = (seconds % 60).toInt
+				
+				if (hoursPart > 0)
+					s"$hoursPart h $minutesPart min"
+				else
+					s"$minutesPart min $secondsPart s"
+			}
+			else
+				f"$seconds%1.2f seconds"
+		}
 	}
 	
 	implicit class TimeNumber[T](val i: T) extends AnyVal

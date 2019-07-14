@@ -65,7 +65,7 @@ object JSONTest extends App
     println(readModel1.get)
     // assert(readModel1 == model)
     
-    val readModel2 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": 39}")
+    val readModel2 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": 39, \"empty\": \"\"}")
     
     assert(readModel2.isSuccess)
     println(readModel2.get)

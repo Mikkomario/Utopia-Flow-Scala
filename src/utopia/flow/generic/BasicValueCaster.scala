@@ -6,12 +6,9 @@ import utopia.flow.generic.ConversionReliability.DATA_LOSS
 import utopia.flow.generic.ConversionReliability.DANGEROUS
 import utopia.flow.generic.ConversionReliability.MEANING_LOSS
 import utopia.flow.datastructure.immutable.Value
-import java.time.Instant
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneId, ZonedDateTime}
+
 import scala.util.Try
-import java.time.ZoneId
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.LocalDateTime
 
 /**
  * This value caster handles the basic data types
@@ -165,7 +162,19 @@ object BasicValueCaster extends ValueCaster
         value.dataType match 
         {
             case LongType => Some(Instant.ofEpochSecond(value.getLong))
-            case StringType => Try(Instant.parse(value.getString)).toOption
+            case StringType =>
+                // Tries various parsing formats
+                val str = value.getString
+                Try(Instant.parse(str)).orElse(Try(ZonedDateTime.parse(str).toInstant)).orElse
+                {
+                    Try
+                    {
+                        val localDateTime = LocalDateTime.parse(str)
+                        localDateTime.toInstant(ZoneId.systemDefault().getRules.getOffset(localDateTime))
+                    }
+                    
+                }.toOption
+                
             case LocalDateTimeType =>
                 val dateTime = value.getLocalDateTime
                 Some(dateTime.toInstant(ZoneId.systemDefault().getRules.getOffset(dateTime)))

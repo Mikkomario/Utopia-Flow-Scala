@@ -69,6 +69,8 @@ v1.6  -------------------------------------
 
         JSONReader.parseFile(File) can now be used to parse the contents of a single json file
 
+        Duration can now be described using .description (usable after importing utopia.flow.util.TimeExtensions._)
+
 
     Updates & Changes
     -----------------
@@ -86,6 +88,8 @@ v1.6  -------------------------------------
 
         JSONReader now works even when string portions contain markers like ',' '{' or ']'. Also, string json conversion
         now removes replaces double quotes " with single quotes ' to avoid parsing errors
+
+        Since Instant.parse(String) wouldn't work on all ISO-8601 instants, added backup parsing styles to value conversion
 
 
 v1.5  ------------------------------------

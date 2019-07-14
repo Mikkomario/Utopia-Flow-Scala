@@ -21,5 +21,12 @@ object TimeNumberTest extends App
 	assert(1.5.minutes == FiniteDuration(90, TimeUnit.SECONDS))
 	assert(13.hours == FiniteDuration(13, TimeUnit.HOURS))
 	
+	println(13.5231.nanos.description)
+	println(13.5231.millis.description)
+	println(324.5231.millis.description)
+	println(13.5231.seconds.description)
+	println(13.5231.minutes.description)
+	println(13.5231.hours.description)
+	
 	println("Success!")
 }

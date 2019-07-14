@@ -6,7 +6,7 @@ import utopia.flow.generic.StringType
 import utopia.flow.generic.ConversionReliability
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DoubleType
-import java.time.Instant
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime}
 
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.generic.ConversionHandler
@@ -14,10 +14,6 @@ import utopia.flow.generic.ConversionHandler
 import scala.collection.immutable.HashSet
 import utopia.flow.generic.IntType
 import utopia.flow.generic.ValueConversions._
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.LocalDateTime
-
 import utopia.flow.datastructure.mutable.GraphNode
 import utopia.flow.generic.InstantType
 import utopia.flow.generic.LocalDateTimeType
@@ -118,6 +114,12 @@ object DataTypeTest extends App
     // Tests Multi type conversion
     assert(ConversionHandler.cast(d, HashSet(StringType, IntType)).exists { 
         _.dataType isOfType IntType })
+    
+    // Tests some specific conversions
+    // println(ZonedDateTime.parse("2007-11-20T22:19:17+02:00"))
+    // assert(Try(Instant.parse("2007-11-20T22:19:17+02:00")).isSuccess)
+    assert("2007-11-20T22:19:17+02:00".instant.isDefined)
+    assert("2018-05-15T10:33:16+03:00".instant.isDefined)
     
     println("Success")
 }
