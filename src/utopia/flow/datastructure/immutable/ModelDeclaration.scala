@@ -1,8 +1,12 @@
 package utopia.flow.datastructure.immutable
 
 import utopia.flow.util.CollectionExtensions._
-import utopia.flow.datastructure.template.NoSuchAttributeException
+import utopia.flow.datastructure.template.{NoSuchAttributeException, Property}
+import utopia.flow.datastructure.template
 import utopia.flow.generic.DataType
+
+import scala.collection.immutable.VectorBuilder
+import scala.util.{Failure, Success}
 
 object ModelDeclaration
 {
@@ -100,4 +104,43 @@ case class ModelDeclaration private(declarations: Set[PropertyDeclaration])
     @throws(classOf[NoSuchAttributeException])
     def get(propertyName: String) = find(propertyName).getOrElse(
             throw new NoSuchAttributeException(s"No property named '$propertyName' declared"))
+    
+    /*
+    def validate(model: template.Model[Property]) =
+    {
+        // Tries to convert all declared model properties to required types and checks that each declared (non-default)
+        // property has been defined
+        val castValuesBuilder = new VectorBuilder[Constant]()
+        
+        
+        
+        /*
+        val castValues = new VectorBuilder[(String, Value)]
+    
+        // Checks each requirement
+        val error = requirements.findMap
+        {
+            case (paramName, dataType) =>
+                if (!params.contains(paramName))
+                    Some(Failure(new IllegalArgumentException(requiredParameterMessage)))
+                else
+                {
+                    val cast = params(paramName).castTo(dataType)
+                    if (cast.isEmpty)
+                        Some(Failure(new IllegalArgumentException(s"$paramName must be of type $dataType")))
+                    else
+                    {
+                        castValues += (paramName -> cast.get)
+                        None
+                    }
+                }
+        }
+    
+        // Either returns failure or the new parameters
+        error.getOrElse
+        {
+            val nonCast = params.filterNot { param => requirements.exists { _._1 == param.name } }
+            Success(nonCast ++ Model(castValues.result()))
+        }*/
+    }*/
 }
