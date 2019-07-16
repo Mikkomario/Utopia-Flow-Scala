@@ -71,6 +71,10 @@ v1.6  -------------------------------------
 
         Duration can now be described using .description (usable after importing utopia.flow.util.TimeExtensions._)
 
+        New utility constructors added to ModelDeclaration.
+
+        ModelDeclaration now contains validate(Model) method which makes sure specified model matches the declaration.
+
 
     Updates & Changes
     -----------------

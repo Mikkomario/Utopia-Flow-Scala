@@ -2,6 +2,27 @@ package utopia.flow.datastructure.immutable
 
 import utopia.flow.generic.DataType
 
+object ModelValidationResult
+{
+	/**
+	  * @param missingDeclarations Declarations that were missing or empty
+	  * @return A result for missing properties
+	  */
+	def missing(missingDeclarations: Set[PropertyDeclaration]) = ModelValidationResult(missingProperties = missingDeclarations)
+	
+	/**
+	  * @param failedConversions Conversions that failed (original attribute -> desired data type)
+	  * @return A result for cast failure
+	  */
+	def castFailed(failedConversions: Set[(Constant, DataType)]) = ModelValidationResult(invalidConversions = failedConversions)
+	
+	/**
+	  * @param model Successfully validated model
+	  * @return A result for successful validation
+	  */
+	def success(model: Model[Constant]) = ModelValidationResult(success = Some(model))
+}
+
 /**
   * A simple struct that contains model validation results (model on success or missing information on failure)
   * @author Mikko Hilpinen
@@ -10,8 +31,9 @@ import utopia.flow.generic.DataType
   * @param missingProperties The properties that were missing from the model
   * @param invalidConversions Properties that failed to convert to desired data type
   */
-case class ModelValidationResult private(success: Option[Model[Constant]], missingProperties: Set[PropertyDeclaration],
-										 invalidConversions: Set[(Constant, DataType)])
+case class ModelValidationResult private(success: Option[Model[Constant]] = None,
+										 missingProperties: Set[PropertyDeclaration] = Set(),
+										 invalidConversions: Set[(Constant, DataType)] = Set())
 {
 	// COMPUTED	-----------------
 	
@@ -29,4 +51,17 @@ case class ModelValidationResult private(success: Option[Model[Constant]], missi
 	  * @return Names of missing properties
 	  */
 	def missingPropertyNames = missingProperties.map { _.name }
+	
+	
+	// IMPLEMENTED	------------
+	
+	override def toString =
+	{
+		if (isSuccess)
+			success.get.toString
+		else if (missingProperties.nonEmpty)
+			s"Missing properties: ${missingProperties.map { _.name }.mkString(", ")}"
+		else
+			s"Couldn't convert: ${invalidConversions.map { case (prop, target) => s"$prop -> $target" }.mkString(", ")}"
+	}
 }

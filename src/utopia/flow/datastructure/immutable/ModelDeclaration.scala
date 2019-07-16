@@ -6,7 +6,6 @@ import utopia.flow.datastructure.template
 import utopia.flow.generic.DataType
 
 import scala.collection.immutable.VectorBuilder
-import scala.util.{Failure, Success}
 
 object ModelDeclaration
 {
@@ -105,42 +104,61 @@ case class ModelDeclaration private(declarations: Set[PropertyDeclaration])
     def get(propertyName: String) = find(propertyName).getOrElse(
             throw new NoSuchAttributeException(s"No property named '$propertyName' declared"))
     
-    /*
+    /**
+      * Returns whether this declaration declares a property with the specified name (case-insensitive)
+      * @param propertyName Property name
+      */
+    def contains(propertyName: String) = declarations.exists { _.name.equalsIgnoreCase(propertyName) }
+    
+    /**
+      * Checks the provided model whether all declared (non-default) properties have non-empty values and can be casted
+      * to declared type
+      * @param model Model to be validated
+      * @return Validation results that either contain the modified model or a reason for validation failure (either
+      *         missing properties or failed casting)
+      */
     def validate(model: template.Model[Property]) =
     {
-        // Tries to convert all declared model properties to required types and checks that each declared (non-default)
-        // property has been defined
-        val castValuesBuilder = new VectorBuilder[Constant]()
+        // First checks for missing attributes
+        val missing = declarations.filterNot { d => model.contains(d.name) }
+        val (missingNonDefaults, missingDefaults) = missing.divideBy { _.defaultValue.isDefined }
         
-        
-        
-        /*
-        val castValues = new VectorBuilder[(String, Value)]
-    
-        // Checks each requirement
-        val error = requirements.findMap
+        // Declarations with default values are replaced with their defaults
+        if (missingNonDefaults.nonEmpty)
+            ModelValidationResult.missing(missingNonDefaults)
+        else
         {
-            case (paramName, dataType) =>
-                if (!params.contains(paramName))
-                    Some(Failure(new IllegalArgumentException(requiredParameterMessage)))
-                else
+            // Tries to convert all declared model properties to required types and checks that each declared (non-default)
+            // property has been defined
+            val keepBuilder = new VectorBuilder[Constant]()
+            val castBuilder = new VectorBuilder[Constant]()
+            val castFailedBuilder = new VectorBuilder[(Constant, DataType)]()
+    
+            model.attributesWithValue.foreach { att =>
+        
+                val declaration = find(att.name)
+                if (declaration.isDefined)
                 {
-                    val cast = params(paramName).castTo(dataType)
-                    if (cast.isEmpty)
-                        Some(Failure(new IllegalArgumentException(s"$paramName must be of type $dataType")))
+                    val castValue = att.value.castTo(declaration.get.dataType)
+                    if (castValue.isDefined)
+                        castBuilder += Constant(att.name, castValue.get)
                     else
-                    {
-                        castValues += (paramName -> cast.get)
-                        None
-                    }
+                        castFailedBuilder += (Constant(att.name, att.value) -> declaration.get.dataType)
                 }
+                else
+                    keepBuilder += Constant(att.name, att.value)
+            }
+            
+            // If all values could be cast, proceeds to create the model, otherwise fails
+            val castFailed = castFailedBuilder.result()
+            if (castFailed.isEmpty)
+            {
+                val resultConstants = keepBuilder.result() ++ castBuilder.result() ++ missingDefaults.map {
+                    d => Constant(d.name, d.defaultValue.get) }
+                ModelValidationResult.success(Model.withConstants(resultConstants))
+            }
+            else
+                ModelValidationResult.castFailed(castFailed.toSet)
         }
-    
-        // Either returns failure or the new parameters
-        error.getOrElse
-        {
-            val nonCast = params.filterNot { param => requirements.exists { _._1 == param.name } }
-            Success(nonCast ++ Model(castValues.result()))
-        }*/
-    }*/
+    }
 }

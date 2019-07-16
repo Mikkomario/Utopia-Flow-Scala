@@ -1,14 +1,12 @@
 package utopia.flow.test
 
-import utopia.flow.datastructure.immutable.PropertyDeclaration
+import utopia.flow.datastructure.immutable.{Model, ModelDeclaration, PropertyDeclaration}
 import utopia.flow.generic.IntType
 import utopia.flow.generic.DataType
 import utopia.flow.generic.StringType
-import utopia.flow.datastructure.immutable.ModelDeclaration
 import utopia.flow.generic.BooleanType
 import utopia.flow.generic.DeclarationConstantGenerator
 import utopia.flow.generic.DeclarationVariableGenerator
-
 import utopia.flow.generic.ValueConversions._
 
 object ModelDeclarationTest extends App
@@ -58,6 +56,21 @@ object ModelDeclarationTest extends App
     val generator4 = new DeclarationVariableGenerator(modelDec2)
     
     assert(generator4("test4", Some(1)).value.content.get == true)
+    
+    // Tests model validation
+    val testModel1 = Model(Vector("test1" -> 12, "test2" -> 5))
+    val testModel2 = Model(Vector("test2" -> 17, "test3" -> 11))
+    val testModel3 = Model(Vector("test1" -> 12))
+    val testModel4 = Model(Vector("test1" -> 12, "test4" -> "Hello"))
+    val testModel5 = Model(Vector("test1" -> "Hello"))
+    val testModel6 = Model(Vector("test1" -> 12, "test2" -> "Hello"))
+    
+    assert(modelDec.validate(testModel1).success.get.attributes.size == 3)
+    assert(modelDec.validate(testModel2).missingProperties.size == 1)
+    assert(modelDec.validate(testModel3).success.get.attributes.size == 3)
+    assert(modelDec.validate(testModel4).success.get.attributes.size == 4)
+    assert(modelDec.validate(testModel5).invalidConversions.size == 1)
+    assert(modelDec.validate(testModel6).invalidConversions.size == 1)
     
     println("Success")
 }
