@@ -82,6 +82,8 @@ v1.6  -------------------------------------
 
         Constant is now a case class
 
+        ModelDeclaration syntax updated. Class constructor is now hidden. Please use object constructors instead.
+
 
     Fixes
     -----

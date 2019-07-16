@@ -27,7 +27,7 @@ object ModelDeclarationTest extends App
     assert(prop2.defaultValue.isDefined)
     
     // Tests model declaration
-    val modelDec = new ModelDeclaration(prop1, prop2, prop3)
+    val modelDec = ModelDeclaration(prop1, prop2, prop3)
     
     assert(modelDec.find("TEST1").isDefined)
     assert(modelDec.find("kkk").isEmpty)

@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_TEST_SOURCES" value="false" />
+    <option name="SCOPE_TYPE" value="8" />
+    <option name="CUSTOM_SCOPE_NAME" value="Module 'Utopia-Flow-Scala'" />
+  </component>
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
       <artifact name="utopia-flow" />
+      <artifact name="utopia-flow-with-sources" />
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="JSONReader.parseSingle result type changed. parseFile added.">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/utopia_flow_with_sources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/utopia/flow/test/ModelDeclarationTest.scala" beforeDir="false" afterPath="$PROJECT_DIR$/test/utopia/flow/test/ModelDeclarationTest.scala" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path=".idea/workspace.xml" />
@@ -21,17 +32,7 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="489">
-              <caret line="79" selection-start-line="79" selection-end-line="79" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -74,8 +75,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/utopia/flow/caching/WeakSingleCache.scala" />
-        <option value="$PROJECT_DIR$/src/utopia/flow/caching/SingleFutureCacheLike.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/caching/SingleTryCacheLike.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/caching/SingleTryCache.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheOld.scala" />
@@ -122,17 +121,18 @@
         <option value="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/Model.scala" />
         <option value="$PROJECT_DIR$/test/utopia/flow/test/ModelTest.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/parse/JSONReader.scala" />
-        <option value="$PROJECT_DIR$/README.txt" />
         <option value="$PROJECT_DIR$/src/utopia/flow/generic/FromModelFactory.scala" />
         <option value="$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala" />
+        <option value="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala" />
+        <option value="$PROJECT_DIR$/test/utopia/flow/test/ModelDeclarationTest.scala" />
+        <option value="$PROJECT_DIR$/README.txt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1275" />
-    <option name="y" value="-12" />
-    <option name="width" value="2514" />
-    <option name="height" value="2112" />
+    <option name="x" value="-7" />
+    <option name="width" value="1771" />
+    <option name="height" value="1567" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -142,8 +142,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -154,6 +152,17 @@
             <path>
               <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
               <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="artifacts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -167,17 +176,34 @@
               <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="flow" type="462c0819:PsiDirectoryNode" />
-              <item name="parse" type="462c0819:PsiDirectoryNode" />
+              <item name="datastructure" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="flow" type="462c0819:PsiDirectoryNode" />
+              <item name="datastructure" type="462c0819:PsiDirectoryNode" />
+              <item name="immutable" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="flow" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea/workspace.xml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -368,10 +394,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="2575" height="1415" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="2576" height="1576" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1304175" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13275039" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -380,8 +405,8 @@
       <window_info id="Learn" order="6" weight="0.32975766" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32969603" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.22525331" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32917532" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.22522523" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -389,7 +414,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.21205822" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.32949308" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.22837101" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.1878032" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24970178" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -419,12 +444,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleFutureCacheLike.scala" />
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheOld.scala" />
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleCacheOld.scala" />
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/CacheOld.scala" />
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ClearableSingleCacheLike.scala" />
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCache.scala" />
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleTryCache.scala" />
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/ExpiringSingleCacheLike.scala" />
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/caching/SingleCacheLike.scala" />
@@ -715,10 +734,49 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/doc/index.js" />
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/generic/DeclarationVariableGenerator.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="2" column="43" selection-start-line="2" selection-start-column="43" selection-end-line="2" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/PropertyDeclaration.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="770">
+          <caret line="35" column="29" lean-forward="true" selection-start-line="35" selection-start-column="29" selection-end-line="35" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/ModelDeclarationTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="33" column="43" lean-forward="true" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="489">
-          <caret line="79" selection-start-line="79" selection-end-line="79" />
+        <state relative-caret-position="577">
+          <caret line="86" lean-forward="true" selection-start-line="86" selection-end-line="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="16" column="58" lean-forward="true" selection-start-line="16" selection-start-column="58" selection-end-line="16" selection-end-column="58" />
+          <folding>
+            <element signature="e#45#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/util/CollectionExtensions.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="881">
+          <caret line="63" column="46" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="46" />
         </state>
       </provider>
     </entry>
@@ -728,7 +786,7 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
-          <last-edited>utopia-flow</last-edited>
+          <last-edited>utopia-flow-with-sources</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

@@ -1,37 +1,50 @@
 package utopia.flow.datastructure.immutable
 
-import utopia.flow.util.Equatable
+import utopia.flow.util.CollectionExtensions._
 import utopia.flow.datastructure.template.NoSuchAttributeException
+import utopia.flow.generic.DataType
+
+object ModelDeclaration
+{
+    /**
+      * Creates a new model declaration
+      * @param declarations Property declarations
+      */
+    def apply(declarations: Seq[PropertyDeclaration]) = new ModelDeclaration(declarations.distinctWith {
+        case (a, b) => a.name.equalsIgnoreCase(b.name) }.toSet)
+    
+    /**
+      * Creates a model declaration with a single property
+      * @param declaration property declaration
+      */
+    def apply(declaration: PropertyDeclaration) = new ModelDeclaration(Set(declaration))
+    
+    /**
+      * Creates a new model declaration
+      */
+    def apply(first: PropertyDeclaration, second: PropertyDeclaration, more: PropertyDeclaration*): ModelDeclaration =
+        apply(Vector(first, second) ++ more)
+    
+    /**
+      * Creates a new model declaration from property name - data type -pairs
+      */
+    def apply(first: (String, DataType), second: (String, DataType), more: (String, DataType)*): ModelDeclaration =
+        apply((Vector(first, second) ++ more).map { case (name, t) => PropertyDeclaration(name, t) })
+}
 
 /**
- * A Model Declaration is an interface to a number of variable declarations
+ * Used to access a number of property declarations
  * @author Mikko Hilpinen
  * @since 11.12.2016
  */
-class ModelDeclaration(content: Traversable[PropertyDeclaration]) extends Equatable
+case class ModelDeclaration private(declarations: Set[PropertyDeclaration])
 {
-    // PROPERTIES    -----------
-    
-    /**
-     * The unique property declarations within this model declaration. No two instances with 
-     * the same name exist
-     */
-    val declarations = content.groupBy { _.name.toLowerCase() }.values.map { _.head }.toSet
-    
-    
     // COMP. PROPERTIES    ----
-    
-    override def properties = Vector(declarations)
     
     /**
      * The names of the properties declared in this declaration
      */
     def propertyNames = declarations.map { _.name }
-    
-    
-    // CONSTRUCTOR OVERLOAD    ---
-    
-    def this(content: PropertyDeclaration*) = this(content)
     
     
     // OPERATORS    -----------
