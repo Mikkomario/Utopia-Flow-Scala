@@ -2,6 +2,8 @@ package utopia.flow.datastructure.immutable
 
 import utopia.flow.generic.DataType
 
+import scala.util.{Failure, Success}
+
 object ModelValidationResult
 {
 	/**
@@ -52,6 +54,15 @@ case class ModelValidationResult private(success: Option[Model[Constant]] = None
 	  */
 	def missingPropertyNames = missingProperties.map { _.name }
 	
+	/**
+	  * @return This result converted to a try
+	  */
+	def toTry = success match
+	{
+		case Some(model) => Success(model)
+		case None => Failure(new ModelValidationFailedException(toString))
+	}
+	
 	
 	// IMPLEMENTED	------------
 	
@@ -65,3 +76,9 @@ case class ModelValidationResult private(success: Option[Model[Constant]] = None
 			s"Couldn't convert: ${invalidConversions.map { case (prop, target) => s"$prop -> $target" }.mkString(", ")}"
 	}
 }
+
+/**
+  * Thrown when model validation fails
+  * @param message Message that describes exception cause
+  */
+class ModelValidationFailedException(message: String) extends Exception(message)
