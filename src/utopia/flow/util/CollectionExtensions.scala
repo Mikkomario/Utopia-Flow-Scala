@@ -129,6 +129,23 @@ object CollectionExtensions
         def failure = t.failed.toOption
     }
     
+    implicit class RichEither[L, R](val e: Either[L, R]) extends AnyVal
+    {
+        /**
+          * @return This either's left value or None if this either is right
+          */
+        def leftOption = e match
+        {
+            case Left(l) => Some(l)
+            case Right(_) => None
+        }
+    
+        /**
+          * @return This either's right value or None if this either is left (same as toOption)
+          */
+        def rightOption = e.toOption
+    }
+    
     implicit class RichTraversable[A](val t: Traversable[A]) extends AnyVal
     {
         /**
