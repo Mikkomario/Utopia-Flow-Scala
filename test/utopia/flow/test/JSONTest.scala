@@ -134,5 +134,19 @@ object JSONTest extends App
     assert(parsed6("Test2").getString == "This one is also { tough }")
     assert(parsed6("Even worse [when, array, in, property, name]").getBoolean)
     
+    // Testing int and double handling on missing and empty (null) values
+    val readModel4 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": null, \"empty\": \"\"}").get
+    
+    assert(readModel4("none").int.isEmpty)
+    assert(readModel4("none").double.isEmpty)
+    assert(readModel4("none").isEmpty)
+    assert(readModel4("age").int.isEmpty)
+    assert(readModel4("age").double.isEmpty)
+    assert(readModel4("age").isEmpty)
+    assert(readModel4("empty").int.isEmpty)
+    assert(readModel4("empty").double.isEmpty)
+    assert(readModel4("name").int.isEmpty)
+    assert(readModel4("name").double.isEmpty)
+    
     println("Success!")
 }

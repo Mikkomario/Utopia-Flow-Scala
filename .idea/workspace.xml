@@ -14,6 +14,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala" beforeDir="false" afterPath="$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path=".idea/workspace.xml" />
@@ -28,13 +29,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="96" column="7" lean-forward="true" selection-start-line="96" selection-start-column="7" selection-end-line="96" selection-end-column="7" />
+            <state relative-caret-position="163">
+              <caret line="95" column="4" selection-start-line="95" selection-start-column="4" selection-end-line="95" selection-end-column="4" />
               <folding>
                 <element signature="e#45#91#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="873">
+              <caret line="143" column="44" lean-forward="true" selection-start-line="143" selection-start-column="44" selection-end-line="143" selection-end-column="44" />
+              <folding>
+                <element signature="e#26#74#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -129,18 +142,18 @@
         <option value="$PROJECT_DIR$/test/utopia/flow/test/ModelTest.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/parse/JSONReader.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/generic/FromModelFactory.scala" />
-        <option value="$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala" />
         <option value="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelValidationResult.scala" />
         <option value="$PROJECT_DIR$/test/utopia/flow/test/ModelDeclarationTest.scala" />
         <option value="$PROJECT_DIR$/README.txt" />
+        <option value="$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-9" />
-    <option name="width" value="1773" />
-    <option name="height" value="1569" />
+    <option name="x" value="-7" />
+    <option name="width" value="1813" />
+    <option name="height" value="1567" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -150,6 +163,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -201,11 +215,21 @@
               <item name="flow" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Utopia-Flow-Scala" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Utopia-Flow-Scala" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -239,7 +263,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ModelDeclarationTest">
+  <component name="RunManager" selected="Application.JSONTest">
     <configuration name="JSONTest" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="utopia.flow.test.JSONTest" />
       <module name="Utopia-Flow-Scala" />
@@ -303,8 +327,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ModelDeclarationTest" />
         <item itemvalue="Application.JSONTest" />
+        <item itemvalue="Application.ModelDeclarationTest" />
         <item itemvalue="Application.ModelTest" />
         <item itemvalue="Scala Console.Scala Console" />
         <item itemvalue="Application.WeakListTest" />
@@ -419,7 +443,7 @@
     <frame x="-8" y="-8" width="2576" height="1576" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13354531" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13513513" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -429,7 +453,7 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32917532" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.2244739" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.14830215" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -748,16 +772,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="860">
-          <caret line="43" column="33" selection-start-line="43" selection-start-column="33" selection-end-line="43" selection-end-column="33" />
-          <folding>
-            <element signature="e#26#74#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/doc/index.js" />
     <entry file="file://$PROJECT_DIR$/src/utopia/flow/generic/DeclarationVariableGenerator.scala">
       <provider selected="true" editor-type-id="text-editor">
@@ -777,16 +791,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="881">
           <caret line="63" column="46" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="96" column="7" lean-forward="true" selection-start-line="96" selection-start-column="7" selection-end-line="96" selection-end-column="7" />
-          <folding>
-            <element signature="e#45#91#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -810,6 +814,26 @@
           <caret line="66" column="4" selection-start-line="66" selection-start-column="4" selection-end-line="66" selection-end-column="4" />
           <folding>
             <element signature="e#26#115#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/ModelDeclaration.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="95" column="4" selection-start-line="95" selection-start-column="4" selection-end-line="95" selection-end-column="4" />
+          <folding>
+            <element signature="e#45#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/utopia/flow/test/JSONTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="873">
+          <caret line="143" column="44" lean-forward="true" selection-start-line="143" selection-start-column="44" selection-end-line="143" selection-end-column="44" />
+          <folding>
+            <element signature="e#26#74#0" expanded="true" />
           </folding>
         </state>
       </provider>
