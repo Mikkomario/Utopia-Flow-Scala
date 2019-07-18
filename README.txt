@@ -88,6 +88,8 @@ v1.6  -------------------------------------
 
         ModelDeclaration syntax updated. Class constructor is now hidden. Please use object constructors instead.
 
+        XmlReader can now use a reader. Also, XmlReader read method parameter syntax changed to use 2 parameter lists.
+
 
     Fixes
     -----
