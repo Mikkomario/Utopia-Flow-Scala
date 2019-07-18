@@ -28,12 +28,12 @@ object ModelConvertibleTest extends App
     
     // Model parse test
     val fromModel = TestModel(model1.toModel)
-    assert(fromModel.isDefined)
+    assert(fromModel.isSuccess)
     assert(fromModel.get == model1)
     
     // JSON parse test
     val fromJSON = TestModel.fromJSON(model1.toJSON)
-    assert(fromJSON.isDefined)
+    assert(fromJSON.isSuccess)
     assert(fromJSON.get == model1)
     
     println("Success!")

@@ -9,13 +9,15 @@ import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
 
 import scala.collection.immutable.VectorBuilder
+import scala.util.{Failure, Success, Try}
 
 object XmlElement extends FromModelFactory[XmlElement]
 {
-    def apply(model: template.Model[Property]): Option[XmlElement] =
+    def apply(model: template.Model[Property]): Try[XmlElement] =
     {
         // If the name is not provided by user, it is read from the model
-        model("name").string.map(XmlElement.apply(_, model))
+        model("name").string.map { name => Success(apply(name, model)) }.getOrElse(
+            Failure(new NoSuchElementException(s"Cannot parse XmlElement from $model without 'name' property")))
     }
     
     /**
@@ -42,8 +44,8 @@ object XmlElement extends FromModelFactory[XmlElement]
             att.name != "children" && att.name != "name")
         
         // Children are either read from 'children' attribute or from the unused attributes
-        val specifiedChildren = model.findExisting("children").map(_.value.getVector.flatMap(
-                _.model).flatMap(XmlElement(_)))
+        val specifiedChildren = model.findExisting("children").map { _.value.getVector.flatMap(
+                _.model).flatMap { apply(_).toOption } }
         val children = specifiedChildren.getOrElse
         {
             // Expects model type but parses other types as well
@@ -62,7 +64,7 @@ object XmlElement extends FromModelFactory[XmlElement]
         val attributes = specifiedAttributes.getOrElse
         {
             if (specifiedChildren.isDefined)
-                Model.withConstants(unspecifiedAttributes.map { att => new Constant(att.name, att.value) })
+                Model.withConstants(unspecifiedAttributes.map { att => Constant(att.name, att.value) })
             else
             {
                 // If unused attributes were parsed into children, doesn't parse them into attributes

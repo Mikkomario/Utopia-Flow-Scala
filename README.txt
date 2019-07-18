@@ -90,6 +90,8 @@ v1.6  -------------------------------------
 
         XmlReader can now use a reader. Also, XmlReader read method parameter syntax changed to use 2 parameter lists.
 
+        FromModelFactory now returns Try[...] instead of Option[...]
+
 
     Fixes
     -----

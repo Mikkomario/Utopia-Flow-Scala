@@ -41,7 +41,7 @@ object XmlTest extends App
     println(parsed.get.toJSON)
     
     // Makes sure model parsing works for xml elements
-    assert(parsed.contains(root))
+    assert(parsed.get == root)
     
     // Tries to write the xml data to a file
     val testFile = new File("test/XmlTest.xml")
