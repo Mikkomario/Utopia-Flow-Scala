@@ -65,13 +65,14 @@ object JSONTest extends App
     println(readModel1.get)
     // assert(readModel1 == model)
     
-    val readModel2 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": 39, \"empty\": \"\"}")
+    val readModel2 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": 39, \"empty\": \"\", \"length\": 76.24}")
     
     assert(readModel2.isSuccess)
     println(readModel2.get)
     
     assert(readModel2.get("name").stringOr() == "Matti")
     assert(readModel2.get("age").dataType == IntType)
+    assert(readModel2.get("length").getDouble == 76.24)
     
     assert(readModel2 == JSONReader.parseSingle(readModel2.get.toJSON))
     
