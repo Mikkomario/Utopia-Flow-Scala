@@ -75,6 +75,9 @@ v1.6  -------------------------------------
 
         ModelDeclaration now contains validate(Model) method which makes sure specified model matches the declaration.
 
+        CollectionExtensions now contains .bestMatch(...) function for traversable items. This allows advanced searching
+        based on hierarchical conditions.
+
 
     Updates & Changes
     -----------------

@@ -183,6 +183,37 @@ object CollectionExtensions
             else
                 Some(t.min(cmp))
         }
+    
+        /**
+          * Finds the item(s) that best match the specified conditions
+          * @param matchers Search conditions used. The conditions that are introduced first are considered more
+          *                 important than those which are introduced the last.
+          * @param cbf A builder for the final result (implicit)
+          * @tparam To Target collection type
+          * @return The items in this collection that best match the specified conditions
+          */
+        def bestMatch[To](matchers: Seq[A => Boolean])(implicit cbf: CanBuildFrom[_, A, To]): To =
+        {
+            // If there is only a single option, that is the best match. If there are 0 options, there's no best match
+            // If there are no matchers left, cannot make a distinction between items
+            if (t.size < 2 || matchers.isEmpty)
+            {
+                val buffer = cbf()
+                buffer ++= t
+                buffer.result()
+            }
+            else
+            {
+                val nextMatcher = matchers.head
+                val matched = t.filter(nextMatcher.apply)
+                
+                // If matcher found some results, limits to those. if not, cannot use that group
+                if (matched.nonEmpty)
+                    matched.bestMatch(matchers.drop(1))
+                else
+                    bestMatch(matchers.drop(1))
+            }
+        }
     }
     
     implicit class RichTraversableLike[A, Repr](val t: TraversableLike[A, Repr]) extends AnyVal
