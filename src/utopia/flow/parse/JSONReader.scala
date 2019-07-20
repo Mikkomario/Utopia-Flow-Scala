@@ -1,6 +1,6 @@
 package utopia.flow.parse
 
-import java.io.File
+import java.io.{File, InputStream}
 
 import utopia.flow.util.AutoClose._
 
@@ -24,6 +24,15 @@ import scala.util.Try
  */
 object JSONReader
 {
+    /**
+      * Parses the contents of a stream into a model
+      * @param inputStream Stream from which data is read
+      * @param encoding Encoding used in stream (default = UTF-8)
+      * @return Model parsed from stream data
+      */
+    def parseStream(inputStream: InputStream, encoding: String = "UTF-8") =
+        Try(Source.fromInputStream(inputStream, encoding).getLines.mkString).flatMap(parseSingle)
+    
     /**
       * Parses the contents of a file into a model. Expects file to be json-formatted and to contain a single model
       * @param jsonFile A file that contains json data
