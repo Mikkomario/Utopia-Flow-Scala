@@ -86,6 +86,16 @@ object CollectionExtensions
         }
     
         /**
+          * Filters a seq so that only distinct values remain. Compares the values by mapping them.
+          * @param f A mapping function to produce comparable values
+          * @param cbf A canbuildfrom (implicit) to build the final collection
+          * @tparam B Map targe type
+          * @tparam To Type of resulting collection
+          * @return A collection with only distinct values (based on mapping)
+          */
+        def distinctBy[B, To](f: A => B)(implicit cbf: CanBuildFrom[_, A, To]) = distinctWith[To] { (a, b) => f(a) == f(b) }
+    
+        /**
           * @return A version of this seq with consecutive items paired. Each item will be present twice in the returned
           *         collection, except the first and the last item
           */

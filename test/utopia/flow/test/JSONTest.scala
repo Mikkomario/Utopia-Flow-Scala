@@ -149,5 +149,8 @@ object JSONTest extends App
     assert(readModel4("name").int.isEmpty)
     assert(readModel4("name").double.isEmpty)
     
+    // Testing JSONReader parseValue with quotations
+    assert(JSONReader.parseValue("\"Test\"").get.string.contains("Test"))
+    
     println("Success!")
 }
