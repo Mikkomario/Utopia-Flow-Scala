@@ -95,6 +95,8 @@ v1.6  -------------------------------------
 
         FromModelFactory now returns Try[...] instead of Option[...]
 
+        Simple loop construction syntaxt was change from Loop(Duration, () => Unit) to Loop(Duration, => Unit)
+
 
     Fixes
     -----
