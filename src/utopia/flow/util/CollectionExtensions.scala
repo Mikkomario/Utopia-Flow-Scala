@@ -2,7 +2,7 @@ package utopia.flow.util
 
 import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
-import scala.util.Try
+import scala.util.{Success, Try}
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
@@ -154,6 +154,30 @@ object CollectionExtensions
           * @return This either's right value or None if this either is left (same as toOption)
           */
         def rightOption = e.toOption
+    
+        /**
+          * If this either is left, maps it
+          * @param f A mapping function for left side
+          * @tparam B New type for left side
+          * @return A mapped version of this either
+          */
+        def mapLeft[B](f: L => B) = e match
+        {
+            case Right(r) => Right(r)
+            case Left(l) => Left(f(l))
+        }
+    
+        /**
+          * If this either is right, maps it
+          * @param f A mapping function for left side
+          * @tparam B New type for right side
+          * @return A mapped version of this either
+          */
+        def mapRight[B](f: R => B) = e match
+        {
+            case Right(r) => Right(f(r))
+            case Left(l) => Left(l)
+        }
     }
     
     implicit class RichTraversable[A](val t: Traversable[A]) extends AnyVal

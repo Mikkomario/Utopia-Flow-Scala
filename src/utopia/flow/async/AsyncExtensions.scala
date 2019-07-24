@@ -2,7 +2,7 @@ package utopia.flow.async
 
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.Try
 
 /**
@@ -23,6 +23,16 @@ object AsyncExtensions
 	     * @return The result of the future. A failure if this future failed or if timeout was reached
 	     */
 	    def waitFor(timeout: Duration = Duration.Inf) = Try(Await.ready(f, timeout).value.get).flatten
+		
+		/**
+		  * Creates a copy of this future that will either succeed or fail before the specified timeout duration
+		  * has passed
+		  * @param timeout Maximum wait duration
+		  * @param exc Implicit execution context
+		  * @return A future that contains the result of the original future or a failure if timeout was passed
+		  *         before receiving a result.
+		  */
+		def withTimeout(timeout: FiniteDuration)(implicit exc: ExecutionContext) = Future { waitFor(timeout) }
 		
 		/**
 		  * @return Whether this future was already completed successfully
@@ -48,6 +58,17 @@ object AsyncExtensions
 		  * @return The result of the future. A failure if this future failed, if timeout was reached or if result was a failure
 		  */
 		def waitForResult(timeout: Duration = Duration.Inf): Try[A] = f.waitFor(timeout).flatten
+		
+		/**
+		  * Creates a copy of this future with specified timeout. The resulting future will contain a failure if result
+		  * wasn't received within timeout duration
+		  * @param timeout A timeout duration
+		  * @param exc Implicit execution context
+		  * @return A future that will contain a failure if result is not received within timeout duration (the future will also
+		  *         contain a failure if this future received a failure result)
+		  */
+		def resultWithTimeout(timeout: FiniteDuration)(implicit exc: ExecutionContext) =
+			if (f.isCompleted) Future.successful(waitForResult()) else Future { waitForResult(timeout) }
 		
 		/**
 		  * @return Whether this future already contains a success result

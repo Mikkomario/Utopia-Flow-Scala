@@ -78,6 +78,10 @@ v1.6  -------------------------------------
         CollectionExtensions now contains .bestMatch(...) function for traversable items. This allows advanced searching
         based on hierarchical conditions.
 
+        withTimeout(FiniteDuration) and resultWithTimeout(FiniteDuration) were added through AsyncExtensions to Future.
+
+        CollectionExtensions now contains mapLeft(...) and mapRight(...) for Either.
+
 
     Updates & Changes
     -----------------

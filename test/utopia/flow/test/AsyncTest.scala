@@ -51,5 +51,15 @@ object AsyncTest extends App
     assert(finalStarts.size == 20)
     assert(finalEnds.size == 20)
     
+    // Tests futures with timeouts
+    val originalFuture = makeFuture(21)
+    val shortTimeoutFuture = originalFuture.withTimeout(0.5.seconds)
+    val longTimeoutFuture = originalFuture.withTimeout(10.seconds)
+    
+    assert(shortTimeoutFuture.waitForResult().isFailure)
+    println("Short timeout future completed")
+    assert(longTimeoutFuture.waitForResult().isSuccess)
+    println("Long timeout future completed")
+    
     println("Success!")
 }
