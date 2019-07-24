@@ -2,6 +2,7 @@ package utopia.flow.test
 
 import utopia.flow.datastructure.immutable.Value
 import java.time.Instant
+
 import utopia.flow.generic.StringType
 import utopia.flow.generic.DataType
 import utopia.flow.datastructure.immutable.Constant
@@ -9,7 +10,6 @@ import utopia.flow.datastructure.immutable.Model
 import utopia.flow.parse.JSONReader
 import utopia.flow.generic.IntType
 import utopia.flow.generic.ModelType
-
 import utopia.flow.generic.ValueConversions._
 
 object JSONTest extends App
@@ -56,25 +56,23 @@ object JSONTest extends App
     println(model.toJSON)
     
     // Tests value reading
-    assert(JSONReader.parseValue("1").get.intOr() == 1)
-    assert(JSONReader.parseValue("[1, 2, 3]").get.vectorOr() == Vector[Value](1, 2, 3))
+    assert(JSONReader("1").get.intOr() == 1)
+    println(JSONReader("[1, 2, 3]").get.description)
+    assert(JSONReader("[1, 2, 3]").get.vectorOr() == Vector[Value](1, 2, 3))
     
     // Tests model reading
-    val readModel1 = JSONReader.parseSingle(model.toJSON)
-    assert(readModel1.isSuccess)
-    println(readModel1.get)
+    val readModel1 = JSONReader(model.toJSON).get.getModel
+    println(readModel1)
     // assert(readModel1 == model)
     
-    val readModel2 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": 39, \"empty\": \"\", \"length\": 76.24}")
+    val readModel2 = JSONReader("{\"name\" : \"Matti\", \"age\": 39, \"empty\": \"\", \"length\": 76.24}").get.getModel
+    println(readModel2)
     
-    assert(readModel2.isSuccess)
-    println(readModel2.get)
+    assert(readModel2("name").stringOr() == "Matti")
+    assert(readModel2("age").dataType == IntType)
+    assert(readModel2("length").getDouble == 76.24)
     
-    assert(readModel2.get("name").stringOr() == "Matti")
-    assert(readModel2.get("age").dataType == IntType)
-    assert(readModel2.get("length").getDouble == 76.24)
-    
-    assert(readModel2 == JSONReader.parseSingle(readModel2.get.toJSON))
+    assert(readModel2 == JSONReader(readModel2.toJSON).get.getModel)
     
     // Tests more difficult data types
     val prop4 = Constant("test4", v)
@@ -82,22 +80,18 @@ object JSONTest extends App
     val prop6 = Constant("test6", time)
     
     val model2 = Model.withConstants(Vector(prop4, prop5, prop6))
-    
     println(model2)
     
-    val readModel3 = JSONReader.parseSingle(model2.toJSON)
+    val readModel3 = JSONReader(model2.toJSON).get.getModel
+    println(readModel3)
     
-    assert(readModel3.isSuccess)
-    println(readModel3.get)
-    
-    val readTime = readModel3.get("test6").instant
+    val readTime = readModel3("test6").instant
     assert(readTime.contains(time.getInstant))
-    assert(readModel3.get("test4").vectorOr().length == 3)
-    assert(readModel3.get("test5").dataType == ModelType)
+    assert(readModel3("test4").vectorOr().length == 3)
+    assert(readModel3("test5").dataType == ModelType)
     
     // Tests value reading vs. model reading
-    assert(JSONReader.parseSingle(readModel2.get.toJSON).get == readModel2.get)
-    assert(JSONReader.parseValue(readModel2.get.toJSON).get.getModel == readModel2.get)
+    assert(JSONReader(readModel2.toJSON).get.getModel == readModel2)
     
     // This kind of setting was causing a problem earlier
     val test = Vector(1)
@@ -110,33 +104,33 @@ object JSONTest extends App
     val model4 = Model(Vector("vec" -> Vector[Value](), "normal" -> "a"))
     
     println(model4)
-    val parsed = JSONReader.parseSingle(model4.toJSON).get
+    val parsed = JSONReader(model4.toJSON).get.getModel
     println(parsed)
     assert(parsed == model4)
     
     val model5 = Model(Vector("mod" -> Model(Vector())))
     
     println(model5)
-    val parsed5 = JSONReader.parseSingle(model5.toJSON).get
+    val parsed5 = JSONReader(model5.toJSON).get.getModel
     println(parsed5)
     assert(parsed5 == model5)
     
-    assert(JSONReader.parseValue("[]").get == Vector[Value]().toValue)
-    assert(JSONReader.parseValue("[ ]").get == Vector[Value]().toValue)
-    assert(JSONReader.parseValue("[null]").get == Vector(Value.empty()).toValue)
-    assert(JSONReader.parseValue("[,]").get == Vector(Value.empty(), Value.empty()).toValue)
+    assert(JSONReader("[]").get == Vector[Value]().toValue)
+    assert(JSONReader("[ ]").get == Vector[Value]().toValue)
+    assert(JSONReader("[null]").get == Vector(Value.empty()).toValue)
+    assert(JSONReader("[,]").get == Vector(Value.empty(), Value.empty()).toValue)
     
     // Testing JSON reading when quoted portion contains json markers
     val jsonWithQuotes = Model(Vector("Test1" -> "This portion contains, special values",
         "Test2" -> "This one is also { tough }", "Even worse [when, array, in, property, name]" -> true)).toJSON
-    val parsed6 = JSONReader.parseSingle(jsonWithQuotes).get
+    val parsed6 = JSONReader(jsonWithQuotes).get.getModel
     
     assert(parsed6("Test1").getString == "This portion contains, special values")
     assert(parsed6("Test2").getString == "This one is also { tough }")
     assert(parsed6("Even worse [when, array, in, property, name]").getBoolean)
     
     // Testing int and double handling on missing and empty (null) values
-    val readModel4 = JSONReader.parseSingle("{\"name\" : \"Matti\", \"age\": null, \"empty\": \"\"}").get
+    val readModel4 = JSONReader("{\"name\" : \"Matti\", \"age\": null, \"empty\": \"\"}").get.getModel
     
     assert(readModel4("none").int.isEmpty)
     assert(readModel4("none").double.isEmpty)
@@ -150,7 +144,7 @@ object JSONTest extends App
     assert(readModel4("name").double.isEmpty)
     
     // Testing JSONReader parseValue with quotations
-    assert(JSONReader.parseValue("\"Test\"").get.string.contains("Test"))
+    assert(JSONReader("\"Test\"").get.string.contains("Test"))
     
     println("Success!")
 }
