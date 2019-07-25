@@ -89,8 +89,6 @@ v1.6  -------------------------------------
         Instant JSON representation is now in string format and not in long format. This might cause problems in
         external systems, although Utopia Flow should be able to parse the values just the same.
 
-        JSONReader.parseSingle now returns Try[Model[Constant]] instead of Option[Model[Constant]]
-
         Constant is now a case class
 
         ModelDeclaration syntax updated. Class constructor is now hidden. Please use object constructors instead.
@@ -100,6 +98,12 @@ v1.6  -------------------------------------
         FromModelFactory now returns Try[...] instead of Option[...]
 
         Simple loop construction syntaxt was change from Loop(Duration, () => Unit) to Loop(Duration, => Unit)
+
+        Value.empty(DataType) replaced with Value.emptyWithType(DataType). Value.empty added as a property
+
+        JSONReader completely rewritten. Methods parse... are either deprecated or removed. Please use apply method
+        variations instead
+            - JSONReader also now returns a Try[Value] and not a Option[Model[Constant]]
 
 
     Fixes

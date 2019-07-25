@@ -107,7 +107,7 @@ object DataTypeTest extends App
     assert(model.vectorOr().length == 1)
     
     assert(str.orElse(i) == str)
-    assert(Value.empty().orElse(i) == i)
+    assert(Value.empty.orElse(i) == i)
     
     println(model.toString())
     

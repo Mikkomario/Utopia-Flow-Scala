@@ -94,7 +94,7 @@ object XmlReader
     /**
       * Parses a value from a string
       */
-    private[parse] def valueFromString(s: String) = JSONReader.parseValue(s).toOption.getOrElse(s.toValue)
+    private[parse] def valueFromString(s: String) = JSONReader(s).toOption.getOrElse(s.toValue)
 }
 
 /**
@@ -372,7 +372,7 @@ private class UnfinishedElement(val name: String, val attributes: Map[String, St
     def toXmlElement: XmlElement = 
     {
         val attributesModel = Model(attributes.mapValues(XmlReader.valueFromString).toVector)
-        new XmlElement(name, if (text.isEmpty) Value.empty(StringType) else
+        new XmlElement(name, if (text.isEmpty) Value.emptyWithType(StringType) else
                 XmlReader.valueFromString(text), attributesModel, children.map(_.toXmlElement))
     }
 }

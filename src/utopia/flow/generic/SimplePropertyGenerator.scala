@@ -9,7 +9,7 @@ import utopia.flow.util.Equatable
  * value and a certain property constructor.
  */
 abstract class SimplePropertyGenerator[+T <: Property](val createProperty: (String, Value) => T,
-        val defaultValue: Value = Value.empty()) extends PropertyGenerator[T]
+        val defaultValue: Value = Value.empty) extends PropertyGenerator[T]
 {
     // IMPLEMENTED    ------------
     

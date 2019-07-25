@@ -11,14 +11,14 @@ object PropertyChangeEvent
 	  * @return A change event for the specified property
 	  */
 	def propertyAdded(newProperty: Property) = PropertyChangeEvent(newProperty.name,
-		Value.empty(newProperty.dataType), newProperty.value)
+		Value.emptyWithType(newProperty.dataType), newProperty.value)
 	
 	/**
 	  * Creates a new event from property deletion
 	  * @param property The deleted property
 	  * @return A change event for the specified property
 	  */
-	def propertyRemoved(property: Property) = PropertyChangeEvent(property.name, property.value, Value.empty(property.dataType))
+	def propertyRemoved(property: Property) = PropertyChangeEvent(property.name, property.value, Value.emptyWithType(property.dataType))
 }
 
 /**

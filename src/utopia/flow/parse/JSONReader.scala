@@ -329,7 +329,7 @@ object JSONReader
 	{
 		// 'null' (without quotations) is a synonym for empty value
 		if (string.isEmpty || string.equalsIgnoreCase("null"))
-			Value.empty()
+			Value.empty
 		// 'true' / 'false' are considered to be boolean
 		else if (string.equalsIgnoreCase("true"))
 			true

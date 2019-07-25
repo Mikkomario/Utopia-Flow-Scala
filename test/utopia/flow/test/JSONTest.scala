@@ -29,7 +29,7 @@ object JSONTest extends App
     val s = "Hello World!".toValue
     val time = Instant.now().toValue
     val b = true.toValue
-    val empty = Value.empty(StringType)
+    val empty = Value.emptyWithType(StringType)
     val v = Vector(empty, b, i).toValue
     
     assertJSON(empty, "null")
@@ -117,8 +117,8 @@ object JSONTest extends App
     
     assert(JSONReader("[]").get == Vector[Value]().toValue)
     assert(JSONReader("[ ]").get == Vector[Value]().toValue)
-    assert(JSONReader("[null]").get == Vector(Value.empty()).toValue)
-    assert(JSONReader("[,]").get == Vector(Value.empty(), Value.empty()).toValue)
+    assert(JSONReader("[null]").get == Vector(Value.empty).toValue)
+    assert(JSONReader("[,]").get == Vector(Value.empty, Value.empty).toValue)
     
     // Testing JSON reading when quoted portion contains json markers
     val jsonWithQuotes = Model(Vector("Test1" -> "This portion contains, special values",

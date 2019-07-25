@@ -36,7 +36,7 @@ object XmlElement extends FromModelFactory[XmlElement]
         // Value is either in 'value' or 'text' attribute
         val valueAttribute = model.findExisting("value")
         val value = valueAttribute.map(_.value).orElse(
-                model.findExisting("text").map(_.value)).getOrElse(Value.empty(StringType))
+                model.findExisting("text").map(_.value)).getOrElse(Value.emptyWithType(StringType))
         
         // There may be some unused / non-standard attributes in the model
         val unspecifiedAttributes = model.attributes.filter(att => 
@@ -81,7 +81,7 @@ object XmlElement extends FromModelFactory[XmlElement]
  * @author Mikko Hilpinen
  * @since 13.1.2017 (v1.3)
  */
-case class XmlElement(name: String, value: Value = Value.empty(StringType), attributes: Model[Constant] = Model(Vector()),
+case class XmlElement(name: String, value: Value = Value.emptyWithType(StringType), attributes: Model[Constant] = Model(Vector()),
                       override val children: Vector[XmlElement] = Vector()) extends TreeLike[String, XmlElement] with ModelConvertible
 {
     // COMPUTED PROPERTIES    ------------------
