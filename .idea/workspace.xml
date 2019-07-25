@@ -74,6 +74,7 @@
     <option name="width" value="2565" />
     <option name="height" value="2111" />
   </component>
+  <component name="ProjectId" id="1OUq6kGufVQDNmsdtGF0ISXWKmF" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
@@ -307,7 +308,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
