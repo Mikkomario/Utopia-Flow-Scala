@@ -82,6 +82,8 @@ v1.6  -------------------------------------
 
         CollectionExtensions now contains mapLeft(...) and mapRight(...) for Either.
 
+        FromModelFactoryWithSchema handles model parsing more easily using a schema to validate the model before using it.
+
 
     Updates & Changes
     -----------------

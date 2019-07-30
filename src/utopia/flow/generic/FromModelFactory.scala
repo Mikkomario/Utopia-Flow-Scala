@@ -17,6 +17,7 @@ trait FromModelFactory[+A]
     
     /**
      * Parses an instance by reading the data from a model instance
+     * @param model Model data is parsed from
      * @return an instance parsed from model data. Failure if no instance could be parsed.
      */
     def apply(model: Model[Property]): Try[A]
