@@ -84,6 +84,8 @@ v1.6  -------------------------------------
 
         FromModelFactoryWithSchema handles model parsing more easily using a schema to validate the model before using it.
 
+        New extensions added for java.time.Year, java.time.LocalDate and java.time.YearMonth
+
 
     Updates & Changes
     -----------------

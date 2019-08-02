@@ -1,14 +1,16 @@
 package utopia.flow.util
 
+import java.time.chrono.ChronoLocalDate
+
 import scala.language.implicitConversions
-import java.time.Instant
+import java.time.{DayOfWeek, Duration, Instant, LocalDate, Month, Year, YearMonth, ZoneId}
 import java.time.temporal.TemporalAmount
-import java.time.ZoneId
-import java.time.Duration
 
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
+
+import scala.collection.immutable.VectorBuilder
 
 /**
 * This object contains some extensions for java's time classes
@@ -119,6 +121,110 @@ object TimeExtensions
 			}
 			else
 				f"$seconds%1.2f seconds"
+		}
+	}
+	
+	implicit class ExtendedLocalDate(val d: LocalDate) extends AnyVal
+	{
+		/**
+		  * @return Year of this date
+		  */
+		def year = Year.of(d.getYear)
+		/**
+		  * @return Month of this date
+		  */
+		def month = d.getMonth
+		/**
+		  * @return Week day of this date
+		  */
+		def weekDay = d.getDayOfWeek
+		/**
+		  * @return Year + month of this date
+		  */
+		def yearMonth = d.year + d.month
+	}
+	
+	implicit class ExtendedYear(val y: Year) extends AnyVal
+	{
+		/**
+		  * Adds month information to this year
+		  * @param month Targeted month
+		  * @return A monthYear based on this year and specified month
+		  */
+		def +(month: Month) = YearMonth.of(y.getValue, month)
+	}
+	
+	implicit class ExtendedYearMonth(val ym: YearMonth) extends AnyVal
+	{
+		// COMPUTED	----------------------
+		
+		/**
+		  * @return Year portion of this year month
+		  */
+		def year = Year.of(ym.getYear)
+		
+		/**
+		  * @return Dates in this month
+		  */
+		def dates = (1 to ym.lengthOfMonth()).map(apply)
+		
+		/**
+		  * @return The year month previous to this one
+		  */
+		def previous = this - 1
+		
+		/**
+		  * @return The year month following this one
+		  */
+		def next = this + 1
+		
+		
+		// OTHER	----------------------
+		
+		/**
+		  * Adjusts this month by specified amount
+		  * @param monthAdjust Adjustment to month count
+		  * @return Adjusted month
+		  */
+		def +(monthAdjust: Int) = ym.plusMonths(monthAdjust)
+		
+		/**
+		  * Adjusts this month by specified amount
+		  * @param monthAdjust Adjustment to month count
+		  * @return Adjusted month
+		  */
+		def -(monthAdjust: Int) = ym.minusMonths(monthAdjust)
+		
+		/**
+		  * @param dayNumber Targeted day number
+		  * @return Targeted date
+		  */
+		def apply(dayNumber: Int) = LocalDate.of(ym.getYear, ym.getMonth, dayNumber)
+		
+		/**
+		  * Separates this month to weeks
+		  * @param firstDayOfWeek The first day of a week (default = Monday)
+		  * @return A vector that contains all weeks in this month, first and last week may contain less than 7
+		  *         days.
+		  */
+		def weeks(firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY) =
+		{
+			val d = dates
+			// Month may start at the middle of the week
+			val incompleteStart = d.takeWhile { _.weekDay.getValue > firstDayOfWeek.getValue }.toVector
+			
+			val weeksBuffer = new VectorBuilder[Vector[LocalDate]]()
+			if (incompleteStart.nonEmpty)
+				weeksBuffer += incompleteStart
+			
+			var nextWeekStartIndex = incompleteStart.size
+			while (nextWeekStartIndex < d.size)
+			{
+				weeksBuffer += d.slice(nextWeekStartIndex, nextWeekStartIndex + 7).toVector
+				nextWeekStartIndex += 7
+			}
+			
+			weeksBuffer.result()
 		}
 	}
 	
