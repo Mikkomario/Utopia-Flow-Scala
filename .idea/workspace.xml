@@ -12,13 +12,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/Model.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/Model.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Model.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Model.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/template/Model.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/template/Model.scala" afterDir="false" />
-    </list>
+    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
