@@ -5,7 +5,15 @@ object Pointer
     /**
      * Creates a new pointer for value
      */
-    def apply[T](value: T) = new Pointer(value)    
+    def apply[A](value: A) = new Pointer(value)
+	
+	/**
+	  * Creates a new pointer with events
+	  * @param value The initial value for the pointer
+	  * @tparam A The type of the contained item
+	  * @return A new pointer with events
+	  */
+	def withEvents[A](value: A) = new PointerWithEvents(value)
 }
 
 /**
@@ -13,30 +21,15 @@ object Pointer
 * @author Mikko Hilpinen
 * @since 23.3.2019
 **/
-class Pointer[T](var value: T)
+class Pointer[A](var value: A) extends PointerLike[A]
 {
-    // COMPUTED    -------------------------
-    
-    /**
-     * The current value in this pointer
-     */
-    def get = value
-    
-    
-    // IMPLEMENTED    ----------------------
-    
-	override def toString() = value.toString()
-	
-	
-	// OTHER    ------------------------
+	/**
+	  * The current value in this pointer
+	  */
+	def get = value
 	
 	/**
-	 * Updates the value in this pointer
-	 */
-	def set(newVal: T) = value = newVal
-	
-	/**
-	 * Whether this pointer contains the specified value
-	 */
-	def contains(item: Any) = value == item
+	  * Updates the value in this pointer
+	  */
+	def set(newVal: A) = value = newVal
 }

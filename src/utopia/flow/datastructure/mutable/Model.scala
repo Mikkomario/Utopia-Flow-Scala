@@ -7,8 +7,10 @@ import utopia.flow.generic.SimpleVariableGenerator
 import utopia.flow.generic.PropertyGenerator
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.SimpleConstantGenerator
+
 import scala.collection.immutable.HashMap
 import utopia.flow.datastructure.template.Property
+import utopia.flow.event.{PropertyChangeEvent, PropertyChangeListener}
 
 object Model
 {
@@ -52,6 +54,11 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     private var _attributeMap = HashMap[String, Attribute]()
     def attributeMap = _attributeMap
     
+    /**
+      * The listeners that are interested in changes in this model
+      */
+    var listeners = Vector[PropertyChangeListener]()
+    
     
     // IMPLEMENTED METHODS    -----
     
@@ -67,9 +74,21 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      */
     def update(attName: String, value: Value) = 
     {
+        // Replaces value & generates events, may generate a new attribute
         val existing = findExisting(attName)
-        if (existing.isDefined) existing.get.value = value else generateAttribute(attName, Some(value))
-        Unit
+        if (existing.isDefined)
+        {
+            val oldValue = existing.get.value
+            existing.get.value = value
+            lazy val event = PropertyChangeEvent(existing.get.name, oldValue, existing.get.value)
+            listeners.foreach { _.onPropertyChanged(event) }
+        }
+        else
+        {
+            val generated = generateAttribute(attName, Some(value))
+            lazy val event = PropertyChangeEvent.propertyAdded(generated)
+            listeners.foreach { _.onPropertyChanged(event) }
+        }
     }
     
     /**
@@ -88,7 +107,12 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      * is overwritten
      * @param attribute The attribute added to this model
      */
-    def +=(attribute: Attribute) = _attributeMap += attribute.name.toLowerCase() -> attribute
+    def +=(attribute: Attribute) =
+    {
+        _attributeMap += attribute.name.toLowerCase() -> attribute
+        lazy val event = PropertyChangeEvent.propertyAdded(attribute)
+        listeners.foreach { _.onPropertyChanged(event) }
+    }
     
     /**
      * Adds a number of attributes to this model
@@ -100,10 +124,30 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      * Removes an attribute from this model
      * @param attribute The attribute that is removed from this model
      */
-    def -=(attribute: Attribute) = _attributeMap = _attributeMap.filter { case (_, att) => att != attribute }
+    def -=(attribute: Attribute) =
+    {
+        if (_attributeMap.valuesIterator.contains(attribute))
+        {
+            _attributeMap = _attributeMap.filter { case (_, att) => att != attribute }
+            lazy val event = PropertyChangeEvent.propertyRemoved(attribute)
+            listeners.foreach { _.onPropertyChanged(event) }
+        }
+    }
     
     
     // OTHER METHODS    -----------
+    
+    /**
+      * Adds a new listener to this model
+      * @param listener A listener that will receive property changed events
+      */
+    def addListener(listener: PropertyChangeListener) = listeners :+= listener
+    
+    /**
+      * removes a listener from this model
+      * @param listener A listener that will no longer receive property changed events from this model
+      */
+    def removeListener(listener: Any) = listeners = listeners.filterNot { _ == listener }
     
     /**
      * Creates an immutable version of this model by using the provided attribute generator

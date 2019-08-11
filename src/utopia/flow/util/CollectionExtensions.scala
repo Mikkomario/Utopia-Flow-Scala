@@ -1,6 +1,6 @@
 package utopia.flow.util
 
-import collection.{SeqLike, mutable}
+import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
 import scala.util.Try
 
@@ -46,6 +46,21 @@ object CollectionExtensions
         }
     
         /**
+          * Finds the index of the specified item
+          * @param item Searched item
+          * @tparam B Item type
+          * @return The index of specified item or none if no such index was found
+          */
+        def optionIndexOf[B >: A](item: B) =
+        {
+            val result = seq.indexOf(item)
+            if (result >= 0)
+                Some(result)
+            else
+                None
+        }
+    
+        /**
           * Filters a seq so that only distinct values remain. Uses a special function to determine equality
           * @param equals A function that determines whether two values are equal
           * @param cbf A canbuildfrom (implicit) to build the final collection
@@ -65,6 +80,37 @@ object CollectionExtensions
                         collected += item
                         builder += item
                     }
+            }
+            
+            builder.result()
+        }
+    
+        /**
+          * @return A version of this seq with consecutive items paired. Each item will be present twice in the returned
+          *         collection, except the first and the last item
+          */
+        def paired = (1 until seq.size).map { i => (seq(i - 1), seq(i)) }
+    
+        /**
+          * This function works like foldLeft, except that it stores each step (including the start) into a seq
+          * @param start The starting step
+          * @param map A function for calculating the next step, takes the previous result + the next item in this seq
+          * @param cbf A canbuildfrom for final collection (implicit)
+          * @tparam B The type of steps
+          * @tparam To The type of final collection
+          * @return All of the steps mapped into a collection
+          */
+        def foldMapLeft[B, To](start: B)(map: (B, A) => B)(implicit cbf: CanBuildFrom[_, B, To]) =
+        {
+            val builder = cbf()
+            var last = start
+            builder += last
+            
+            seq.foreach
+            {
+                item =>
+                    last = map(last, item)
+                    builder += last
             }
             
             builder.result()
@@ -92,6 +138,96 @@ object CollectionExtensions
           * @return The first item that was mapped to Some. None if all items were mapped to None.
           */
         def findMap[B](map: A => Option[B]) = t.view.map(map).find { _.isDefined }.flatten
+    
+        /**
+          * Finds the maximum value in this traversable
+          * @param cmp Ordering (implicit)
+          * @tparam B Ordering type
+          * @return Maximum item or None if this traversable was empty
+          */
+        def maxOption[B >: A](implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.max(cmp))
+        }
+        
+        /**
+          * Finds the minimum value in this traversable
+          * @param cmp Ordering (implicit)
+          * @tparam B Ordering type
+          * @return Minimum item or None if this traversable was empty
+          */
+        def minOption[B >: A](implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.min(cmp))
+        }
+    }
+    
+    implicit class RichTraversableLike[A, Repr](val t: TraversableLike[A, Repr]) extends AnyVal
+    {
+        /**
+          * Divides the items in this traversable into two groups, based on boolean result
+          * @param f A function that separates the items
+          * @param cbf An implicit can build from
+          * @return The 'false' group, followed by the 'true' group
+          */
+        def divideBy(f: A => Boolean)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            val groups = t.groupBy(f)
+            groups.getOrElse(false, cbf.apply().result()) -> groups.getOrElse(true, cbf.apply().result())
+        }
+    }
+    
+    implicit class RichIterableLike[A, Repr](val t: IterableLike[A, Repr]) extends AnyVal
+    {
+        /**
+          * Iterates through the items in this iterable along with another iterable's items. Will stop when either
+          * iterable runs out of items
+          * @param another Another iterable
+          * @param f A function that handles the items
+          * @param bf A can build from (implicit)
+          * @tparam B The type of another iterable's items
+          * @tparam U Arbitrary result type
+          */
+        def foreachWith[B, U](another: GenIterable[B])(f: (A, B) => U)
+                                      (implicit bf: CanBuildFrom[Repr, (A, B), Traversable[(A, B)]]) =
+            t.zip(another).foreach { p => f(p._1, p._2) }
+    
+        /**
+          * @return An iterator that keeps repeating over and over (iterator continues infinitely or until this
+          *         collection is empty)
+          */
+        def repeatingIterator(): Iterator[A] = new RepeatingIterator[A](t)
+    }
+    
+    implicit class RichMap[K, V](val m: Map[K, V]) extends AnyVal
+    {
+        /**
+          * Merges this map with another map. If value is present only in one map, it is preserved as is.
+          * @param another Another map
+          * @param merge A merge function used when both maps contain a value
+          * @tparam V2 The resulting value type
+          * @return A map with merged values
+          */
+        def mergedWith[V2 >: V](another: Map[K, V2], merge: (V, V2) => V2) =
+        {
+            val myKeys = m.keySet
+            val theirKeys = another.keySet
+            val onlyInMe = myKeys.diff(theirKeys)
+            val onlyInThem = theirKeys.diff(myKeys)
+            val inBoth = myKeys.intersect(theirKeys)
+            
+            val myPart = onlyInMe.map { k => k -> m(k) }.toMap
+            val theirPart = onlyInThem.map { k => k -> another(k) }.toMap
+            val ourPart = inBoth.map { k => k -> merge(m(k), another(k)) }.toMap
+            
+            myPart ++ theirPart ++ ourPart
+        }
     }
     
     /**
@@ -112,11 +248,36 @@ object CollectionExtensions
     /**
      * This extension allows tuple lists to be transformed into multi maps directly
      */
-    implicit class RichTupleList[K, V](val list: TraversableOnce[Tuple2[K, V]]) extends AnyVal
+    implicit class RichTupleList[K, V](val list: TraversableOnce[(K, V)]) extends AnyVal
     {
         def toMultiMap[Values]()(implicit cbfv: CanBuildFrom[Nothing, V, Values]): Map[K, Values] = 
         {
             new MultiMapConvertible(list).toMultiMap(_._1, _._2)
+        }
+    }
+    
+    private class RepeatingIterator[A](val c: IterableLike[A, _]) extends Iterator[A]
+    {
+        // ATTRIBUTES   -----------------
+        
+        private var currentIterator: Option[Iterator[A]] = None
+        
+        
+        // IMPLEMENTED  -----------------
+        
+        override def hasNext = iterator().hasNext
+    
+        override def next() = iterator().next()
+        
+        
+        // OTHER    -------------------
+        
+        private def iterator() =
+        {
+            if (currentIterator.forall { !_.hasNext } )
+                currentIterator = Some(c.iterator)
+    
+            currentIterator.get
         }
     }
 }

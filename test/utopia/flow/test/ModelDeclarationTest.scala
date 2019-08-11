@@ -3,7 +3,6 @@ package utopia.flow.test
 import utopia.flow.datastructure.immutable.PropertyDeclaration
 import utopia.flow.generic.IntType
 import utopia.flow.generic.DataType
-import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.StringType
 import utopia.flow.datastructure.immutable.ModelDeclaration
 import utopia.flow.generic.BooleanType
@@ -17,13 +16,13 @@ object ModelDeclarationTest extends App
     DataType.setup()
     
     // Tests property declarations
-    val prop1 = new PropertyDeclaration("test1", IntType)
-    val prop2 = new PropertyDeclaration("test2", 0)
+    val prop1 = PropertyDeclaration("test1", IntType)
+    val prop2 = PropertyDeclaration("test2", 0)
     
     // (not the usual use case but possible)
-    val prop3 = new PropertyDeclaration("test3", StringType, Some(3))
+    val prop3 = PropertyDeclaration("test3", StringType, Some(3))
     
-    assert(prop1 == new PropertyDeclaration("test1", IntType))
+    assert(prop1 == PropertyDeclaration("test1", IntType))
     assert(prop1.defaultValue.isEmpty)
     assert(prop2.defaultValue.isDefined)
     
@@ -34,7 +33,7 @@ object ModelDeclarationTest extends App
     assert(modelDec.find("kkk").isEmpty)
     assert(modelDec.declarations.size == 3)
     
-    val modelDec2 = modelDec + new PropertyDeclaration("Test4", BooleanType)
+    val modelDec2 = modelDec + PropertyDeclaration("Test4", BooleanType)
     
     assert(modelDec2.declarations.size == 4)
     

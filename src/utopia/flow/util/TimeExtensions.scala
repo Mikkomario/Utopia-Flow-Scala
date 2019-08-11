@@ -6,6 +6,7 @@ import java.time.temporal.TemporalAmount
 import java.time.ZoneId
 import java.time.Duration
 
+import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
 
@@ -57,9 +58,63 @@ object TimeExtensions
 	implicit class ExtendedDuration(val d: Duration) extends AnyVal
 	{
 	    /**
-	     * The this duration as milliseconds, but with double precision
+	     * This duration as milliseconds, but with double precision
 	     */
 	    def toPreciseMillis = d.toNanos / 1000000.0
+		
+		/**
+		  * @return This duration in seconds, but with double precision
+		  */
+		def toPreciseSeconds = toPreciseMillis / 1000
+	}
+	
+	implicit class ExtendedScalaDuration(val d: duration.Duration) extends AnyVal
+	{
+		/**
+		  * @return A finite version of this duration. None for infinite durations.
+		  */
+		def finite = if (d.isFinite()) Some(FiniteDuration(d.length, d.unit)) else None
+		
+		/**
+		  * @return This duration in milliseconds, but with double precision (converted from nanoseconds)
+		  */
+		def toPreciseMillis = d.toNanos / 1000000.0
+		
+		/**
+		  * @return This duration in seconds, but with double precision (converted from nanoseconds)
+		  */
+		def toPreciseSeconds = toPreciseMillis / 1000
+	}
+	
+	implicit class TimeNumber[T](val i: T) extends AnyVal
+	{
+		private def nanoPrecision(mod: Long)(implicit n: Numeric[T]) = FiniteDuration((n.toDouble(i) * mod).toLong, TimeUnit.NANOSECONDS)
+		
+		/**
+		  * @param n implicit numeric
+		  * @return This number amount of nano seconds
+		  */
+		def nanos(implicit n: Numeric[T]) = nanoPrecision(1)
+		/**
+		  * @param n implicit numeric
+		  * @return This number amount of milli seconds (provides nano precision with doubles)
+		  */
+		def millis(implicit n: Numeric[T]) = nanoPrecision(1000000)
+		/**
+		  * @param n implicit numeric
+		  * @return This number amount of seconds (provides nano precision with doubles)
+		  */
+		def seconds(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000)
+		/**
+		  * @param n implicit numeric
+		  * @return This number amount of minutes (provides nano precision with doubles)
+		  */
+		def minutes(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000 * 60)
+		/**
+		  * @param n implicit numeric
+		  * @return This number amount of hours (provides nano precision with doubles)
+		  */
+		def hours(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000 * 60 * 60)
 	}
 	
 	/**

@@ -1,7 +1,6 @@
 package utopia.flow.test
 
-import java.time.Duration
-
+import utopia.flow.util.TimeExtensions._
 import utopia.flow.collection.WeakList
 import utopia.flow.util.WaitUtils
 
@@ -33,6 +32,6 @@ object WeakListTest extends App
 	
 	val weak2 = addItem("Moi", weakList)
 	
-	WaitUtils.wait(Duration.ofSeconds(5), new AnyRef())
+	WaitUtils.wait(5.seconds, new AnyRef())
 	println(weak2.reduceOption { _ + ", " + _ })
 }

@@ -71,4 +71,35 @@ trait TreeLike[A, NodeType <: TreeLike[A, NodeType]] extends template.TreeLike[A
       * @return A filtered version of this tree
       */
     def filterChildren(f: NodeType => Boolean) = makeNode(content, children.filter(f))
+    
+    /**
+      * Replaces a node with a new version within this tree
+      * @param oldNode The old node
+      * @param newNode A replacement node
+      * @return A copy of this tree with the node(s) replaced
+      */
+    def replace(oldNode: NodeType, newNode: NodeType): NodeType =
+    {
+        // TODO: If necessary, modify this to replace ALL instances of oldNode and not just the first
+        val replacementIndex = children.indexOf(oldNode)
+        if (replacementIndex >= 0)
+            makeNode(content, children.updated(replacementIndex, newNode))
+        else
+            makeNode(content, children.map { _.replace(oldNode, newNode) })
+    }
+    
+    /**
+      * Finds a node and replaces it with a new version
+      * @param find A find function used for identifying the node to be replaced
+      * @param map A mapping function that produces the replacement node
+      * @return A copy of this tree with the node(s) replaced
+      */
+    def findAndReplace(find: NodeType => Boolean, map: NodeType => NodeType): NodeType =
+    {
+        val replacementIndex = children.indexWhere(find)
+        if (replacementIndex >= 0)
+            makeNode(content, children.updated(replacementIndex, map(children(replacementIndex))))
+        else
+            makeNode(content, children.map { _.findAndReplace(find, map) })
+    }
 }

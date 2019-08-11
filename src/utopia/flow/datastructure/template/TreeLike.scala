@@ -53,6 +53,11 @@ trait TreeLike[A, NodeType <: TreeLike[A, NodeType]] extends Node[A]
       */
     def leaves: Vector[NodeType] = children.flatMap { c => if (c.isEmpty) Vector(c) else c.leaves }
     
+    /**
+      * @return All content within this node and the nodes under
+      */
+    def allContent = content +: nodesBelow.map { _.content }
+    
     
     // IMPLEMENTED  ----------------
     
@@ -98,4 +103,11 @@ trait TreeLike[A, NodeType <: TreeLike[A, NodeType]] extends Node[A]
      * @return Whether the provided node exists below this node
      */
     def contains(node: TreeLike[_, _]): Boolean = { children.contains(node) || children.exists { _.contains(node) } }
+    
+    /**
+      * Checks whether this node or any of this node's children contains the specified content
+      * @param content The searched content
+      * @return Whether this node or any node under this node contains the specified content
+      */
+    def contains(content: A): Boolean = this.content == content || children.exists { _.contains(content) }
 }
