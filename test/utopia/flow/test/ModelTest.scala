@@ -40,7 +40,7 @@ object ModelTest extends App
     assert(model2("Test").content.get == 0)
     
     // 3) immutable model with no default value
-    val constants = Vector(new Constant("Test1", 1), new Constant("Test2", 2))
+    val constants = Vector(Constant("Test1", 1), Constant("Test2", 2))
     val model3 = immutable.Model.withConstants(constants)
     
     assert(model3.attributeGenerator == model3.attributeGenerator)
@@ -50,12 +50,19 @@ object ModelTest extends App
     assert(model3.attributes.size == 2)
     assert(model3("Test1").content.get == 1)
     
+    // Tests model renaming too
+    val renamed1 = model3.renamed(Vector("Test1" -> "Renamed", "non-existing" -> "still-not-existing"))
+    
+    assert(renamed1("Renamed") == model3("Test1"))
+    assert(renamed1.attributes.size == 2)
+    assert(renamed1("Test2").getInt == 2)
+    
     val mutableModel2 = mutable.Model()
     mutableModel2("Test1") = 1
     mutableModel2("Test2") = 2
     assert(mutableModel2.immutableCopy() == model3)
     
-    val model4 = model3 + new Constant("Test3", 3)
+    val model4 = model3 + Constant("Test3", 3)
     
     assert(model4.attributes.size == 3)
     assert(model4("Test3").content.get == 3)

@@ -9,13 +9,11 @@ import utopia.flow.datastructure.mutable.Variable
  * @author Mikko Hilpinen
  * @since 29.11.2016
  */
-class Constant(val name: String, val value: Value) extends Property with Equatable
+case class Constant(name: String, value: Value) extends Property
 {
     // COMP. PROPERTIES    ---------
     
     override def dataType = value.dataType
-    
-    override def properties = Vector(name, value)
     
     
     // COMPUTED    -----------------
@@ -32,5 +30,11 @@ class Constant(val name: String, val value: Value) extends Property with Equatab
      * Creates a new constant that has the provided value but the same name
      * @param value the value the new constant will have
      */
-    def withValue(value: Value) = new Constant(name, value)
+    def withValue(value: Value) = copy(value = value)
+    
+    /**
+      * @param name New name for constant
+      * @return A copy of this constant with provided name
+      */
+    def withName(name: String) = copy(name = name)
 }

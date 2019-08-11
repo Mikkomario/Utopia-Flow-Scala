@@ -26,9 +26,14 @@ import java.time.LocalDateTime
 object Value
 {
     /**
+     * An empty value with no data type
+     */
+    val empty: Value = emptyWithType(AnyType)
+    
+    /**
      * Creates a new empty value that represents / mimics the provided data type
      */
-    def empty(dataType: DataType = AnyType) = Value(None, dataType)
+    def emptyWithType(dataType: DataType) = Value(None, dataType)
 }
 
 /**
@@ -78,7 +83,7 @@ case class Value(content: Option[Any], dataType: DataType) extends Node[Option[A
      * @param propertyName The name of the requested property
      * @return The value of the requested property 
      */
-    def apply(propertyName: String) = getModel(propertyName)
+    def apply(propertyName: String): Value = getModel(propertyName)
     
     /**
      * Finds a value from this value as if this value was a vector
@@ -86,10 +91,10 @@ case class Value(content: Option[Any], dataType: DataType) extends Node[Option[A
      * @return The value from the provided index from a vector within this value or empty value if 
      * this value doesn't contain a vector or index was out of range
      */
-    def apply(index: Int) = 
+    def apply(index: Int): Value =
     {
         val vector = getVector
-        if (index < 0 || index >= vector.length) Value.empty() else vector(index)
+        if (index < 0 || index >= vector.length) Value.empty else vector(index)
     }
     
     
@@ -116,7 +121,7 @@ case class Value(content: Option[Any], dataType: DataType) extends Node[Option[A
      * @return This value casted to a new data type. If the value couldn't be casted, an empty 
      * value is returned instead
      */
-    def withType(dataType: DataType) = ConversionHandler.cast(this, dataType).getOrElse(Value.empty(dataType))
+    def withType(dataType: DataType) = ConversionHandler.cast(this, dataType).getOrElse(Value.emptyWithType(dataType))
     
     /**
      * Returns the contents of this value, casted to the desired type range

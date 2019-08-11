@@ -2,14 +2,13 @@ package utopia.flow.test
 
 import utopia.flow.generic.ModelConvertible
 import utopia.flow.datastructure.immutable.Model
-import utopia.flow.datastructure.immutable.Constant
-
 import utopia.flow.generic.ValueConversions._
-import utopia.flow.generic.ValueConvertible
 import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
 import utopia.flow.datastructure.template
 import utopia.flow.util.Equatable
+
+import scala.util.{Failure, Success}
 
 object TestModel extends FromModelFactory[TestModel]
 {
@@ -24,12 +23,10 @@ object TestModel extends FromModelFactory[TestModel]
             val stats = model("stats").modelOr().toMap { _.int }
             val title = model("title").string
             
-            Some(new TestModel(name.get, level, stats, title))
+            Success(new TestModel(name.get, level, stats, title))
         }
-        else 
-        {
-            None
-        }
+        else
+            Failure(new NoSuchElementException(s"Cannot parse TestModel from $model without 'name' property"))
     }
 }
 
@@ -44,7 +41,7 @@ class TestModel(val name: String, val level: Int = 1, val stats: Map[String, Int
     // COMPUTED PROPERTIES    ------------------
     
     override def toModel = Model(Vector("name" -> name, "level" -> level, 
-            "stats" -> Model.fromMap(stats), "title" -> title));
+            "stats" -> Model.fromMap(stats), "title" -> title))
     
     override def properties = Vector(name, level, stats, title)
 }

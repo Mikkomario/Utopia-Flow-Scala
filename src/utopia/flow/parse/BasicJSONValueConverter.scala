@@ -2,15 +2,7 @@ package utopia.flow.parse
 
 import scala.collection.immutable.HashSet
 import utopia.flow.datastructure.immutable.Value
-import utopia.flow.generic.DataType
-import utopia.flow.generic.StringType
-import utopia.flow.generic.VectorType
-import utopia.flow.generic.ModelType
-import utopia.flow.generic.IntType
-import utopia.flow.generic.DoubleType
-import utopia.flow.generic.FloatType
-import utopia.flow.generic.LongType
-import utopia.flow.generic.BooleanType
+import utopia.flow.generic.{BooleanType, DataType, DoubleType, FloatType, InstantType, IntType, LongType, ModelType, StringType, VectorType}
 
 /**
  * This JSON value writer is able to write instances of basic data types into JSON
@@ -19,20 +11,19 @@ import utopia.flow.generic.BooleanType
  */
 object BasicJSONValueConverter extends ValueConverter[String]
 {
-    override def supportedTypes = HashSet(StringType, VectorType, ModelType, IntType, DoubleType, 
-            FloatType, LongType, BooleanType)
+    override val supportedTypes = HashSet(StringType, VectorType, ModelType, IntType, DoubleType,
+            FloatType, LongType, BooleanType, InstantType)
     
     override def apply(value: Value, dataType: DataType) = 
     {
         dataType match 
         {
-            case StringType => "\"" + value.stringOr() + "\""
-            case VectorType => 
-                val vector = value.vectorOr()
-                if (vector.isEmpty) "[]" else 
-                        '[' + vector.map{ _.toJSON }.reduceLeft{ _ + ", " + _ } + ']'
-            case ModelType => value.modelOr().toJSON
-            case _ => value.stringOr()
+            case StringType => "\"" + value.getString.replaceAll("\"", "'") + "\""
+            case VectorType => s"[${value.getVector.map { _.toJSON }.mkString(", ")}]"
+            case ModelType => value.getModel.toJSON
+            // Handles instant type separately to format it correctly
+            case InstantType => "\"" + value.getString + "\""
+            case _ => value.getString
         }
     }
 }

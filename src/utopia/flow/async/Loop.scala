@@ -15,7 +15,7 @@ object Loop
      * @param wait the wait time between iterations
      * @param operation the operation that is looped
      */
-    def apply(wait: Duration, operation: () => Unit): Loop = new SimpleLoop(WaitDuration(wait), operation)
+    def apply(wait: Duration)(operation: => Unit): Loop = new SimpleLoop(WaitDuration(wait), () => operation)
 }
 
 /**

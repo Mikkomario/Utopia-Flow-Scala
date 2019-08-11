@@ -13,7 +13,7 @@ object Variable
       * @param dataType The data type of this variable
       * @return A new empty variable
       */
-    def empty(name: String, dataType: DataType) = new Variable(name, Value.empty(dataType))
+    def empty(name: String, dataType: DataType) = new Variable(name, Value.emptyWithType(dataType))
 }
 
 /**
@@ -39,5 +39,5 @@ class Variable(val name: String, content: Value) extends PointerWithEvents[Value
     /**
      * This variable as a constant copy
      */
-    def toConstant = new Constant(name, content)
+    def toConstant = Constant(name, content)
 }

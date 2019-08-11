@@ -59,6 +59,69 @@ Available Extensions
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
+
+v1.6  -------------------------------------
+
+    New Features
+    ------------
+
+        Immutable model now contains renamed-function which allows one to easily change property names.
+
+        JSONReader.parseFile(File) can now be used to parse the contents of a single json file
+
+        Duration can now be described using .description (usable after importing utopia.flow.util.TimeExtensions._)
+
+        New utility constructors added to ModelDeclaration.
+
+        ModelDeclaration now contains validate(Model) method which makes sure specified model matches the declaration.
+
+        CollectionExtensions now contains .bestMatch(...) function for traversable items. This allows advanced searching
+        based on hierarchical conditions.
+
+        withTimeout(FiniteDuration) and resultWithTimeout(FiniteDuration) were added through AsyncExtensions to Future.
+
+        CollectionExtensions now contains mapLeft(...) and mapRight(...) for Either.
+
+        FromModelFactoryWithSchema handles model parsing more easily using a schema to validate the model before using it.
+
+        New extensions added for java.time.Year, java.time.LocalDate and java.time.YearMonth
+
+
+    Updates & Changes
+    -----------------
+
+        Instant JSON representation is now in string format and not in long format. This might cause problems in
+        external systems, although Utopia Flow should be able to parse the values just the same.
+
+        Constant is now a case class
+
+        ModelDeclaration syntax updated. Class constructor is now hidden. Please use object constructors instead.
+
+        XmlReader can now use a reader. Also, XmlReader read method parameter syntax changed to use 2 parameter lists.
+
+        FromModelFactory now returns Try[...] instead of Option[...]
+
+        Simple loop construction syntax was change from Loop(Duration, () => Unit) to Loop(Duration, => Unit)
+
+        Value.empty(DataType) replaced with Value.emptyWithType(DataType). Value.empty added as a property
+
+        JSONReader completely rewritten. Methods parse... are either deprecated or removed. Please use apply method
+        variations instead
+            - JSONReader also now returns a Try[Value] and not a Option[Model[Constant]]
+
+        Models now preserve attribute ordering. This mostly affects JSON-generation where previously models would
+        list their attributes in varying order.
+
+
+    Fixes
+    -----
+
+        JSONReader now works even when string portions contain markers like ',' '{' or ']'. Also, string json conversion
+        now removes replaces double quotes " with single quotes ' to avoid parsing errors
+
+        Since Instant.parse(String) wouldn't work on all ISO-8601 instants, added backup parsing styles to value conversion
+
+
 v1.5  ------------------------------------
 
     New Features

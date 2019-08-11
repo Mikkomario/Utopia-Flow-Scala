@@ -9,13 +9,15 @@ import utopia.flow.generic.FromModelFactory
 import utopia.flow.datastructure.template.Property
 
 import scala.collection.immutable.VectorBuilder
+import scala.util.{Failure, Success, Try}
 
 object XmlElement extends FromModelFactory[XmlElement]
 {
-    def apply(model: template.Model[Property]): Option[XmlElement] =
+    def apply(model: template.Model[Property]): Try[XmlElement] =
     {
         // If the name is not provided by user, it is read from the model
-        model("name").string.map(XmlElement.apply(_, model))
+        model("name").string.map { name => Success(apply(name, model)) }.getOrElse(
+            Failure(new NoSuchElementException(s"Cannot parse XmlElement from $model without 'name' property")))
     }
     
     /**
@@ -34,7 +36,7 @@ object XmlElement extends FromModelFactory[XmlElement]
         // Value is either in 'value' or 'text' attribute
         val valueAttribute = model.findExisting("value")
         val value = valueAttribute.map(_.value).orElse(
-                model.findExisting("text").map(_.value)).getOrElse(Value.empty(StringType))
+                model.findExisting("text").map(_.value)).getOrElse(Value.emptyWithType(StringType))
         
         // There may be some unused / non-standard attributes in the model
         val unspecifiedAttributes = model.attributes.filter(att => 
@@ -42,8 +44,8 @@ object XmlElement extends FromModelFactory[XmlElement]
             att.name != "children" && att.name != "name")
         
         // Children are either read from 'children' attribute or from the unused attributes
-        val specifiedChildren = model.findExisting("children").map(_.value.getVector.flatMap(
-                _.model).flatMap(XmlElement(_)))
+        val specifiedChildren = model.findExisting("children").map { _.value.getVector.flatMap(
+                _.model).flatMap { apply(_).toOption } }
         val children = specifiedChildren.getOrElse
         {
             // Expects model type but parses other types as well
@@ -62,7 +64,7 @@ object XmlElement extends FromModelFactory[XmlElement]
         val attributes = specifiedAttributes.getOrElse
         {
             if (specifiedChildren.isDefined)
-                Model.withConstants(unspecifiedAttributes.map { att => new Constant(att.name, att.value) })
+                Model.withConstants(unspecifiedAttributes.map { att => Constant(att.name, att.value) })
             else
             {
                 // If unused attributes were parsed into children, doesn't parse them into attributes
@@ -79,7 +81,7 @@ object XmlElement extends FromModelFactory[XmlElement]
  * @author Mikko Hilpinen
  * @since 13.1.2017 (v1.3)
  */
-case class XmlElement(name: String, value: Value = Value.empty(StringType), attributes: Model[Constant] = Model(Vector()),
+case class XmlElement(name: String, value: Value = Value.emptyWithType(StringType), attributes: Model[Constant] = Model(Vector()),
                       override val children: Vector[XmlElement] = Vector()) extends TreeLike[String, XmlElement] with ModelConvertible
 {
     // COMPUTED PROPERTIES    ------------------

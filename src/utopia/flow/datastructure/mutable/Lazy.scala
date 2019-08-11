@@ -57,7 +57,6 @@ class Lazy[T](val generator: () => T)
     /**
      * Updates the value in this container
      */
-    @deprecated("Use of this method is discouraged since it may be removed in a future release", "v1.5")
     def set(newValue: T) = item = Some(newValue)
     
     /**

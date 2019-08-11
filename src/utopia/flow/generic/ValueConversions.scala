@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 object ValueConversions
 {
     implicit def flattenValueOption[V](option: Option[V])(implicit f: V => Value): Value = 
-            option.map(f).getOrElse(Value.empty());
+            option.map(f).getOrElse(Value.empty)
     
     implicit def unwrapConvertible[C1](c: C1)(implicit f: C1 => ValueConvertible): Value = c.toValue
     

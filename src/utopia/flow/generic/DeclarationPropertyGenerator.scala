@@ -11,7 +11,7 @@ import utopia.flow.util.Equatable
  * @since 16.12.2016
  */
 abstract class DeclarationPropertyGenerator[T <: Property](val createProperty: (String, Value) => T, 
-        val declaration: ModelDeclaration, val defaultValue: Value = Value.empty()) extends 
+        val declaration: ModelDeclaration, val defaultValue: Value = Value.empty) extends
         PropertyGenerator[T]
 {
     override def apply(propertyName: String, value: Option[Value] = None) = 

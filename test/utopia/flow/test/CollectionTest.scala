@@ -19,4 +19,19 @@ object CollectionTest extends App
  	}
 	
 	assert(lengthUnder4.contains(3))
+	
+	// Tests bestMatch -feature
+	val conditions1 = Vector[String => Boolean](_.length > 3, _.contains('n'))
+	val conditions2 = Vector[String => Boolean](_.length <= 3, _.contains('n'))
+	val conditions3 = Vector[String => Boolean](_.nonEmpty)
+	
+	val result1: Vector[String] = words.bestMatch(conditions1)
+	val result2: Vector[String] = words.bestMatch(conditions2)
+	val result3: Vector[String] = words.bestMatch(conditions3)
+	
+	assert(result1 == Vector("Apina", "Banaani"))
+	assert(result2 == Vector("Car"))
+	assert(result3 == words)
+	
+	println("Success!")
 }

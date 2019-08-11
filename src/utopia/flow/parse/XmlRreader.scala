@@ -1,49 +1,56 @@
 package utopia.flow.parse
 
+import utopia.flow.util.AutoClose._
 import utopia.flow.generic.ValueConversions._
-
-import java.io.InputStream
+import java.io.{File, FileInputStream, InputStream, InputStreamReader, Reader}
 import java.nio.charset.Charset
+
 import javax.xml.stream.XMLInputFactory
-import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
+
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.StringType
+
 import scala.collection.immutable.VectorBuilder
 import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
-import java.io.File
-import java.io.FileInputStream
 
 object XmlReader
 {
+    // OPERATORS    ----------------
+    
+    /**
+      * Creates a new open xml reader
+      * @param stream Xml input stream
+      * @param charset Encoding used in source (default = UTF-8)
+      */
+    def apply(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) =
+        new XmlReader(new InputStreamReader(stream, charset))
+    
+    
+    // OTHER    --------------------
+    
+    /**
+      * Reads the contents of a stream using a reader and a function. Please note that the reader will be closed after
+      * this method completes
+      * @param reader The reader used for reading xml data (will be closed)
+      * @param contentReader the function that uses the reader to parse the stream contents
+      * @return The data parsed from the stream (may fail)
+      */
+    def readWith[A](reader: Reader)(contentReader: XmlReader => Try[A]) =
+        new XmlReader(reader).tryConsume(contentReader).flatten
+    
     /**
      * Reads the contents of a stream using the specified reader function
-     * @param stream the target stream
-     * @param charset the charset of the stream contents
+     * @param stream the target stream (will be closed afterwards)
+     * @param charset the charset of the stream contents (default = UTF 8)
      * @param contentReader the function that uses the reader to parse the stream contents
      * @return The data parsed from the stream (may fail)
      */
-    def readStream[T](stream: InputStream, charset: Charset = StandardCharsets.UTF_8, 
-            contentReader: XmlReader => Try[T]) = 
-    {
-        def read() = 
-        {
-            val reader = new XmlReader(stream, charset)
-            try
-            {
-                contentReader(reader)
-            }
-            finally
-            {
-                reader.close()
-            }
-        }
-        
-        Try(read()).flatten
-    }
+    def readStream[A](stream: InputStream, charset: Charset = StandardCharsets.UTF_8)(contentReader: XmlReader => Try[A]) =
+        readWith(new InputStreamReader(stream, charset))(contentReader)
     
     /**
      * Reads the contents of an xml file using the specified reader function
@@ -52,14 +59,18 @@ object XmlReader
      * @param contentReader the function that uses the reader to parse the file contents
      * @return The data parsed from the file (may fail)
      */
-    def readFile[T](file: File, charset: Charset = StandardCharsets.UTF_8, contentReader: XmlReader => Try[T]) = 
-    {
-        val stream = Try(new FileInputStream(file))
-        stream match 
-        {
-            case Success(stream) => try { readStream(stream, charset, contentReader) } finally { stream.close() }
-            case Failure(ex) => Failure(ex)
-        }
+    def readFile[A](file: File, charset: Charset = StandardCharsets.UTF_8, contentReader: XmlReader => Try[A]) =
+        Try(new FileInputStream(file).consume { readStream(_, charset)(contentReader) }).flatten
+    
+    /**
+      * Parses reader contents into an xml element
+      * @param reader A reader that reads xml data
+      * @return The read xml element
+      */
+    def parseWith(reader: Reader) = readWith(reader) { xml =>
+    
+        val element = xml.readElement()
+        if (element.isDefined) Success(element.get) else Failure(new NoSuchElementException())
     }
     
     /**
@@ -68,12 +79,8 @@ object XmlReader
      * @param charset the charset of the stream contents
      * @return The element parsed from the stream (may fail)
      */
-    def parseStream(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) = readStream(
-            stream, charset, reader => 
-            {
-                val element = reader.readElement()
-                if (element.isDefined) Success(element.get) else Failure(new NoSuchElementException())
-            })
+    def parseStream(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) =
+        parseWith(new InputStreamReader(stream, charset))
     
     /**
      * Parses the contents of an xml file into an xml element
@@ -81,20 +88,13 @@ object XmlReader
      * @param charset the target charset
      * @return The element parsed from the file (may fail)
      */
-    def parseFile(file: File, charset: Charset = StandardCharsets.UTF_8) = 
-    {
-        val stream = Try(new FileInputStream(file))
-        stream match 
-        {
-            case Success(stream) => try { parseStream(stream, charset) } finally { stream.close() }
-            case Failure(ex) => Failure(ex)
-        }
-    }
+    def parseFile(file: File, charset: Charset = StandardCharsets.UTF_8) =
+        Try(new FileInputStream(file).consume { parseStream(_, charset) }).flatten
     
     /**
-     * Parses a value from a stirng
-     */
-    private[parse] def valueFromString(s: String) = JSONReader.parseValue(s).toOption.getOrElse(s.toValue)
+      * Parses a value from a string
+      */
+    private[parse] def valueFromString(s: String) = JSONReader(s).toOption.getOrElse(s.toValue)
 }
 
 /**
@@ -103,12 +103,11 @@ object XmlReader
  * @author Mikko Hilpinen
  * @since 24.1.2018
  */
-class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) extends AutoCloseable
+class XmlReader(streamReader: Reader) extends AutoCloseable
 {
     // ATTRIBUTES    ------------------------
     
-    private val reader = XMLInputFactory.newInstance().createXMLStreamReader(
-            new InputStreamReader(stream, charset));
+    private val reader = XMLInputFactory.newInstance().createXMLStreamReader(streamReader)
     
     
     // INITIAL CODE    ----------------------
@@ -122,7 +121,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
     /**
      * Whether the reader has reached the end of the document
      */
-    def isAtDocumentEnd = !reader.hasNext()
+    def isAtDocumentEnd = !reader.hasNext
     
     /**
      * The name of the current element. None if at the end of the document
@@ -143,22 +142,14 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
     
     private def currentEvent = 
     {
-        if (reader.isStartElement())
-        {
+        if (reader.isStartElement)
             ElementStart
-        }
-        else if (reader.isEndElement())
-        {
+        else if (reader.isEndElement)
             ElementEnd
-        }
-        else if (reader.isCharacters())
-        {
+        else if (reader.isCharacters)
             Text
-        }
         else
-        {
             nextEvent()
-        }
     }
     
     
@@ -201,6 +192,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
      * @return how much the 'depth' of this reader changed in the process (1 for child, 
      * 0 for sibling, -1 for parent level and so on)
      */
+    //noinspection AccessorLikeMethodIsEmptyParen
     def toNextElement() = _toNextElementStart()
     
     /**
@@ -226,7 +218,8 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
      * @return how much the 'depth' of this reader changed in the process (1 for child, 
      * 0 for sibling, -1 for parent level and so on)
      */
-    def toNextElementWithName(searchedName: String): Int = toNextElementWithName { 
+    //noinspection ConvertibleToMethodValue
+    def toNextElementWithName(searchedName: String): Int = toNextElementWithName {
             searchedName.equalsIgnoreCase(_) }
     
     /**
@@ -253,6 +246,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
      * @param searchedName the name of the searched element (case-insensitive)
      * @return Whether such a child element was found (if true, this reader is now at the searched element)
      */
+    //noinspection ConvertibleToMethodValue
     def toNextChildWithName(searchedName: String): Boolean = toNextChildWithName { 
             searchedName.equalsIgnoreCase(_) }
     
@@ -278,6 +272,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
      * @param searchedName the name of the searched element (case-insensitive)
      * @return Whether such a sibling was found (if true, this reader is now at the searched element)
      */
+    //noinspection ConvertibleToMethodValue
     def toNextSiblingWithName(searchedName: String): Boolean = toNextSiblingWithName { 
             searchedName.equalsIgnoreCase(_) }
     
@@ -308,7 +303,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
         depth
     }
     
-    private def _readElement(): Tuple2[UnfinishedElement, Int] = 
+    private def _readElement(): (UnfinishedElement, Int) =
     {
         val element = new UnfinishedElement(reader.getLocalName, parseAttributes())
         var depthChange = _toNextElementStart(Some(element))
@@ -333,7 +328,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
     // Updates openElement text, returns the depth change
     private def _toNextElementStart(openElement: Option[UnfinishedElement] = None): Int = 
     {
-        nextEvent match 
+        nextEvent() match
         {
             case ElementStart => 1
             case ElementEnd => _toNextElementStart(openElement) - 1
@@ -346,7 +341,7 @@ class XmlReader(stream: InputStream, charset: Charset = StandardCharsets.UTF_8) 
     
     private def nextEvent(): XmlReadEvent = 
     {
-        if (reader.hasNext())
+        if (reader.hasNext)
         {
             reader.next()
             currentEvent
@@ -377,7 +372,7 @@ private class UnfinishedElement(val name: String, val attributes: Map[String, St
     def toXmlElement: XmlElement = 
     {
         val attributesModel = Model(attributes.mapValues(XmlReader.valueFromString).toVector)
-        new XmlElement(name, if (text.isEmpty()) Value.empty(StringType) else 
+        new XmlElement(name, if (text.isEmpty) Value.emptyWithType(StringType) else
                 XmlReader.valueFromString(text), attributesModel, children.map(_.toXmlElement))
     }
 }

@@ -1,6 +1,6 @@
 package utopia.flow.test
 
-import java.time.{Duration, Instant}
+import java.time.Instant
 
 import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.TimeExtensions._
@@ -17,25 +17,25 @@ object LoopTest extends App
 {
 	// Makes sure WaitTarget / Until is working
 	val started = Instant.now()
-	val targetTime = started + Duration.ofSeconds(1)
+	val targetTime = started + 1.seconds
 	Until(targetTime).waitWith(this)
 	val firstWaitDuration = Instant.now() - started
 	
-	assert(firstWaitDuration < Duration.ofMillis(1100))
-	assert(firstWaitDuration > Duration.ofMillis(999))
+	assert(firstWaitDuration < 1100.millis)
+	assert(firstWaitDuration > 999.millis)
 	
 	// Creates execution context
 	implicit val context: ExecutionContext = new ThreadPool("Test").executionContext
 	
 	// Creates the loop
 	var loopCount = 0
-	val loop = Loop(Duration.ofMillis(100), () => loopCount += 1)
+	val loop = Loop(100.millis) { loopCount += 1 }
 	
 	assert(loopCount == 0)
 	
 	// Starts the loop, then waits
 	loop.startAsync()
-	WaitUtils.wait(Duration.ofSeconds(3), this)
+	WaitUtils.wait(3.seconds, this)
 	val loopCountAfterWait = loopCount
 	
 	println(loopCountAfterWait)
@@ -45,7 +45,7 @@ object LoopTest extends App
 	val completion = loop.stop()
 	val loopCountAfterStop = loopCount
 	
-	WaitUtils.wait(Duration.ofSeconds(1), this)
+	WaitUtils.wait(1.seconds, this)
 	
 	println(loopCount - loopCountAfterStop)
 	assert(loopCountAfterStop == loopCount)

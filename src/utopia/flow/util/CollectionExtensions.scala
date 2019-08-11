@@ -2,7 +2,7 @@ package utopia.flow.util
 
 import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
-import scala.util.Try
+import scala.util.{Success, Try}
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
@@ -86,6 +86,16 @@ object CollectionExtensions
         }
     
         /**
+          * Filters a seq so that only distinct values remain. Compares the values by mapping them.
+          * @param f A mapping function to produce comparable values
+          * @param cbf A canbuildfrom (implicit) to build the final collection
+          * @tparam B Map targe type
+          * @tparam To Type of resulting collection
+          * @return A collection with only distinct values (based on mapping)
+          */
+        def distinctBy[B, To](f: A => B)(implicit cbf: CanBuildFrom[_, A, To]) = distinctWith[To] { (a, b) => f(a) == f(b) }
+    
+        /**
           * @return A version of this seq with consecutive items paired. Each item will be present twice in the returned
           *         collection, except the first and the last item
           */
@@ -129,6 +139,47 @@ object CollectionExtensions
         def failure = t.failed.toOption
     }
     
+    implicit class RichEither[L, R](val e: Either[L, R]) extends AnyVal
+    {
+        /**
+          * @return This either's left value or None if this either is right
+          */
+        def leftOption = e match
+        {
+            case Left(l) => Some(l)
+            case Right(_) => None
+        }
+    
+        /**
+          * @return This either's right value or None if this either is left (same as toOption)
+          */
+        def rightOption = e.toOption
+    
+        /**
+          * If this either is left, maps it
+          * @param f A mapping function for left side
+          * @tparam B New type for left side
+          * @return A mapped version of this either
+          */
+        def mapLeft[B](f: L => B) = e match
+        {
+            case Right(r) => Right(r)
+            case Left(l) => Left(f(l))
+        }
+    
+        /**
+          * If this either is right, maps it
+          * @param f A mapping function for left side
+          * @tparam B New type for right side
+          * @return A mapped version of this either
+          */
+        def mapRight[B](f: R => B) = e match
+        {
+            case Right(r) => Right(f(r))
+            case Left(l) => Left(l)
+        }
+    }
+    
     implicit class RichTraversable[A](val t: Traversable[A]) extends AnyVal
     {
         /**
@@ -165,6 +216,37 @@ object CollectionExtensions
                 None
             else
                 Some(t.min(cmp))
+        }
+    
+        /**
+          * Finds the item(s) that best match the specified conditions
+          * @param matchers Search conditions used. The conditions that are introduced first are considered more
+          *                 important than those which are introduced the last.
+          * @param cbf A builder for the final result (implicit)
+          * @tparam To Target collection type
+          * @return The items in this collection that best match the specified conditions
+          */
+        def bestMatch[To](matchers: Seq[A => Boolean])(implicit cbf: CanBuildFrom[_, A, To]): To =
+        {
+            // If there is only a single option, that is the best match. If there are 0 options, there's no best match
+            // If there are no matchers left, cannot make a distinction between items
+            if (t.size < 2 || matchers.isEmpty)
+            {
+                val buffer = cbf()
+                buffer ++= t
+                buffer.result()
+            }
+            else
+            {
+                val nextMatcher = matchers.head
+                val matched = t.filter(nextMatcher.apply)
+                
+                // If matcher found some results, limits to those. if not, cannot use that group
+                if (matched.nonEmpty)
+                    matched.bestMatch(matchers.drop(1))
+                else
+                    bestMatch(matchers.drop(1))
+            }
         }
     }
     

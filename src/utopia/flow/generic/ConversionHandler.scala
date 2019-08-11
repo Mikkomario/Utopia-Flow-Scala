@@ -42,7 +42,7 @@ object ConversionHandler
     {
         // An empty value doens't need to be modified
         if (value.isEmpty)
-            Some(Value.empty(toType))
+            Some(Value.emptyWithType(toType))
         // If value is already of desired type, doesn't need to cast
         else if (value isOfType toType)
             Some(value)
@@ -64,7 +64,7 @@ object ConversionHandler
             None
         // Empty values needn't be modified
         else if (value.isEmpty)
-            Some(Value.empty(targetTypes.head))
+            Some(Value.emptyWithType(targetTypes.head))
         // Checks if the value already is of any of the types
         else if (targetTypes.exists(value.dataType.isOfType))
             Some(value)

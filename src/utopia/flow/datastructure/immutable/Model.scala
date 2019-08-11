@@ -103,6 +103,8 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute], val attribu
     // Filters out duplicates (case-insensitive) (if there are duplicates, last instance is used)
     val attributeMap = content.groupBy { _.name.toLowerCase() }.map { case (name, atts) => name -> atts.last }
     
+    protected val attributeOrder = content.map { _.name.toLowerCase }.toVector.distinct
+    
     
     // COMP. PROPERTIES    -------
     
@@ -186,6 +188,21 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute], val attribu
      * attributes not included by the filter
      */
     def filterNot(f: Attribute => Boolean) = withAttributes(attributes.filterNot(f))
+    
+    /**
+      * Renames multiple attiributes in this model
+      * @param renames The attribute name changes (old -> new)
+      * @return A copy of this model with renamed attributes
+      */
+    def renamed(renames: Traversable[(String, String)]) = withAttributes(attributes.map {
+        a => renames.find { _._1 == a.name }.map { n => a.withName(n._2) } getOrElse a })
+    
+    /**
+      * @param oldName Old attribute name
+      * @param newName New attribute name
+      * @return A copy of this model with that one attribute renamed
+      */
+    def renamed(oldName: String, newName: String): Model[Constant] = renamed(Vector(oldName -> newName))
     
     /**
      * Creates a mutable copy of this model
