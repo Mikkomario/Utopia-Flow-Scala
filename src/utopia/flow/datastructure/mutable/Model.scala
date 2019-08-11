@@ -54,6 +54,9 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     private var _attributeMap = HashMap[String, Attribute]()
     def attributeMap = _attributeMap
     
+    private var _attributeOrder = Vector[String]()
+    override protected def attributeOrder = _attributeOrder
+    
     /**
       * The listeners that are interested in changes in this model
       */
@@ -109,9 +112,23 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
      */
     def +=(attribute: Attribute) =
     {
-        _attributeMap += attribute.name.toLowerCase() -> attribute
-        lazy val event = PropertyChangeEvent.propertyAdded(attribute)
-        listeners.foreach { _.onPropertyChanged(event) }
+        val lowercaseName = attribute.name.toLowerCase
+        // If similarly named attribute already exists, replaces it (generates a property change event)
+        if (_attributeMap.contains(lowercaseName))
+        {
+            val oldVersion = _attributeMap(lowercaseName)
+            _attributeMap += lowercaseName -> attribute
+            lazy val event = PropertyChangeEvent(attribute.name, oldVersion.value, attribute.value)
+            listeners.foreach { _.onPropertyChanged(event) }
+        }
+        // On completely new attribute, generates a property added event and modifies property order as well
+        else
+        {
+            _attributeMap += lowercaseName -> attribute
+            _attributeOrder :+= lowercaseName
+            lazy val event = PropertyChangeEvent.propertyAdded(attribute)
+            listeners.foreach { _.onPropertyChanged(event) }
+        }
     }
     
     /**
@@ -128,8 +145,27 @@ class Model[Attribute <: Variable](val attributeGenerator: PropertyGenerator[Att
     {
         if (_attributeMap.valuesIterator.contains(attribute))
         {
-            _attributeMap = _attributeMap.filter { case (_, att) => att != attribute }
+            val lowerCaseName = attribute.name.toLowerCase
+            _attributeOrder = _attributeOrder.filterNot { _ == lowerCaseName }
+            _attributeMap -= lowerCaseName
             lazy val event = PropertyChangeEvent.propertyRemoved(attribute)
+            listeners.foreach { _.onPropertyChanged(event) }
+        }
+    }
+    
+    /**
+     * Removes an attribute from this model
+     * @param attributeName The name of the attribute to be removed (case-insensitive)
+     */
+    def -=(attributeName: String) =
+    {
+        val lowerCaseName = attributeName.toLowerCase
+        if (_attributeMap.contains(lowerCaseName))
+        {
+            val oldAttribute = _attributeMap(lowerCaseName)
+            _attributeOrder = _attributeOrder.filterNot { _ == lowerCaseName }
+            _attributeMap -= lowerCaseName
+            lazy val event = PropertyChangeEvent.propertyRemoved(oldAttribute)
             listeners.foreach { _.onPropertyChanged(event) }
         }
     }

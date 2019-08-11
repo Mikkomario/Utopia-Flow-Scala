@@ -101,13 +101,16 @@ v1.6  -------------------------------------
 
         FromModelFactory now returns Try[...] instead of Option[...]
 
-        Simple loop construction syntaxt was change from Loop(Duration, () => Unit) to Loop(Duration, => Unit)
+        Simple loop construction syntax was change from Loop(Duration, () => Unit) to Loop(Duration, => Unit)
 
         Value.empty(DataType) replaced with Value.emptyWithType(DataType). Value.empty added as a property
 
         JSONReader completely rewritten. Methods parse... are either deprecated or removed. Please use apply method
         variations instead
             - JSONReader also now returns a Try[Value] and not a Option[Model[Constant]]
+
+        Models now preserve attribute ordering. This mostly affects JSON-generation where previously models would
+        list their attributes in varying order.
 
 
     Fixes

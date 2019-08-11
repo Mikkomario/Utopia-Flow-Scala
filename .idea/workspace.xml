@@ -12,7 +12,13 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="" />
+    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/Model.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/immutable/Model.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Model.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Model.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/template/Model.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/template/Model.scala" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,11 +73,6 @@
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="width" value="2565" />
-    <option name="height" value="2111" />
-  </component>
   <component name="ProjectId" id="1OUq6kGufVQDNmsdtGF0ISXWKmF" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -106,7 +107,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.CollectionTest">
+  <component name="RunManager" selected="Application.JSONTest">
     <configuration name="CollectionTest" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="utopia.flow.test.CollectionTest" />
       <module name="Utopia-Flow-Scala" />
@@ -171,8 +172,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.CollectionTest" />
         <item itemvalue="Application.JSONTest" />
+        <item itemvalue="Application.CollectionTest" />
         <item itemvalue="Application.ModelDeclarationTest" />
         <item itemvalue="Application.ModelTest" />
         <item itemvalue="Scala Console.Scala Console" />

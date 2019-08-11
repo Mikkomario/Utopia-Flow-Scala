@@ -103,6 +103,8 @@ class Model[+Attribute <: Constant](content: Traversable[Attribute], val attribu
     // Filters out duplicates (case-insensitive) (if there are duplicates, last instance is used)
     val attributeMap = content.groupBy { _.name.toLowerCase() }.map { case (name, atts) => name -> atts.last }
     
+    protected val attributeOrder = content.map { _.name.toLowerCase }.toVector.distinct
+    
     
     // COMP. PROPERTIES    -------
     

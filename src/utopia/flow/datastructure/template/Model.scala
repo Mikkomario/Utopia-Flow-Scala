@@ -20,6 +20,12 @@ trait Model[+Attribute <: Property] extends JSONConvertible
     def attributeMap: Map[String, Attribute]
     
     /**
+     * @return Attribute names in an order (lower case). Should contain all of this model's attributes and no attribute
+     *         names which are not contained within this model.
+     */
+    protected def attributeOrder: Vector[String]
+    
+    /**
       * Generates a new attribute with the provided name
       * @param attName The name of the new attribute
       * @return The new attribute
@@ -31,12 +37,16 @@ trait Model[+Attribute <: Property] extends JSONConvertible
     
     override def toString = toJSON
     
-    override def toJSON = if (isEmpty) "{}" else '{' + attributes.map { _.toJSON }.mkString(", ") + '}'
+    override def toJSON = if (isEmpty) "{}" else s"{${attributes.map { _.toJSON }.mkString(", ") }}"
     
     /**
       * @return The attributes of this model
       */
-    def attributes = attributeMap.values.toVector
+    def attributes =
+    {
+        val allAttributes = attributeMap
+        attributeOrder.flatMap(allAttributes.get)
+    }
     
     /**
      * The names of the attributes stored in this model
