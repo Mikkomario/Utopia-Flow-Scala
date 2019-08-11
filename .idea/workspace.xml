@@ -12,7 +12,9 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="" />
+    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="Workspace modified">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,17 +41,6 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
-    <option name="PREVIOUS_COMMIT_AUTHORS">
-      <list>
-        <option value="Mikkomario &lt;mikko_hilpinen@hotmail.com&gt;" />
-      </list>
-    </option>
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="development" />
-      </map>
-    </option>
     <favorite-branches>
       <branch-storage>
         <map>
@@ -63,6 +54,17 @@
         </map>
       </branch-storage>
     </favorite-branches>
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Mikkomario &lt;mikko_hilpinen@hotmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
@@ -293,7 +295,13 @@
       <option name="presentableId" value="LOCAL−00016" />
       <updated>1564038632202</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL−00017" summary="Workspace modified">
+      <created>1565510252054</created>
+      <option name="number" value="LOCAL−00017" />
+      <option name="presentableId" value="LOCAL−00017" />
+      <updated>1565510252054</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -310,6 +318,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="RELOAD_CONTEXT" value="false" />
     <MESSAGE value="Fixed warnings in WaitUtils" />
     <MESSAGE value="Refactored, tested and debugged WeakList" />
     <MESSAGE value="Refactoring volatileList" />
@@ -326,7 +335,8 @@
     <MESSAGE value="Added double parse from json to test" />
     <MESSAGE value="Updated loop construction syntax" />
     <MESSAGE value="Updating settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updating settings" />
+    <MESSAGE value="Workspace modified" />
+    <option name="LAST_COMMIT_MESSAGE" value="Workspace modified" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
