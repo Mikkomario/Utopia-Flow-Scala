@@ -2,7 +2,7 @@ package utopia.flow.util
 
 import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
-import scala.util.{Success, Try}
+import scala.util.Try
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
