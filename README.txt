@@ -60,6 +60,14 @@ Available Extensions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
 
+v1.6.1  -----------------------------------
+
+    New Features
+    ------------
+
+        Instant + and - now also support scala duration
+
+
 v1.6  -------------------------------------
 
     New Features

@@ -35,12 +35,24 @@ object TimeExtensions
 	     * An instant after the specified duration has passed from this instant
 	     */
 	    def +(amount: TemporalAmount) = i.plus(amount)
+		
+		/**
+		  * @param amount Amount of duration to move this instant
+		  * @return An instant after specified duration has passed from this instant
+		  */
+		def +(amount: duration.Duration) = i.plusNanos(amount.toNanos)
 	    
 	    /**
 	     * An instant before the specified duration
 	     */
 	    def -(amount: TemporalAmount) = i.minus(amount)
-	    
+		
+		/**
+		  * @param amount Amount of time to subtract
+		  * @return The instant before this instant by specified duration
+		  */
+		def -(amount: duration.Duration) = i.minusNanos(amount.toNanos)
+		
 	    /**
 	     * Finds the difference (duration) between the two time instances
 	     */
