@@ -19,7 +19,7 @@ trait ModelConvertible extends JSONConvertible
     def toModel: Model[Constant]
     
     
-    // COMPUTED PROPERTIES    ---------------------------
+    // IMPLEMENTED    ---------------------------
     
     override def toJSON = toModel.toJSON
     
