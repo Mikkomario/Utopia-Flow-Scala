@@ -74,6 +74,8 @@ v1.6.1  -----------------------------------
 
         StringFrom and LinesFrom objects for easier file- and stream reading
 
+        TimeExtensions now also allow easier creation of Period instances
+
 
 v1.6  -------------------------------------
 

@@ -1,9 +1,7 @@
 package utopia.flow.util
 
-import java.time.chrono.ChronoLocalDate
-
 import scala.language.implicitConversions
-import java.time.{DayOfWeek, Duration, Instant, LocalDate, Month, Year, YearMonth, ZoneId}
+import java.time.{DayOfWeek, Duration, Instant, LocalDate, Month, Period, Year, YearMonth, ZoneId}
 import java.time.temporal.TemporalAmount
 
 import scala.concurrent.duration
@@ -269,6 +267,29 @@ object TimeExtensions
 		  * @return This number amount of hours (provides nano precision with doubles)
 		  */
 		def hours(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000 * 60 * 60)
+	}
+	
+	implicit class DayCount(val i: Int) extends AnyVal
+	{
+		/**
+		 * @return Period of this many days
+		 */
+		def days = Period.ofDays(i)
+		
+		/**
+		 * @return Period of this many weeks
+		 */
+		def weeks = Period.ofWeeks(i)
+		
+		/**
+		 * @return Period of this many months
+		 */
+		def months = Period.ofMonths(i)
+		
+		/**
+		 * @return Period of this many years
+		 */
+		def years = Period.ofYears(i)
 	}
 	
 	/**
