@@ -59,6 +59,9 @@ Available Extensions
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
+    utopia.flow.util.StringExtensions
+        - Utility methods for String
+
 
 v1.6.1  -----------------------------------
 
@@ -66,6 +69,10 @@ v1.6.1  -----------------------------------
     ------------
 
         Instant + and - now also support scala duration
+
+        Added some new String extensions, which are available by importing utopia.flow.util.StringExtensions._
+
+        StringFrom and LinesFrom objects for easier file- and stream reading
 
 
 v1.6  -------------------------------------

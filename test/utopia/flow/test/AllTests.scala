@@ -7,6 +7,8 @@ package utopia.flow.test
   */
 object AllTests extends App
 {
+	val s = ""
+	
 	def run(test: App) =
 	{
 		println(s"\nRunning ${test.getClass.getName}	------------------------------")
