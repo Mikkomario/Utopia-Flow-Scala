@@ -219,6 +219,36 @@ object CollectionExtensions
         }
     
         /**
+         * Finds the maximum value based on map result
+         * @param map A mapping function
+         * @param cmp Implicit ordering
+         * @tparam B Type of map result
+         * @return Maximum item based on map result. None if this traversable was empty
+         */
+        def maxByOption[B](map: A => B)(implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.maxBy(map))
+        }
+    
+        /**
+         * Finds the minimum value based on map result
+         * @param map A mapping function
+         * @param cmp Implicit ordering
+         * @tparam B Type of map result
+         * @return Minimum item based on map result. None if this traversable was empty
+         */
+        def minByOption[B](map: A => B)(implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.minBy(map))
+        }
+    
+        /**
           * Finds the item(s) that best match the specified conditions
           * @param matchers Search conditions used. The conditions that are introduced first are considered more
           *                 important than those which are introduced the last.

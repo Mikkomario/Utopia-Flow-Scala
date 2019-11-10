@@ -76,6 +76,8 @@ v1.6.1  -----------------------------------
 
         TimeExtensions now also allow easier creation of Period instances
 
+        maxByOption and minByOption added to CollectionExtensions
+
 
 v1.6  -------------------------------------
 
