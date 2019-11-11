@@ -1,5 +1,8 @@
 package utopia.flow.async
 
+import utopia.flow.datastructure.mutable.Pointer
+import utopia.flow.util.{SingleWait, WaitTarget}
+
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -15,7 +18,7 @@ object AsyncExtensions
     /**
      * This implicit class provides extra features to Future
      */
-	implicit class RichFuture[T](val f: Future[T]) extends AnyVal
+	implicit class RichFuture[A](val f: Future[A]) extends AnyVal
 	{
 	    /**
 	     * Waits for the result of this future (blocks) and returns it once it's ready
@@ -48,6 +51,42 @@ object AsyncExtensions
 		  * @return The current result of this future. None if not completed yet
 		  */
 		def current = if (f.isCompleted) Some(waitFor()) else None
+		
+		/**
+		 * Makes this future "race" with another future so that only the earliest result is returned
+		 * @param other Another future
+		 * @param exc Execution context (implicit)
+		 * @tparam B Type of return value
+		 * @return A future for the first completion of these two futures
+		 */
+		def raceWith[B >: A](other: Future[B])(implicit exc: ExecutionContext) =
+		{
+			if (f.isCompleted)
+				f
+			else if (other.isCompleted)
+				other
+			else
+			{
+				Future {
+					val resultPointer = VolatileOption[B]()
+					val wait = new SingleWait(WaitTarget.UntilNotified)
+					
+					// Both futures try to set the pointer and end the wait
+					f.foreach { r =>
+						resultPointer.setOneIfEmpty(() => r)
+						wait.stop()
+					}
+					other.foreach { r =>
+						resultPointer.setOneIfEmpty(() => r)
+						wait.stop()
+					}
+					
+					// Waits until either future completes
+					wait.run()
+					resultPointer.get.get // Can call get because pointer is always set before wait is stopped
+				}
+			}
+		}
 	}
 	
 	implicit class TryFuture[A](val f: Future[Try[A]]) extends AnyVal

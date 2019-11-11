@@ -78,6 +78,9 @@ v1.6.1  -----------------------------------
 
         maxByOption and minByOption added to CollectionExtensions
 
+        raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
+        from two futures.
+
 
 v1.6  -------------------------------------
 
