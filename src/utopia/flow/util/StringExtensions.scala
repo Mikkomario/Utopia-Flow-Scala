@@ -171,5 +171,12 @@ object StringExtensions
 		 *         (returns this string if specified string is not a substring of this string), (case-sensitive)
 		 */
 		def untilLast(str: String) = optionLastIndexOf(str).map(s.take).getOrElse(s)
+		
+		/**
+		 * A comparison of two strings in a case-insensitive manner
+		 * @param another Another string
+		 * @return Whether this string equals the other string when case is ignored
+		 */
+		def ~==(another: String) = s.equalsIgnoreCase(another)
 	}
 }

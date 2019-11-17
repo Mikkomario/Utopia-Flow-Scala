@@ -18,11 +18,15 @@ Main Features
     JSON and XML support & Integration with models and typeless values
         - Flow offers full support for JSON and XML parsing + writing that fully utilizes the power of the typeless values
         - Conversion between JSON and Model / Value is seamless and converts between supported types under the hood
+        - Please note that the current implementation of JSON parser prioritizes accessibility over performance and is not
+        most efficient at this time. You may wish to use another parser for very large json files where performance
+        becomes an issue.
 
     Various data structures
         - Tree and Graph supports
         - Support for weakly referenced lists and pointer-like data structures
-        - Mutable concurrent collections (Volatile, VolatileFlag, VolatileList and VolatileOption)
+        - Mutable concurrent collections (Volatile, VolatileFlag, VolatileList and VolatileOption) may be used in
+        multi-threaded environments where some data is shared between multiple threads.
 
     Tools for asynchronous programs
         - ThreadPool implementation for generating a scaling ExecutionContext
@@ -31,7 +35,7 @@ Main Features
         - WaitFor -simplification of Future waiting available through extension
 
     Data Caching
-        - utopia.flow.caching package contains various tools for caching a single or multiple pieces of data either
+        - utopia.flow.caching package contains various tools for caching individual single or multiple pieces of data either
         temporarily or permanently, asynchronously or synchronously
 
 
@@ -46,7 +50,8 @@ Available Extensions
 --------------------
 
     utopia.flow.util.CollectionExtensions
-        - Collection utility updates, like support for multimaps and optional return values instead of indexOutOfBounds
+        - Collection utility updates, like support for multimaps and optional return values instead of throwing
+        indexOutOfBounds
 
     utopia.flow.util.TimeExtensions
         - Functional additions to java.time classes
@@ -59,8 +64,15 @@ Available Extensions
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
 
+    utopia.flow.util.AutoClose
+        - Provides consume and tryConsume methods for autocloseable instances (like streams, etc.).
+        This does java's try-with style resource handling functionally.
+
     utopia.flow.util.StringExtensions
         - Utility methods for String
+
+    utopia.flow.util.FileExtensions
+        - A number of new scala-friendly methods for java.nio.file.Path
 
 
 v1.6.1  -----------------------------------
@@ -80,6 +92,11 @@ v1.6.1  -----------------------------------
 
         raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
         from two futures.
+
+        Added FileExtensions that add a number of new methods to java.nio.file.Path. Available by importing
+        utopia.flow.util.FileExtensions._
+
+        Added a VectorCollector class for collecting java streams to scala vectors
 
 
 v1.6  -------------------------------------
