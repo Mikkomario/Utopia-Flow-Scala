@@ -2,7 +2,7 @@ package utopia.flow.util
 
 import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
@@ -276,6 +276,30 @@ object CollectionExtensions
                     matched.bestMatch(matchers.drop(1))
                 else
                     bestMatch(matchers.drop(1))
+            }
+        }
+    
+        /**
+         * Maps the contents of this traversable. Mapping may fail, interrupting all remaining mappings
+         * @param f A mapping function. May fail.
+         * @param cbf Implicit can build from for final collection
+         * @tparam B Type of map result
+         * @tparam To Type of final collection
+         * @return Mapped collection if all mappings succeeded. Failure otherwise.
+         */
+        def tryMap[B, To](f: A => Try[B])(implicit cbf: CanBuildFrom[_, B, To]): Try[To] =
+        {
+            val buffer = cbf()
+            // Maps items until the mapping function fails
+            t.view.map { a =>
+                val result = f(a)
+                result.toOption.foreach { buffer += _ }
+                result
+            }.find { _.isFailure } match
+            {
+                case Some(failure) => Failure(failure.failure.get)
+                // On success (no failure found), returns all mapped items
+                case None => Success(buffer.result())
             }
         }
     }

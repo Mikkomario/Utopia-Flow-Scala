@@ -88,7 +88,7 @@ v1.6.1  -----------------------------------
 
         TimeExtensions now also allow easier creation of Period instances
 
-        maxByOption and minByOption added to CollectionExtensions
+        maxByOption, minByOption and tryMap added to CollectionExtensions
 
         raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
         from two futures.
