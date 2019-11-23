@@ -2,12 +2,15 @@ package utopia.flow.util
 
 import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths, StandardCopyOption}
 
+import utopia.flow.parse.JSONConvertible
+
 import scala.language.implicitConversions
 import utopia.flow.util.StringExtensions._
 import utopia.flow.util.CollectionExtensions._
 import utopia.flow.util.AutoClose._
 import utopia.flow.util.NullSafe._
 
+import scala.io.Codec
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -249,5 +252,20 @@ object FileExtensions
 		 * @return Whether these two files have same last modified time
 		 */
 		def hasSameLastModifiedAs(another: Path) = lastModified.success.exists { another.lastModified.success.contains }
+		
+		/**
+		 * Writes specified text to this file (creates or empties file if necessary)
+		 * @param text Text to be written to this file
+		 * @param codec Charset / codec used (implicit)
+		 * @return This path. Failure if writing failed.
+		 */
+		def write(text: String)(implicit codec: Codec) = Try { Files.write(p, text.getBytes(codec.charSet)) }
+		
+		/**
+		 * Writes a json-convertible instance to this file
+		 * @param json A json-convertible instance that will produce contents of this file
+		 * @return This path. Failure if writing failed.
+		 */
+		def writeJSON(json: JSONConvertible) = write(json.toJSON)(Codec.UTF8)
 	}
 }
