@@ -183,6 +183,13 @@ object FileExtensions
 		def overwriteWith(anotherPath: Path) = Try { Files.copy(anotherPath, p, StandardCopyOption.REPLACE_EXISTING) }
 		
 		/**
+		 * Overwrites this path with file from another path, but only if the file was changed (had different last modified time)
+		 * @param anotherPath Another file that will overwrite this one
+		 * @return Path to this file. May contain a failure
+		 */
+		def overwriteWithIfChanged(anotherPath: Path) = if (hasSameLastModifiedAs(anotherPath)) Success(p) else overwriteWith(p)
+		
+		/**
 		 * Deletes this file or directory
 		 * @param allowDeletionOfDirectoryContents Whether deletion of a non-empty directory should be allowed
 		 *                                         (resulting in deletion of all files under it) (default = true)
@@ -209,5 +216,38 @@ object FileExtensions
 		 */
 		def deleteChildren() = children.flatMap { _.findMap {
 			c => Some(c.delete()).filter { _.isFailure }.map { _.map { _ => Unit } } }.getOrElse(Success(Unit)) }
+		
+		/**
+		 * Creates this directory (and ensures existence of parent directories as well). If this is not a directory,
+		 * simply creates parent directories.
+		 * @return This path. Failure if couldn't create directories.
+		 */
+		def createDirectories() =
+		{
+			if (notExists)
+			{
+				// Checks whether this file should be a directory (doesn't have a file type) or a regular file
+				// (has file type)
+				if (fileType.isEmpty)
+					Try { Files.createDirectories(p) }
+				else
+					createParentDirectories()
+			}
+			else
+				Success(p)
+		}
+		
+		/**
+		 * Creates directories above this path. Eg. for path "dir1/dir2/fileX.txt" would ensure existence of dir1 and dir2
+		 * @return This path, failure if couldn't create directories
+		 */
+		def createParentDirectories() = parentOption.map { dir => Try[Unit] { Files.createDirectories(dir) } }
+			.getOrElse(Success(Unit)).map { _ => p }
+		
+		/**
+		 * @param another Another file
+		 * @return Whether these two files have same last modified time
+		 */
+		def hasSameLastModifiedAs(another: Path) = lastModified.success.exists { another.lastModified.success.contains }
 	}
 }
