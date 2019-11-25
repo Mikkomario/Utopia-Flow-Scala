@@ -147,11 +147,17 @@ object FileExtensions
 		 */
 		def moveTo(targetDirectory: Path, replaceIfExists: Boolean = true) = Try
 		{
-			val newLocation = targetDirectory/fileName
-			if (replaceIfExists)
-				Files.move(p, newLocation, StandardCopyOption.REPLACE_EXISTING)
+			// Directories with content will have to be first copied, then removed
+			if (isDirectory)
+				copyTo(targetDirectory, replaceIfExists).flatMap { newDir => delete().map { _ => newDir } }
 			else
-				Files.move(p, newLocation)
+			{
+				val newLocation = targetDirectory/fileName
+				if (replaceIfExists)
+					Files.move(p, newLocation, StandardCopyOption.REPLACE_EXISTING)
+				else
+					Files.move(p, newLocation)
+			}
 		}
 		
 		/**
@@ -161,14 +167,14 @@ object FileExtensions
 		 *                        if present (default = true)
 		 * @return Link to the target path. Failure if file moving failed or if couldn't replace an existing file
 		 */
-		def copyTo(targetDirectory: Path, replaceIfExists: Boolean = true) = Try
-		{
-			val newLocation = targetDirectory/fileName
-			if (replaceIfExists)
-				Files.copy(p, newLocation, StandardCopyOption.REPLACE_EXISTING)
-			else
-				Files.copy(p, newLocation)
-		}
+		def copyTo(targetDirectory: Path, replaceIfExists: Boolean = true) =
+			recursiveMoveCopy(targetDirectory, (a, b) => if (replaceIfExists)
+				Files.copy(a, b, StandardCopyOption.REPLACE_EXISTING) else Files.copy(a, b))
+		
+		private def recursiveMoveCopy(targetDirectory: Path, operation: (Path, Path) => Path): Try[Path] = Try {
+			operation(p, targetDirectory/fileName) }
+			.flatMap { newParent => newParent.children
+				.flatMap { _.tryForEach { c => new RichPath(c).recursiveMoveCopy(newParent, operation) } }.map { _ => newParent }}
 		
 		/**
 		 * Renames this file or directory
@@ -183,14 +189,22 @@ object FileExtensions
 		 * @param anotherPath A path leading to the file that will overwrite this one
 		 * @return Path to this file. May contain failure.
 		 */
-		def overwriteWith(anotherPath: Path) = Try { Files.copy(anotherPath, p, StandardCopyOption.REPLACE_EXISTING) }
+		def overwriteWith(anotherPath: Path) =
+		{
+			val copyResult = Try { Files.copy(anotherPath, p, StandardCopyOption.REPLACE_EXISTING) }
+			// May need to copy directory contents
+			if (isDirectory)
+				copyResult.flatMap { newDir => children.flatMap { _.tryForEach { _.copyTo(newDir) } }.map { _ => newDir } }
+			else
+				copyResult
+		}
 		
 		/**
 		 * Overwrites this path with file from another path, but only if the file was changed (had different last modified time)
 		 * @param anotherPath Another file that will overwrite this one
 		 * @return Path to this file. May contain a failure
 		 */
-		def overwriteWithIfChanged(anotherPath: Path) = if (hasSameLastModifiedAs(anotherPath)) Success(p) else overwriteWith(p)
+		def overwriteWithIfChanged(anotherPath: Path) = if (hasSameLastModifiedAs(anotherPath)) Success(p) else overwriteWith(anotherPath)
 		
 		/**
 		 * Deletes this file or directory

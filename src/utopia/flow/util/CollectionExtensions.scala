@@ -339,7 +339,7 @@ object CollectionExtensions
          * @param f A function that takes an item and performs an operation that may fail
          * @return Failure if any of the operations failed, success otherwise.
          */
-        def tryForEach(f: A => Try[Unit]): Try[Unit] = t.view.map(f).find { _.isFailure }.getOrElse(Success(Unit))
+        def tryForEach(f: A => Try[Any]): Try[Any] = t.view.map(f).find { _.isFailure }.getOrElse(Success(Unit))
         
         /**
           * @return An iterator that keeps repeating over and over (iterator continues infinitely or until this
