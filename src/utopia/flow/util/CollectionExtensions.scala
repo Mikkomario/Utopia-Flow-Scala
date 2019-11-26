@@ -46,6 +46,17 @@ object CollectionExtensions
         }
     
         /**
+         * Finds the index of the last item that matches the predicate
+         * @param find a function for finding the correct item
+         * @return The index of the item in this seq or None if no such item was found
+         */
+        def lastIndexWhereOption(find: A => Boolean) =
+        {
+            val result = seq.lastIndexWhere(find)
+            if (result < 0) None else Some(result)
+        }
+    
+        /**
           * Finds the index of the specified item
           * @param item Searched item
           * @tparam B Item type
@@ -124,6 +135,17 @@ object CollectionExtensions
             }
             
             builder.result()
+        }
+    
+        /**
+         * Drops items from the right as long as the specified condition returns true
+         * @param f A function that tests whether items should be dropped
+         * @return A copy of this collection with rightmost items (that satisfy provided predicate) removed
+         */
+        def dropRightWhile(f: A => Boolean) = lastIndexWhereOption { !f(_) } match
+        {
+            case Some(index) => seq.take(index + 1)
+            case None => seq.take(0)
         }
     }
     
