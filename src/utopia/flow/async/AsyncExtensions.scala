@@ -38,6 +38,11 @@ object AsyncExtensions
 		def withTimeout(timeout: FiniteDuration)(implicit exc: ExecutionContext) = Future { waitFor(timeout) }
 		
 		/**
+		 * @return Whether this future is still "empty" (not completed)
+		 */
+		def isEmpty = !f.isCompleted
+		
+		/**
 		  * @return Whether this future was already completed successfully
 		  */
 		def isSuccess = f.isCompleted && f.waitFor().isSuccess

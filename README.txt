@@ -98,6 +98,10 @@ v1.6.1  -----------------------------------
 
         Added a VectorCollector class for collecting java streams to scala vectors
 
+        WaitUtils now contains delayed -method which performs an operation after a delay
+
+        Future now contains isEmpty method (which is an inverted isCompleted method) through AsyncExtensions
+
 
 v1.6  -------------------------------------
 
