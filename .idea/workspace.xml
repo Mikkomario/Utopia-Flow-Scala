@@ -12,14 +12,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="Workspace modified">
-      <change afterPath="$PROJECT_DIR$/test/utopia/flow/test/WaitTest.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/async/AsyncExtensions.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/async/AsyncExtensions.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/util/SingleWait.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/util/SingleWait.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/util/WaitUtils.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/util/WaitUtils.scala" afterDir="false" />
-    </list>
+    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -309,7 +302,13 @@
       <option name="presentableId" value="LOCAL−00017" />
       <updated>1565510252054</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL−00018" summary="Added support for delayed operations to WaitUtils">
+      <created>1574960460358</created>
+      <option name="number" value="LOCAL−00018" />
+      <option name="presentableId" value="LOCAL−00018" />
+      <updated>1574960460358</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -344,7 +343,8 @@
     <MESSAGE value="Updated loop construction syntax" />
     <MESSAGE value="Updating settings" />
     <MESSAGE value="Workspace modified" />
-    <option name="LAST_COMMIT_MESSAGE" value="Workspace modified" />
+    <MESSAGE value="Added support for delayed operations to WaitUtils" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added support for delayed operations to WaitUtils" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
