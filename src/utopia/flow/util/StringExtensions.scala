@@ -1,5 +1,7 @@
 package utopia.flow.util
 
+import utopia.flow.datastructure.mutable.Lazy
+
 import scala.util.Try
 
 /**
@@ -129,6 +131,12 @@ object StringExtensions
 		}
 		
 		/**
+		  * @param str Searched string
+		  * @return An iterator that returns the next index of the searched string
+		  */
+		def indexOfIterator(str: String): Iterator[Int] = new StringIndexOfIterator(s, str)
+		
+		/**
 		 * @param str A string
 		 * @return A portion of this string that comes after the first occurrence of specified string (empty string if
 		 *         specified string is not a substring of this string), (case-sensitive)
@@ -172,11 +180,12 @@ object StringExtensions
 		 */
 		def untilLast(str: String) = optionLastIndexOf(str).map(s.take).getOrElse(s)
 		
-		/**
+		/*
 		 * Splits this string into two at specified index. Eg. "apple".splitAt(2) = "ap" -> "ple"
 		 * @param index Index where this string will be split
 		 * @return Part of this string until specified index -> part of this string starting from specified index
 		 */
+		/*
 		def splitAt(index: Int) =
 		{
 			if (index <= 0)
@@ -185,7 +194,7 @@ object StringExtensions
 				s -> ""
 			else
 				s.take(index) -> s.drop(index)
-		}
+		}*/
 		
 		/**
 		 * Splits this string into two at the first occurrence of specified substring. Eg. "apple".splitAtFirst("p") = "a" -> "ple"
@@ -215,5 +224,39 @@ object StringExtensions
 		 * @return Whether this string equals the other string when case is ignored
 		 */
 		def ~==(another: String) = s.equalsIgnoreCase(another)
+	}
+	
+	private class StringIndexOfIterator(val string: String, val searched: String) extends Iterator[Int]
+	{
+		// ATTRIBUTES	------------------
+		
+		private var lastIndex: Option[Int] = None
+		private val nextIndex: Lazy[Option[Int]] = Lazy {
+			val next = lastIndex match
+			{
+				case Some(last) =>
+					val result = string.indexOf(searched, last + searched.length)
+					if (result < 0) None else Some(result)
+				case None => string.optionIndexOf(searched)
+			}
+			lastIndex = next
+			next
+		}
+		
+		
+		// IMPLEMENTED	------------------
+		
+		override def hasNext = nextIndex.get.isDefined
+		
+		override def next() =
+		{
+			val result = nextIndex.get
+			nextIndex.reset()
+			result match
+			{
+				case Some(index) => index
+				case None => throw new NoSuchElementException("Iterator.next() called after running out of items")
+			}
+		}
 	}
 }
