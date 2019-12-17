@@ -12,7 +12,23 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="" />
+    <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/async/VolatileLazy.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/LazyLike.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Entourage.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/ExcavationStatus.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Explorer.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Mine.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Miner.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/PathType.scala" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/SearchStyle.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/async/Volatile.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/async/Volatile.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/async/VolatileOption.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/async/VolatileOption.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Lazy.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Lazy.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/util/FileExtensions.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/util/FileExtensions.scala" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,12 +47,6 @@
         <option value="Scala Trait" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>newBuilder</find>
-      <find>separatorIndices</find>
-    </findStrings>
   </component>
   <component name="Git.Settings">
     <favorite-branches>

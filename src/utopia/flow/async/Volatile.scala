@@ -5,7 +5,7 @@ object Volatile
     /**
      * Creates a new volatile value
      */
-    def apply[T](value: T) = new Volatile(value)    
+    def apply[T](value: T) = new Volatile(value)
 }
 
 /**
@@ -42,6 +42,30 @@ class Volatile[T](@volatile private var value: T)
     def updateAndGet(mutate: T => T) = this.synchronized
     {
         value = mutate(value)
+        value
+    }
+    
+    /**
+     * Updates this volatile only if specified condition is met
+     * @param condition A condition for updating
+     * @param mutate A mutating function
+     */
+    def updateIf(condition: T => Boolean)(mutate: T => T) = this.synchronized
+    {
+        if (condition(value))
+            value = mutate(value)
+    }
+    
+    /**
+     * Updates this volatile only if specified condition is met
+     * @param condition A condition for updating
+     * @param mutate A mutating function
+     * @return Value of this volatile after operation
+     */
+    def updateIfAndGet(condition: T => Boolean)(mutate: T => T) = this.synchronized
+    {
+        if (condition(value))
+            value = mutate(value)
         value
     }
     

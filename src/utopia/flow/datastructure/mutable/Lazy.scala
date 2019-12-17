@@ -17,7 +17,7 @@ object Lazy
 * @author Mikko Hilpinen
 * @since 26.2.2019
 **/
-class Lazy[T](val generator: () => T)
+class Lazy[T](val generator: () => T) extends LazyLike[T]
 {
 	// ATTRIBUTES    ----------------
     
@@ -51,16 +51,5 @@ class Lazy[T](val generator: () => T)
     
     override def toString = current.map(c => s"Lazy($c)") getOrElse "Lazy"
     
-    
-    // OTHER    ---------------------
-    
-    /**
-     * Updates the value in this container
-     */
-    def set(newValue: T) = item = Some(newValue)
-    
-    /**
-     * Resets this container so that the next time #get is called, a new item will be generated
-     */
-    def reset() = item = None
+    override protected def updateValue(newValue: Option[T]) = item = newValue
 }

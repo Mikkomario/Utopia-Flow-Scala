@@ -2,6 +2,7 @@ package utopia.flow.util
 
 import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths, StandardCopyOption}
 
+import utopia.flow.filesearch.PathType.{Directory, File}
 import utopia.flow.parse.JSONConvertible
 
 import scala.language.implicitConversions
@@ -54,6 +55,11 @@ object FileExtensions
 		def fileType = fileName.afterLast(".")
 		
 		/**
+		 * @return Type of this path (directory or regular file)
+		 */
+		def pathType = if (isDirectory) Directory else File
+		
+		/**
 		 * @param another A sub-path
 		 * @return This path extended with another path
 		 */
@@ -98,6 +104,17 @@ object FileExtensions
 			// Non-directory paths don't have children
 			if (isDirectory)
 				Files.list(p).tryConsume { _.collect(new VectorCollector[Path]) }
+			else
+				Success(Vector())
+		}
+		
+		/**
+		 * @return Directories directly under this one (returns empty vector for regular files). May fail.
+		 */
+		def subDirectories =
+		{
+			if (isDirectory)
+				Files.list(p).tryConsume { _.filter { p => p.isDirectory }.collect(new VectorCollector[Path]) }
 			else
 				Success(Vector())
 		}
