@@ -88,7 +88,7 @@ v1.6.1 (beta)  -----------------------------------
 
         TimeExtensions now also allow easier creation of Period instances
 
-        maxByOption, minByOption, tryMap and dropRightWhile added to CollectionExtensions
+        maxByOption, minByOption, tryMap, dropRightWhile and compareWith added to CollectionExtensions
 
         raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
         from two futures.
