@@ -13,23 +13,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1d97171-8bfd-4172-ab88-9a2439f179ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/async/VolatileLazy.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/LazyLike.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Entourage.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/ExcavationStatus.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Explorer.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Mine.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Miner.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/PathType.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/SearchStyle.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/async/Volatile.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/async/Volatile.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/async/VolatileOption.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/async/VolatileOption.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Lazy.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/datastructure/mutable/Lazy.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utopia/flow/util/FileExtensions.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/util/FileExtensions.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/filesearch/Entourage.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Entourage.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/filesearch/Explorer.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Explorer.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/filesearch/Mine.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Mine.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utopia/flow/filesearch/Miner.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/utopia/flow/filesearch/Miner.scala" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,6 +70,11 @@
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
@@ -98,18 +92,6 @@
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="utopia.flow.collection" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Application.WaitTest">
     <configuration name="CollectionTest" type="Application" factoryName="Application" temporary="true">
@@ -186,6 +168,18 @@
         <item itemvalue="Application.ModelTest" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -318,7 +312,13 @@
       <option name="presentableId" value="LOCAL−00018" />
       <updated>1574960460358</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL−00019" summary="Working on a new file search algorithm">
+      <created>1576613589070</created>
+      <option name="number" value="LOCAL−00019" />
+      <option name="presentableId" value="LOCAL−00019" />
+      <updated>1576613589070</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -354,7 +354,22 @@
     <MESSAGE value="Updating settings" />
     <MESSAGE value="Workspace modified" />
     <MESSAGE value="Added support for delayed operations to WaitUtils" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added support for delayed operations to WaitUtils" />
+    <MESSAGE value="Working on a new file search algorithm" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working on a new file search algorithm" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="873" y="360" key="#Plugins" timestamp="1576858017999">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="873" y="360" key="#Plugins/0.0.2560.1400@0.0.2560.1400" timestamp="1576858017999" />
+    <state x="976" y="526" key="com.intellij.ide.util.TipDialog" timestamp="1576858432874">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="976" y="526" key="com.intellij.ide.util.TipDialog/0.0.2560.1400@0.0.2560.1400" timestamp="1576858432874" />
+    <state x="943" y="419" width="672" height="678" key="search.everywhere.popup" timestamp="1576857941957">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="943" y="419" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400@0.0.2560.1400" timestamp="1576857941957" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
