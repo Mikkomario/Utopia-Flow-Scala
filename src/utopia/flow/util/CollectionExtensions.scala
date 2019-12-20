@@ -147,6 +147,15 @@ object CollectionExtensions
             case Some(index) => seq.take(index + 1)
             case None => seq.take(0)
         }
+    
+        /**
+          * @param another Another sequence
+          * @param equals Equality function
+          * @tparam B Type of another sequence's content
+          * @return Whether these two sequences are equal when using specified equality function
+          */
+        def compareWith[B](another: SeqLike[B, _])(equals: (A, B) => Boolean) = seq.size == another.size &&
+            seq.indices.forall { i => equals(seq(i), another(i)) }
     }
     
     implicit class RichTry[T](val t: Try[T]) extends AnyVal
