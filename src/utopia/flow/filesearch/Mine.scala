@@ -45,14 +45,19 @@ class Mine(val directory: Path)
 	def isDeadEnd = pathWays.isEmpty
 	
 	/**
+	 * @return Number of explorable paths directly under this pathway
+	 */
+	def numberOfExplorablePaths = pathWays.count { _.isExplorable }
+	
+	/**
 	 * @return Whether this mineshaft has any room left to explore
 	 */
-	def hasUncheckedPaths: Boolean =
+	def isExplorable: Boolean =
 	{
 		if (status.isStarted)
 			false
 		else if (status.isTraversed)
-			isDeadEnd || pathWays.exists { _.hasUncheckedPaths }
+			isDeadEnd || pathWays.exists { _.isExplorable }
 		else
 			true
 	}

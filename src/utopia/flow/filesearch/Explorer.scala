@@ -56,10 +56,19 @@ trait Explorer
 			false
 	}
 	
-	private def goDeeper() =
+	protected def findUnexploredRoot() =
+	{
+		// Backtracks to an incomplete passage
+		while (currentLocation.status.isStarted && backtrack()) {
+			// Condition moves this explorer
+		}
+		currentLocation.status.isStarted
+	}
+	
+	protected def goDeeper() =
 	{
 		// Finds the next path, preferring those that haven't been explored yet
-		currentLocation.pathWays.filter { _.hasUncheckedPaths }.bestMatch(
+		currentLocation.pathWays.filter { _.isExplorable }.bestMatch(
 			Vector(!_.status.isTraversed, !_.status.isStarted, !_.status.hasResults)).headOption match
 		{
 			case Some(nextPath) =>
@@ -68,14 +77,5 @@ trait Explorer
 				true
 			case None => false
 		}
-	}
-	
-	private def findUnexploredRoot() =
-	{
-		// Backtracks to an incomplete passage
-		while (currentLocation.status.isStarted && backtrack()) {
-			// Condition moves this explorer
-		}
-		currentLocation.status.isStarted
 	}
 }

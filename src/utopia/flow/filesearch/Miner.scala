@@ -30,6 +30,7 @@ class Miner(override val origin: Mine, val searchStyle: SearchStyle)(val searchC
 			while (findDeadEnd())
 			{
 				// Mines the found location
+				currentLocation.declareStarted()
 				mine()
 			}
 			
@@ -40,9 +41,19 @@ class Miner(override val origin: Mine, val searchStyle: SearchStyle)(val searchC
 	
 	// OTHER	------------------------
 	
-	private def mine() =
+	/**
+	 * Mines the current location (asynchronously)
+	 * @param exc Implicit execution context
+	 * @return Asynchronous completion of the mining operation
+	 */
+	def mineCurrentLocation()(implicit exc: ExecutionContext) =
 	{
 		currentLocation.declareStarted()
+		Future { mine() }
+	}
+	
+	private def mine() =
+	{
 		// Either checks the directory itself or the files under the directory
 		searchStyle.conditionType match
 		{
