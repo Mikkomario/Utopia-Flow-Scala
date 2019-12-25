@@ -4,20 +4,23 @@ import java.nio.file.Path
 
 import utopia.flow.util.FileExtensions._
 import utopia.flow.async.{Volatile, VolatileLazy}
-import utopia.flow.filesearch.ExcavationStatus.{Closed, Finished, Passed, Promising, Started, Unexplored}
+import utopia.flow.filesearch.ExcavationStatus.{Finished, Passed, Started, Unexplored}
 
 /**
  * Represents a portion of a file system with a mutable search status
  * @author Mikko Hilpinen
  * @since 17.12.2019, v1.6.1+
+ * @param directory Directory represented by this mine
+ * @tparam R Type of results collected from this mine
  */
-class Mine(val directory: Path)
+class Mine[R](val directory: Path)
 {
 	// ATTRIBUTES	--------------------
 	
 	private val _status: Volatile[ExcavationStatus] = Volatile(Unexplored)
 	// Underlying pathways are lazily initialized
-	private val _pathWays = VolatileLazy { directory.subDirectories.getOrElse(Vector()).map { new Mine(_) } }
+	private val _pathWays = VolatileLazy { directory.subDirectories.getOrElse(Vector()).map { new Mine[R](_) } }
+	private var foundResults: Option[R] = None
 	
 	
 	// COMPUTED	------------------------
@@ -45,9 +48,14 @@ class Mine(val directory: Path)
 	def isDeadEnd = pathWays.isEmpty
 	
 	/**
+	 * @return Paths directly under this mine which haven't been explored yet
+	 */
+	def unexploredPaths = pathWays.filter { _.isExplorable }
+	
+	/*
 	 * @return Number of explorable paths directly under this pathway
 	 */
-	def numberOfExplorablePaths = pathWays.count { _.isExplorable }
+	// def numberOfExplorablePaths = pathWays.count { _.isExplorable }
 	
 	/**
 	 * @return Whether this mineshaft has any room left to explore
@@ -76,13 +84,11 @@ class Mine(val directory: Path)
 	def declareStarted() = _status.update { current => if (!current.isStarted) Started else current }
 	
 	/**
-	 * Declares that this mine contains at least a single result
-	 */
-	def declarePromising() = _status.update { current => if (current.isCompleted) Finished else Promising }
-	
-	/**
 	 * Declares this mineshaft's exploration completed
-	 * @param foundResults Whether search results were found from this path
 	 */
-	def declareCompleted(foundResults: Boolean) = _status.set(if (foundResults) Finished else Closed)
+	def declareCompleted(results: R) =
+	{
+		_status.set(Finished)
+		foundResults = Some(results)
+	}
 }

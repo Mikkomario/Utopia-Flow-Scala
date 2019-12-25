@@ -1,94 +1,103 @@
 package utopia.flow.filesearch
 import java.nio.file.Path
 
-import utopia.flow.async.{Volatile, VolatileOption}
-import utopia.flow.util.WaitTarget.UntilNotified
-import utopia.flow.util.{SingleWait, WaitUtils}
+import utopia.flow.async.AsyncExtensions._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * A group of miners that can then split into individual workers
  * @author Mikko Hilpinen
  * @since 17.12.2019, v1.6.1+
  */
-// TODO: Gather common features (like moving in mines) to a single trait
-class Entourage(override val origin: Mine, size: Int, val searchStyle: SearchStyle)
-			   (val searchCondition: Path => Boolean) extends Explorer
+class Entourage[R](origin: Mine[R], size: Int, startingPath: Vector[Mine[R]] = Vector())
+			   (private val search: Path => R) extends Explorer(origin, startingPath)
 {
 	// ATTRIBUTES	-------------------
 	
-	private val deployedMinerCount = Volatile(0)
-	private val outOfMinersWait: VolatileOption[SingleWait] = VolatileOption()
+	private var deployedMinerCount = 0
+	private var sentCompletions: Vector[Future[Any]] = Vector()
 	
 	
 	// IMPLEMENTED	-------------------
 	
 	// Moves forward in the mines until a split is found
-	override def explore()(implicit exc: ExecutionContext) = ???
+	override def explore()(implicit exc: ExecutionContext) =
+	{
+		while (move()) { }
+		sentCompletions.future
+	}
 	
 	
 	// OTHER	-----------------------
 	
-	private def move()(implicit exc: ExecutionContext) =
+	private def move()(implicit exc: ExecutionContext): Boolean =
 	{
 		// Finds a passage that hasn't been started yet
 		if (findUnexploredRoot())
 		{
 			// Checks whether this entourage should split or move on as a single unit
 			// In case of a dead-end, leaves a single miner behind while the rest backtrack
-			val pathsToExplore = currentLocation.numberOfExplorablePaths // TODO: Request paths instead
-			if (pathsToExplore == 0)
+			val pathsToExplore = currentLocation.unexploredPaths
+			if (pathsToExplore.isEmpty)
 			{
-				deploySingleLocationMiner()
-				backtrack()
+				if (deploySingleLocationMiner())
+					backtrack()
+				else
+					false
 			}
 			// If there's only a single way to go, the entourage moves there
-			else if (pathsToExplore == 1)
-				goDeeper() // TODO: Specify which mine
+			else if (pathsToExplore.size == 1)
+			{
+				goDeeper(pathsToExplore.head)
+				true
+			}
 			// if there are multiple possible pathways, splits the entourage between the pathways
 			else
 			{
 				// Reserves all remaining miners
-				val minersToSend = deployedMinerCount.getAndSet(0)
+				val minersToSend = size - deployedMinerCount
 				
-				// There may be too few miners to send between different paths, in which case the entourage will
-				// deploy miners as they become available
-				if (minersToSend < pathsToExplore)
+				// There may be too few miners to send between different paths, in which case all miners are sent individually
+				if (minersToSend <= pathsToExplore.size)
 				{
-					// TODO: Deploy
+					pathsToExplore.take(minersToSend).foreach { deployMinerUnder }
+					deployedMinerCount = size
 				}
 				// If there are more miners than pathways, deploys them as sub-groups (where available)
 				else
 				{
-					val minMinersPerPath = minersToSend / pathsToExplore
-					var remainingExtraMiners = minersToSend % pathsToExplore
+					val minMinersPerPath = minersToSend / pathsToExplore.size
+					val extraMinersCount = minersToSend % pathsToExplore.size
 					
-					// TODO: If some other miner started the mine already, miners will return immediately
+					val (pathsWithMoreMiners, pathsWithLessMiners) = pathsToExplore.splitAt(extraMinersCount)
+					pathsWithMoreMiners.foreach { path => deployEntourageUnder(path, minMinersPerPath + 1) }
 					
-					// TODO: Implement
+					if (minMinersPerPath > 1)
+						pathsWithLessMiners.foreach { path => deployEntourageUnder(path, minMinersPerPath) }
+					else
+						pathsWithLessMiners.foreach { deployMinerUnder }
+					
+					deployedMinerCount = size
 				}
+				false
 			}
 		}
+		else
+			false
 	}
 	
 	private def deploySingleLocationMiner()(implicit exc: ExecutionContext) =
 	{
-		val outOfMiners = deployedMinerCount.updateAndGet { _ - 1 } == 0
-		val preparedWait = if (outOfMiners) Some(prepareWait()) else None
-		new Miner(currentLocation, searchStyle)(searchCondition).mineCurrentLocation().foreach { _ =>
-			deployedMinerCount.update { _ + 1 }
-			// TODO: Collect results
-			endWait()
-		}
-		
-		// If ran out of miners, has to wait until one of them completes
-		preparedWait.foreach(waitUntilMinerReturns)
+		// Deploys the miner to current location
+		sentCompletions :+= new Miner(origin, currentRoute)(search).mineCurrentLocationThenExplore()
+		deployedMinerCount += 1
+		deployedMinerCount < size
 	}
 	
-	private def prepareWait() = outOfMinersWait.setOneIfEmptyAndGet { () => new SingleWait(UntilNotified) }
+	private def deployMinerUnder(path: Mine[R])(implicit exc: ExecutionContext) =
+		sentCompletions :+= new Miner(origin, currentRoute :+ path)(search).explore()
 	
-	private def waitUntilMinerReturns(wait: SingleWait) = wait.run()
-	
-	private def endWait() = outOfMinersWait.pop().foreach { _.stop() }
+	private def deployEntourageUnder(path: Mine[R], size: Int)(implicit exc: ExecutionContext) =
+		sentCompletions :+= new Entourage(origin, size, currentRoute :+ path)(search).explore()
 }

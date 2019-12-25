@@ -29,11 +29,6 @@ sealed trait ExcavationStatus extends Ordered[ExcavationStatus]
 	 */
 	def isCompleted: Boolean
 	
-	/**
-	 * @return Whether any results have been found
-	 */
-	def hasResults: Boolean
-	
 	
 	// IMPLEMENTED	-----------------
 	
@@ -51,7 +46,6 @@ object ExcavationStatus
 		override val isTraversed = false
 		override val isStarted = false
 		override val isCompleted = false
-		override val hasResults = false
 	}
 	
 	case object Passed extends ExcavationStatus
@@ -60,7 +54,6 @@ object ExcavationStatus
 		override val isTraversed = true
 		override val isStarted = false
 		override val isCompleted = false
-		override val hasResults = false
 	}
 	
 	/**
@@ -72,31 +65,6 @@ object ExcavationStatus
 		override val isTraversed = true
 		override val isStarted = true
 		override val isCompleted = false
-		override val hasResults = false
-	}
-	
-	/**
-	 * Status used while excavation is in progress and results have already been found
-	 */
-	case object Promising extends ExcavationStatus
-	{
-		override val orderIndex = 4
-		override val isTraversed = true
-		override val isStarted = true
-		override val isCompleted = false
-		override val hasResults = true
-	}
-	
-	/**
-	 * Status used when excavation has been completed without any results
-	 */
-	case object Closed extends ExcavationStatus
-	{
-		override val orderIndex = 5
-		override val isTraversed = true
-		override val isStarted = true
-		override val isCompleted = true
-		override val hasResults = false
 	}
 	
 	/**
@@ -108,6 +76,5 @@ object ExcavationStatus
 		override val isTraversed = true
 		override val isStarted = true
 		override val isCompleted = true
-		override val hasResults = true
 	}
 }

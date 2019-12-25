@@ -2,85 +2,52 @@ package utopia.flow.filesearch
 
 import java.nio.file.Path
 
-import utopia.flow.util.CollectionExtensions._
-import utopia.flow.util.FileExtensions._
-import utopia.flow.filesearch.PathType.{Directory, File}
-
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 /**
  * Used for searching for files or directories in a file system
  * @author Mikko Hilpinen
  * @since 17.12.2019, v1.6.1+
  */
-class Miner(override val origin: Mine, val searchStyle: SearchStyle)(val searchCondition: Path => Boolean) extends Explorer
+class Miner[R](origin: Mine[R], startingPath: Vector[Mine[R]] = Vector())(private val search: Path => R)
+	extends Explorer(origin, startingPath)
 {
-	// ATTRIBUTES	---------------------
-	
-	private var foundResults: Vector[Path] = Vector()
-	
-	
 	// IMPLEMENTED	---------------------
 	
-	override def explore()(implicit exc: ExecutionContext) =
-	{
-		Future
-		{
-			// Traverses forward until a suitable dead-end is found
-			while (findDeadEnd())
-			{
-				// Mines the found location
-				currentLocation.declareStarted()
-				mine()
-			}
-			
-			// Returns once the whole passage has been completed
-		}
-	}
+	override def explore()(implicit exc: ExecutionContext) = Future { exploreSync() }
 	
 	
 	// OTHER	------------------------
 	
 	/**
-	 * Mines the current location (asynchronously)
+	 * Mines the current location (asynchronously), then continues exploring normally
 	 * @param exc Implicit execution context
-	 * @return Asynchronous completion of the mining operation
+	 * @return Asynchronous completion of the exploration
 	 */
-	def mineCurrentLocation()(implicit exc: ExecutionContext) =
+	def mineCurrentLocationThenExplore()(implicit exc: ExecutionContext) =
 	{
 		currentLocation.declareStarted()
-		Future { mine() }
+		Future { mine() }.andThen { case Success(_) => exploreSync() }
+	}
+	
+	private def exploreSync() =
+	{
+		// Traverses forward until a suitable dead-end is found
+		while (findDeadEnd())
+		{
+			// Mines the found location
+			currentLocation.declareStarted()
+			mine()
+		}
+		
+		// Returns once the whole passage has been completed
 	}
 	
 	private def mine() =
 	{
 		// Either checks the directory itself or the files under the directory
-		searchStyle.conditionType match
-		{
-			case Directory =>
-				val wasSuccess = searchCondition(currentLocation.directory)
-				currentLocation.declareCompleted(wasSuccess)
-				foundResults :+= currentLocation.directory
-			case File =>
-				val files = currentLocation.directory.children.getOrElse(Vector())
-				// Finds the first search result
-				files.indexWhereOption(searchCondition) match
-				{
-					case Some(firstResultIndex) =>
-						searchStyle.resultType match
-						{
-							// If a directory is returned, doesn't need to check the other files
-							case Directory =>
-								currentLocation.declareCompleted(true)
-								foundResults :+= currentLocation.directory
-							case File =>
-								currentLocation.declarePromising()
-								foundResults :+= files(firstResultIndex)
-								foundResults ++= files.drop(firstResultIndex + 1).filter(searchCondition)
-								currentLocation.declareCompleted(true)
-						}
-					case None => currentLocation.declareCompleted(false)
-				}
-		}
+		val result = search(currentLocation.directory)
+		currentLocation.declareCompleted(result)
 	}
 }

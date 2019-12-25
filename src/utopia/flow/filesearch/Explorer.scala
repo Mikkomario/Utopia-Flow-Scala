@@ -9,25 +9,20 @@ import utopia.flow.util.CollectionExtensions._
  * @author Mikko Hilpinen
  * @since 17.12.2019, v1.6.1+
  */
-trait Explorer
+abstract class Explorer[R](val origin: Mine[R], private var _currentRoute: Vector[Mine[R]] = Vector())
 {
 	// ABSTRACT	------------------------
 	
-	val origin: Mine
-	
-	def explore()(implicit exc: ExecutionContext): Future[Unit]
-	
-	
-	// ATTRIBUTES	--------------------
-	
-	private var currentRoute: Vector[Mine] = Vector()
+	def explore()(implicit exc: ExecutionContext): Future[Any]
 	
 	
 	// COMPUTED	------------------------
 	
-	def currentLocation = currentRoute.lastOption.getOrElse(origin)
+	def currentLocation = _currentRoute.lastOption.getOrElse(origin)
 	
-	def isAtOrigin = currentRoute.isEmpty
+	def isAtOrigin = _currentRoute.isEmpty
+	
+	def currentRoute = _currentRoute
 	
 	
 	// OTHER	-----------------------
@@ -38,7 +33,7 @@ trait Explorer
 			false
 		else
 		{
-			currentRoute = currentRoute.dropRight(1)
+			_currentRoute = _currentRoute.dropRight(1)
 			true
 		}
 	}
@@ -65,17 +60,21 @@ trait Explorer
 		currentLocation.status.isStarted
 	}
 	
-	protected def goDeeper() =
+	protected def goDeeper(): Boolean =
 	{
 		// Finds the next path, preferring those that haven't been explored yet
-		currentLocation.pathWays.filter { _.isExplorable }.bestMatch(
-			Vector(!_.status.isTraversed, !_.status.isStarted, !_.status.hasResults)).headOption match
+		currentLocation.pathWays.filter { _.isExplorable }.bestMatch(Vector(!_.status.isTraversed)).headOption match
 		{
 			case Some(nextPath) =>
-				nextPath.declareTraversed()
-				currentRoute :+= nextPath
+				goDeeper(nextPath)
 				true
 			case None => false
 		}
+	}
+	
+	protected def goDeeper(path: Mine[R]) =
+	{
+		path.declareTraversed()
+		_currentRoute :+= path
 	}
 }
