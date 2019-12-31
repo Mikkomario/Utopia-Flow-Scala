@@ -1,6 +1,6 @@
 package utopia.flow.async
 
-import java.time.{Duration, Instant}
+import java.time.Instant
 
 import utopia.flow.util.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
@@ -19,9 +19,9 @@ object CloseHook
     /**
       * Maximum duration the shutdown process can take
       */
-    var maxShutdownTime = Duration.ofSeconds(5)
+    var maxShutdownTime = 5.seconds
     
-    private val additionalShutdowntime = Duration.ofMillis(200)
+    private val additionalShutdownTime = 200.millis
     private var loops = WeakList[Breakable]()
     
     
@@ -59,7 +59,7 @@ object CloseHook
             completions.foreach { _.waitFor(shutdownDeadline - Instant.now()) }
             
             // Waits additional shutdown time
-            WaitUtils.wait(additionalShutdowntime, new AnyRef())
+            WaitUtils.wait(additionalShutdownTime, new AnyRef())
         }
     }
 }
