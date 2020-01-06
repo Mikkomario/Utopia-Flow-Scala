@@ -1,6 +1,5 @@
 package utopia.flow.async
 
-import utopia.flow.datastructure.mutable.Pointer
 import utopia.flow.util.{SingleWait, WaitTarget}
 
 import scala.collection.generic.CanBuildFrom
@@ -168,5 +167,11 @@ object AsyncExtensions
 		  * @return A future of the completion of all of these items. Resulting collection contains only successful completions
 		  */
 		def futureSuccesses[C](implicit context: ExecutionContext, cbf: CanBuildFrom[_, A, C]): Future[C] = Future { waitForSuccesses() }
+		
+		/**
+		 * @param context Execution context
+		 * @return A future of the completion of all of these items. Will not check or return the results of those operations.
+		 */
+		def futureCompletion(implicit context: ExecutionContext) = Future { futures.foreach { _.waitFor() } }
 	}
 }

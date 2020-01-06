@@ -102,6 +102,14 @@ v1.6.1 (beta)  -----------------------------------
 
         Future now contains isEmpty method (which is an inverted isCompleted method) through AsyncExtensions
 
+        AsyncExtensions now also provides futureCompletion -method for a combination of futures that works exactly
+        like .future but simply returns Future[Unit]
+
+        NewThreadExecutionContext added for cases where only one or two threads are required. It is still recommended
+        to use a ThreadPool instead.
+            - This feature was added for ConnectionPool closing in Vault where thread pool is not readily available
+            and a single thread needs to be created at the very end of program lifespan
+
         Changing instances now have futureWhere(...) method that allows one to get a conditional future. Volatile now
         extends Changing and will support change events.
 
