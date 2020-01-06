@@ -2,9 +2,13 @@ package utopia.flow.filesearch
 
 import java.nio.file.Path
 
+import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.FileExtensions._
 import utopia.flow.async.{Volatile, VolatileLazy}
+import utopia.flow.datastructure.immutable.Tree
 import utopia.flow.filesearch.ExcavationStatus.{Finished, Passed, Started, Unexplored}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Represents a portion of a file system with a mutable search status
@@ -24,6 +28,33 @@ class Mine[R](val directory: Path)
 	
 	
 	// COMPUTED	------------------------
+	
+	/**
+	 * @param exc Implicit execution context
+	 * @return A future of the eventual results for this mine
+	 */
+	def futureLocalResults(implicit exc: ExecutionContext) =
+	{
+		foundResults match
+		{
+			case Some(results) => Future.successful(results)
+			case None => _status.futureWhere { _.isCompleted }.map { _ => foundResults.get }
+		}
+	}
+	
+	/**
+	 * @param exc Implicit execution context
+	 * @return A future for the eventual results of this mine, including the results of the subsequent pathways. The
+	 *         results are returned in a tree-like format.
+	 */
+	def futureResults(implicit exc: ExecutionContext): Future[Tree[R]] =
+	{
+		// Gets own results and includes results from all pathways as well
+		futureLocalResults.map { local =>
+			val childResults: Vector[Tree[R]] = pathWays.map { _.futureResults }.waitForSuccesses()
+			Tree(local, childResults)
+		}
+	}
 	
 	/**
 	 * @return Current status of this mine
@@ -76,19 +107,25 @@ class Mine[R](val directory: Path)
 	/**
 	 * Declares that this mineshaft has been entered
 	 */
-	def declareTraversed() = _status.update { current => if (!current.isTraversed) Passed else current }
+	def declareTraversed() =
+	{
+		_status.update { current => if (!current.isTraversed) Passed else current }
+	}
 	
 	/**
 	 * Declares that this mineshaft's exploration / mining has started
 	 */
-	def declareStarted() = _status.update { current => if (!current.isStarted) Started else current }
+	def declareStarted() =
+	{
+		_status.update { current => if (!current.isStarted) Started else current }
+	}
 	
 	/**
 	 * Declares this mineshaft's exploration completed
 	 */
 	def declareCompleted(results: R) =
 	{
-		_status.set(Finished)
 		foundResults = Some(results)
+		_status.set(Finished)
 	}
 }

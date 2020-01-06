@@ -120,6 +120,19 @@ object FileExtensions
 		}
 		
 		/**
+		 * @return The size of this file in bytes. If called for a directory, returns the combined size of all files and
+		 *         directories under this directory. Please note that this method may take a while to complete.
+		 */
+		def size: Try[Long] =
+		{
+			// Size of a regular file is delegated to java.nio.Files while size of a directory is calculated recursively
+			if (isRegularFile)
+				Try { Files.size(p) }
+			else
+				children.flatMap { _.tryMap { _.size }.map { _.sum } }
+		}
+		
+		/**
 		 * Performs an operation on all files directly under this path
 		 * @param filter A filter applied to child paths (default = no filter)
 		 * @param operation Operation performed for each path

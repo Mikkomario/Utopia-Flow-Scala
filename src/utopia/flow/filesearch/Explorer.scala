@@ -57,7 +57,7 @@ abstract class Explorer[R](val origin: Mine[R], private var _currentRoute: Vecto
 		while (currentLocation.status.isStarted && backtrack()) {
 			// Condition moves this explorer
 		}
-		currentLocation.status.isStarted
+		!currentLocation.status.isStarted
 	}
 	
 	protected def goDeeper(): Boolean =

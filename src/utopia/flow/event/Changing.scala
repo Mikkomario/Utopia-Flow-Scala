@@ -1,5 +1,7 @@
 package utopia.flow.event
 
+import scala.concurrent.{ExecutionContext, Promise}
+
 /**
   * Changing instances generate change events
   * @author Mikko Hilpinen
@@ -38,6 +40,22 @@ trait Changing[A]
 	def removeListener(listener: Any) = listeners = listeners.filterNot { _ == listener }
 	
 	/**
+	 * @param valueCondition A condition for finding a suitable future
+	 * @param exc Implicit execution context
+	 * @return A future where this changing instance's value triggers the specified condition the first time
+	 *         (immediately completed if current value already triggers the condition). Please note that the future
+	 *         might never complete.
+	 */
+	def futureWhere(valueCondition: A => Boolean)(implicit exc: ExecutionContext) =
+	{
+		val listener = new FutureValueListener(value, valueCondition)
+		addListener(listener)
+		// Will not need to listen anymore once the future has been completed
+		listener.future.foreach { _ => removeListener(listener) }
+		listener.future
+	}
+	
+	/**
 	  * Fires a change event for all the listeners
 	  * @param oldValue The old value of this changing element (call-by-name)
 	  */
@@ -45,5 +63,35 @@ trait Changing[A]
 	{
 		lazy val event = ChangeEvent(oldValue, value)
 		listeners.foreach { _.onChangeEvent(event) }
+	}
+}
+
+private class FutureValueListener[A](initialValue: A, trigger: A => Boolean) extends ChangeListener[A]
+{
+	// ATTRIBUTES	-------------------
+	
+	private val promise = Promise[A]()
+	
+	
+	// INITIAL CODE	-------------------
+	
+	if (trigger(initialValue))
+		promise.success(initialValue)
+	
+	
+	// COMPUTED	-----------------------
+	
+	/**
+	 * @return Future for the first value that triggers the specified condition
+	 */
+	def future = promise.future
+	
+	
+	// IMPLEMENTED	-------------------
+	
+	override def onChangeEvent(event: ChangeEvent[A]) =
+	{
+		if (!promise.isCompleted && trigger(event.newValue))
+			promise.trySuccess(event.newValue)
 	}
 }

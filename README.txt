@@ -102,6 +102,9 @@ v1.6.1 (beta)  -----------------------------------
 
         Future now contains isEmpty method (which is an inverted isCompleted method) through AsyncExtensions
 
+        Changing instances now have futureWhere(...) method that allows one to get a conditional future. Volatile now
+        extends Changing and will support change events.
+
 
 v1.6  -------------------------------------
 

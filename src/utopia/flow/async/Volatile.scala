@@ -1,5 +1,7 @@
 package utopia.flow.async
 
+import utopia.flow.event.Changing
+
 object Volatile
 {
     /**
@@ -14,14 +16,16 @@ object Volatile
 * @author Mikko Hilpinen
 * @since 27.3.2019
 **/
-class Volatile[T](@volatile private var value: T)
+class Volatile[T](@volatile private var _value: T) extends Changing[T]
 {
     // COMPUTED    -----------------
     
     /**
      * The current value of this volatile container
      */
-    def get = this.synchronized { value }
+    def get = this.synchronized { _value }
+    
+    override def value = get
     
     
     // OTHER    --------------------
@@ -29,20 +33,19 @@ class Volatile[T](@volatile private var value: T)
     /**
      * Sets a new value to this container
      */
-    def set(newValue: T) = this.synchronized { value = newValue }
+    def set(newValue: T) = this.synchronized { setValue(newValue) }
     
     /**
      * Safely updates the value in this container
      */
-    def update(mutate: T => T) = this.synchronized { value = mutate(value) }
+    def update(mutate: T => T) = this.synchronized { setValue(mutate(_value)) }
     
     /**
      * Safely updates the value in this container, then returns it
      */
-    def updateAndGet(mutate: T => T) = this.synchronized
-    {
-        value = mutate(value)
-        value
+    def updateAndGet(mutate: T => T) = this.synchronized {
+        setValue(mutate(_value))
+        _value
     }
     
     /**
@@ -52,8 +55,8 @@ class Volatile[T](@volatile private var value: T)
      */
     def updateIf(condition: T => Boolean)(mutate: T => T) = this.synchronized
     {
-        if (condition(value))
-            value = mutate(value)
+        if (condition(_value))
+            setValue(mutate(_value))
     }
     
     /**
@@ -64,9 +67,9 @@ class Volatile[T](@volatile private var value: T)
      */
     def updateIfAndGet(condition: T => Boolean)(mutate: T => T) = this.synchronized
     {
-        if (condition(value))
-            value = mutate(value)
-        value
+        if (condition(_value))
+            setValue(mutate(_value))
+        _value
     }
     
     /**
@@ -74,8 +77,8 @@ class Volatile[T](@volatile private var value: T)
      */
     def takeAndUpdate[B](taker: T => B)(updater: T => T) = this.synchronized
     {
-        val result = taker(value)
-        value = updater(value)
+        val result = taker(_value)
+        setValue(updater(_value))
         result
     }
     
@@ -84,8 +87,8 @@ class Volatile[T](@volatile private var value: T)
      */
     def pop[B](mutate: T => (B, T)) = this.synchronized
     {
-        val (result, next) = mutate(value)
-        value = next
+        val (result, next) = mutate(_value)
+        setValue(next)
         result
     }
     
@@ -94,7 +97,7 @@ class Volatile[T](@volatile private var value: T)
       * @tparam U The result type of the operation
       * @return the result of the operation
      */
-    def lock[U](operation: T => U) = this.synchronized { operation(value) }
+    def lock[U](operation: T => U) = this.synchronized { operation(_value) }
     
     /**
      * Reads the current value of this volatile container and then changes it
@@ -102,4 +105,12 @@ class Volatile[T](@volatile private var value: T)
      * @return the value before the assignment
      */
     def getAndSet(newValue: T) = pop { v => v -> newValue }
+    
+    // Call this only in a synchronized block
+    private def setValue(newValue: T) =
+    {
+        val oldValue = _value
+        _value = newValue
+        fireChangeEvent(oldValue)
+    }
 }
