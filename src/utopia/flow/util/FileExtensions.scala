@@ -1,8 +1,8 @@
 package utopia.flow.util
 
-import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths, StandardCopyOption}
+import java.io.{FileNotFoundException, IOException}
+import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths}
 
-import utopia.flow.filesearch.PathType.{Directory, File}
 import utopia.flow.parse.JSONConvertible
 
 import scala.language.implicitConversions
@@ -44,7 +44,7 @@ object FileExtensions
 		def fileName = p.getFileName.toOption.map { _.toString }.getOrElse("")
 		
 		/**
-		 * @return The last modified time of this file (may fail)
+		 * @return The last modified time of this file (may fail). May not work properly for directories.
 		 */
 		def lastModified = Try { Files.getLastModifiedTime(p).toInstant }
 		
@@ -53,11 +53,6 @@ object FileExtensions
 		 *         for files without type.
 		 */
 		def fileType = fileName.afterLast(".")
-		
-		/**
-		 * @return Type of this path (directory or regular file)
-		 */
-		def pathType = if (isDirectory) Directory else File
 		
 		/**
 		 * @param another A sub-path
@@ -87,6 +82,19 @@ object FileExtensions
 		def isRegularFile = Files.isRegularFile(p)
 		
 		/**
+		 * @return This path as an existing directory. Fails if this is a regular file and not a directory.
+		 */
+		def asExistingDirectory =
+		{
+			if (notExists)
+				createDirectories()
+			else if (isRegularFile)
+				Failure(new IOException(s"$p is not a directory"))
+			else
+				Success(p)
+		}
+		
+		/**
 		 * @return A parent path for this path. None if this path is already a root path
 		 */
 		def parentOption = p.getParent.toOption
@@ -103,7 +111,7 @@ object FileExtensions
 		{
 			// Non-directory paths don't have children
 			if (isDirectory)
-				Files.list(p).tryConsume { _.collect(new VectorCollector[Path]) }
+				Try { Files.list(p).consume { _.collect(new VectorCollector[Path]) } }
 			else
 				Success(Vector())
 		}
@@ -114,7 +122,7 @@ object FileExtensions
 		def subDirectories =
 		{
 			if (isDirectory)
-				Files.list(p).tryConsume { _.filter { p => p.isDirectory }.collect(new VectorCollector[Path]) }
+				Try { Files.list(p).consume { _.filter { p => p.isDirectory }.collect(new VectorCollector[Path]) } }
 			else
 				Success(Vector())
 		}
@@ -133,6 +141,18 @@ object FileExtensions
 		}
 		
 		/**
+		 * @param newFileName New file name
+		 * @return A copy of this path with specified file name
+		 */
+		def withFileName(newFileName: String) =
+		{
+			if (fileName == newFileName)
+				p
+			else
+				parentOption.map { _/newFileName }.getOrElse(newFileName: Path)
+		}
+		
+		/**
 		 * Performs an operation on all files directly under this path
 		 * @param filter A filter applied to child paths (default = no filter)
 		 * @param operation Operation performed for each path
@@ -141,7 +161,7 @@ object FileExtensions
 		def forChildren(filter: Path => Boolean = _ => true)(operation: Path => Unit): Try[Unit] =
 		{
 			if (isDirectory)
-				Files.list(p).tryConsume { _.filter(p => filter(p)).forEach(p => operation(p)) }
+				Try { Files.list(p).consume { _.filter(p => filter(p)).forEach(p => operation(p)) } }
 			else
 				Success(Unit)
 		}
@@ -158,11 +178,11 @@ object FileExtensions
 		{
 			if (isDirectory)
 			{
-				Files.list(p).tryConsume { stream =>
+				Try { Files.list(p).consume { stream =>
 					var result = start
 					stream.filter(p => filter(p)).forEach(p => result = f(result, p))
 					result
-				}
+				} }
 			}
 			else
 				Success(start)
@@ -175,44 +195,123 @@ object FileExtensions
 		 *                        if present (default = true)
 		 * @return Link to the target path. Failure if file moving failed or if couldn't replace an existing file
 		 */
-		def moveTo(targetDirectory: Path, replaceIfExists: Boolean = true) = Try
+		def moveTo(targetDirectory: Path, replaceIfExists: Boolean = true): Try[Path] =
 		{
-			// Directories with content will have to be first copied, then removed
-			if (isDirectory)
-				copyTo(targetDirectory, replaceIfExists).flatMap { newDir => delete().map { _ => newDir } }
+			// Might not need to move at all
+			if (parentOption.contains(targetDirectory))
+				Success(p)
+			else if (notExists)
+				Failure(new FileNotFoundException(s"Cannot move $p because it doesn't exist"))
 			else
 			{
-				val newLocation = targetDirectory/fileName
-				if (replaceIfExists)
-					Files.move(p, newLocation, StandardCopyOption.REPLACE_EXISTING)
+				// Directories with content will have to be first copied, then removed
+				if (isDirectory)
+					copyTo(targetDirectory, replaceIfExists).flatMap { newDir => delete().map { _ => newDir } }
 				else
-					Files.move(p, newLocation)
+				{
+					// May need to create target directory if it doesn't exist yet
+					targetDirectory.asExistingDirectory.flatMap { dir =>
+						// May need to delete an existing file / directory
+						val newLocation = dir/fileName
+						val emptyTarget =
+						{
+							if (newLocation.exists)
+							{
+								if (replaceIfExists)
+									newLocation.delete().map { _ => newLocation}
+								else
+									Failure(new IOException(
+										s"Cannot move $p to $targetDirectory because $newLocation already exists and overwrite is disabled"))
+							}
+							else
+								Success(newLocation)
+						}
+						emptyTarget.flatMap { target => Try { Files.move(p, target) } }
+					}
+				}
 			}
 		}
 		
 		/**
-		 * Moves this file / directory to another directory
+		 * Copies this file / directory to another directory
 		 * @param targetDirectory Target parent directory for this file
 		 * @param replaceIfExists Whether a file already existing at target path should be replaced with this one,
 		 *                        if present (default = true)
 		 * @return Link to the target path. Failure if file moving failed or if couldn't replace an existing file
 		 */
-		def copyTo(targetDirectory: Path, replaceIfExists: Boolean = true) =
-			recursiveMoveCopy(targetDirectory, (a, b) => if (replaceIfExists)
-				Files.copy(a, b, StandardCopyOption.REPLACE_EXISTING) else Files.copy(a, b))
+		def copyTo(targetDirectory: Path, replaceIfExists: Boolean = true) = copyAs(targetDirectory/fileName, replaceIfExists)
 		
-		private def recursiveMoveCopy(targetDirectory: Path, operation: (Path, Path) => Path): Try[Path] = Try {
-			operation(p, targetDirectory/fileName) }
-			.flatMap { newParent => newParent.children
-				.flatMap { _.tryForEach { c => new RichPath(c).recursiveMoveCopy(newParent, operation) } }.map { _ => newParent }}
+		/**
+		 * Copies this file / directory to a new location (over specified path)
+		 * @param targetPath Location, including file name, for the new copy
+		 * @param allowReplace Whether a file already existing at target path should be replaced with this one,
+		 *                        if present (default = true)
+		 * @return Link to the target path. Failure if file moving failed or if couldn't replace an existing file
+		 */
+		def copyAs(targetPath: Path, allowReplace: Boolean = true) =
+		{
+			// May not need to perform any copy
+			if (targetPath == p)
+				Success(p)
+			else if (notExists)
+				Failure(new FileNotFoundException(s"$p cannot be copied over $targetPath because $p doesn't exist"))
+			else
+			{
+				// If the target path already exists, it may need to deleted first, if not, parent directories may
+				// need to be created
+				val prepareResult =
+				{
+					if (targetPath.exists)
+					{
+						if (allowReplace)
+							targetPath.delete().map { _ => targetPath }
+						else
+							Failure(new IOException(
+								s"Cannot copy $p over $targetPath because $targetPath already exists and overwrite is disabled"))
+					}
+					else
+						targetPath.createParentDirectories()
+				}
+				
+				// May need to create parent directories
+				prepareResult.flatMap { target => recursiveCopyAs(target) }
+			}
+		}
 		
+		private def recursiveCopyTo(targetDirectory: Path): Try[Path] = recursiveCopyAs(targetDirectory/fileName)
+		
+		// First copies the file / directory, then the children files, if there are any
+		private def recursiveCopyAs(newPath: Path): Try[Path] =
+		{
+			// May need to delete the existing file first
+			newPath.delete().flatMap { _ => Try { Files.copy(p, newPath) } }.flatMap { newParent =>
+				children.flatMap { _.tryForEach { c => new RichPath(c).recursiveCopyTo(newParent) } }.map { _ => newParent }}
+		}
 		/**
 		 * Renames this file or directory
 		 * @param newFileName New name for this file or directory (just file name, not the full path)
+		 * @param allowOverwrite Whether renaming could overwrite another existing file (default = false). If this is
+		 *                       false, fails when trying to rename over an existing file.
 		 * @return Path to the newly named file. Failure if renaming failed.
 		 */
-		def rename(newFileName: String) = Try { Files.move(p, p.parentOption.map { _/newFileName }.getOrElse(newFileName),
-			StandardCopyOption.REPLACE_EXISTING) }
+		def rename(newFileName: String, allowOverwrite: Boolean = false) =
+		{
+			// Might not need to rename the file at all
+			if (fileName == newFileName)
+				Success(p)
+			else
+			{
+				// Checks whether another path would be overwritten (only when allowOverwrite = false)
+				val newPath: Path = p.parentOption.map { _/newFileName }.getOrElse(newFileName)
+				if (!allowOverwrite && newPath.exists)
+					Failure(new IOException(
+						s"Cannot rename $p to $newFileName because such a file already exists and overwriting is disabled"))
+				else if (notExists) // Paths to non-existing files are simply changed
+					Success(newPath)
+				else
+					newPath.delete().flatMap { _ => Try { Files.move(p, newPath) } }
+			}
+		}
 		
 		/**
 		 * Overwrites this path with file from another path
@@ -221,20 +320,77 @@ object FileExtensions
 		 */
 		def overwriteWith(anotherPath: Path) =
 		{
-			val copyResult = Try { Files.copy(anotherPath, p, StandardCopyOption.REPLACE_EXISTING) }
-			// May need to copy directory contents
-			if (isDirectory)
-				copyResult.flatMap { newDir => children.flatMap { _.tryForEach { _.copyTo(newDir) } }.map { _ => newDir } }
+			// May not need to do anything
+			if (anotherPath == p)
+				Success(p)
+			// The target path must exist
+			else if (anotherPath.notExists)
+				Failure(new FileNotFoundException(s"Cannot overwrite $p with $anotherPath because $anotherPath doesn't exist"))
+			// If both of the files are in the same directory, simply deletes this file
+			else if (anotherPath.parentOption == parentOption)
+				delete().map { _ => anotherPath }
 			else
-				copyResult
+			{
+				anotherPath.copyAs(p.withFileName(anotherPath.fileName)).flatMap { newFilePath =>
+					// May need to delete this file / directory afterwards
+					if (p == newFilePath)
+						Success(newFilePath)
+					else
+						delete().map { _ => newFilePath }
+				}
+			}
 		}
 		
 		/**
-		 * Overwrites this path with file from another path, but only if the file was changed (had different last modified time)
+		 * Overwrites this path with file from another path, but only if the file was changed (had different last
+		 * modified time). In case where directories are being overwritten, checks each file within the directories
+		 * separately. In the end, this path will match the provided path.
 		 * @param anotherPath Another file that will overwrite this one
 		 * @return Path to this file. May contain a failure
 		 */
-		def overwriteWithIfChanged(anotherPath: Path) = if (hasSameLastModifiedAs(anotherPath)) Success(p) else overwriteWith(anotherPath)
+		def overwriteWithIfChanged(anotherPath: Path): Try[Path] =
+		{
+			// May not need to do anything
+			if (anotherPath == p)
+				Success(p)
+			else if (anotherPath.notExists)
+				Failure(new FileNotFoundException(s"Cannot overwrite $p with $anotherPath because $anotherPath doesn't exist"))
+			else if (notExists)
+				overwriteWith(anotherPath)
+			// Copying from directory to directory is handled recursively
+			else if (isDirectory)
+			{
+				if (anotherPath.isDirectory)
+				{
+					children.flatMap { myChildren =>
+						anotherPath.children.flatMap { newChildren =>
+							val myChildrenByName = myChildren.map { c => c.fileName -> c }.toMap
+							val newChildrenByName = newChildren.map { c => c.fileName -> c }.toMap
+							val myChildNames = myChildrenByName.keySet
+							val newChildNames = newChildrenByName.keySet
+							
+							// Files that didn't exists previously will be copied over
+							(newChildNames -- myChildNames).tryMap { name =>
+								newChildrenByName(name).copyTo(p) }.flatMap { _ =>
+								// Files that already existed will be overwritten, if changed
+								(newChildNames & myChildNames).tryMap { name => myChildrenByName(name)
+									.overwriteWithIfChanged(newChildrenByName(name)) }.flatMap { _ =>
+									// Files that existed but can't be found from new children will be removed
+									(myChildNames -- newChildNames).tryMap { name => myChildrenByName(name).delete() }
+								}
+							}
+						}
+						// Renames this directory afterwards to match specified name
+					}.flatMap { _ => rename(anotherPath.fileName) }
+				}
+				else
+					overwriteWith(anotherPath)
+			}
+			else if (hasSameLastModifiedAs(anotherPath) && fileName == anotherPath.fileName)
+				Success(p)
+			else
+				overwriteWith(anotherPath)
+		}
 		
 		/**
 		 * Deletes this file or directory
@@ -243,26 +399,30 @@ object FileExtensions
 		 * @return Whether any files were deleted (false if this file didn't exist).
 		 *         May contain a failure if some of the files couldn't be deleted.
 		 */
-		def delete(allowDeletionOfDirectoryContents: Boolean = true): Try[Boolean] = {
+		def delete(allowDeletionOfDirectoryContents: Boolean = true): Try[Boolean] =
+		{
+			if (notExists)
+				Success(false)
 			// In case of a directory, may need to clear contents first
-			if (isDirectory)
+			else if (isDirectory)
 			{
 				// If any of child deletion fails, the whole process is interrupted
+				// Deletes this directory once the children have been removed
 				if (allowDeletionOfDirectoryContents)
-					children.flatMap { _.findMap { c => Some(c.delete()).filter { _.isFailure } }.getOrElse(Success(true)) }
-						.flatMap { _ => Try { Files.deleteIfExists(p) }} // Deletes this directory once empty
+					children.flatMap { _.tryMap { _.delete() } }.flatMap { _ => Try { Files.deleteIfExists(p) }}
 				else
-					Failure(new DirectoryNotEmptyException(s"Targeted directory $p is not empty and recursive deletion is disabled"))
+					Failure(new DirectoryNotEmptyException(
+						s"Targeted directory $p is not empty and recursive deletion is disabled"))
 			}
 			else
 				Try { Files.deleteIfExists(p) }
 		}
 		
 		/**
-		 * @return Deletes all child paths from under this directory. Returns failure if deletion of some file failed.
+		 * Deletes all child paths from under this directory. Stops deletion if any deletion fails.
+		 * @return Whether any files were deleted. May contain failure.
 		 */
-		def deleteChildren() = children.flatMap { _.findMap {
-			c => Some(c.delete()).filter { _.isFailure }.map { _.map { _ => Unit } } }.getOrElse(Success(Unit)) }
+		def deleteChildren() = children.flatMap { _.tryMap { _.delete() } }.map { _.contains(true) }
 		
 		/**
 		 * Creates this directory (and ensures existence of parent directories as well). If this is not a directory,
