@@ -18,6 +18,17 @@ object SingleTryCache
 	  */
 	def apply[A](failCacheDuration: FiniteDuration)(makeRequest: => Try[A]): SingleTryCache[A] =
 		new SingleTryCacheImpl[A](failCacheDuration, () => makeRequest)
+	
+	/**
+	 * Creates an expiring cache where failed requests have a shorter expiration time
+	 * @param failCacheDuration How long failed requests are cached
+	 * @param maxCacheDuration How long successful requests are cached
+	 * @param makeRequest A function for making a request
+	 * @tparam A Type of item cached
+	 * @return A new cache
+	 */
+	def expiring[A](failCacheDuration: FiniteDuration, maxCacheDuration: FiniteDuration)(makeRequest: => Try[A]) =
+		ExpiringSingleCache.wrap(apply(failCacheDuration){ makeRequest }, maxCacheDuration)
 }
 
 /**

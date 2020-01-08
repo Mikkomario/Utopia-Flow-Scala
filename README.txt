@@ -140,6 +140,8 @@ v1.6  -------------------------------------
 
         New extensions added for java.time.Year, java.time.LocalDate and java.time.YearMonth
 
+        SingleTryCache object now has expiring(...) method
+
 
     Updates & Changes
     -----------------

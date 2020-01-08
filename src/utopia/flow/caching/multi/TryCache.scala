@@ -34,5 +34,5 @@ object TryCache
 	  */
 	def expiring[Key, Value](failResultDuration: FiniteDuration, maxResultDuration: FiniteDuration)(
 		request: Key => Try[Value]) = ExpiringCache[Key, Try[Value]] {
-		key: Key => ExpiringSingleCache.wrap(SingleTryCache(failResultDuration){ request(key) }, maxResultDuration) }
+		key: Key => SingleTryCache.expiring(failResultDuration, maxResultDuration){ request(key) } }
 }
