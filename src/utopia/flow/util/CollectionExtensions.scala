@@ -158,6 +158,20 @@ object CollectionExtensions
             seq.indices.forall { i => equals(seq(i), another(i)) }
     }
     
+    implicit class RichOption[A](val o: Option[A]) extends AnyVal
+    {
+        /**
+         * Converts this option to a try
+         * @param generateFailure A function for generating a throwable for a failure if one is needed
+         * @return Success with this option's value or failure if this option was empty
+         */
+        def toTry(generateFailure: => Throwable) = o match
+        {
+            case Some(v) => Success(v)
+            case None => Failure(generateFailure)
+        }
+    }
+    
     implicit class RichTry[T](val t: Try[T]) extends AnyVal
     {
         /**

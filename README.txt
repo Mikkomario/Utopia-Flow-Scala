@@ -90,6 +90,8 @@ v1.6.1 (beta)  -----------------------------------
 
         maxByOption, minByOption, tryMap, dropRightWhile and compareWith added to CollectionExtensions
 
+        toTry method added to Option through collectionExtensions
+
         raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
         from two futures.
 
