@@ -156,6 +156,41 @@ object CollectionExtensions
           */
         def compareWith[B](another: SeqLike[B, _])(equals: (A, B) => Boolean) = seq.size == another.size &&
             seq.indices.forall { i => equals(seq(i), another(i)) }
+    
+        /**
+         * Sorts this collection based on multiple orderings (second ordering is only used if first one fails to
+         * differentiate the items, then third and so on)
+         * @param firstOrdering The first ordering to use
+         * @param secondOrdering The second ordering to use
+         * @param moreOrderings More orderings to use
+         * @return A sorted copy of this collection
+         */
+        def sortedWith(firstOrdering: Ordering[A], secondOrdering: Ordering[A], moreOrderings: Ordering[A]*) =
+            seq.sorted(new CombinedOrdering[A](Vector(firstOrdering, secondOrdering) ++ moreOrderings))
+    }
+    
+    implicit class RichSeqLike2[A, Repr <: SeqLike[A, _]](val seq: SeqLike[A, Repr]) extends AnyVal
+    {
+        /**
+         * Maps the first item that matches provided condition, leaves the other items as they were
+         * @param find A function for finding the mapped item
+         * @param map A mapping function for that item
+         * @param cbf A can build from for resulting collection (implicit)
+         * @return A copy of this sequence with specified item mapped. Returns this if no such item was found.
+         */
+        def mapFirstWhere(find: A => Boolean)(map: A => A)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            seq.indexWhereOption(find) match
+            {
+                case Some(mapIndex) =>
+                    val builder = cbf()
+                    builder ++= seq.take(mapIndex)
+                    builder += map(seq(mapIndex))
+                    builder ++= seq.drop(mapIndex + 1)
+                    builder.result()
+                case None => seq.repr
+            }
+        }
     }
     
     implicit class RichOption[A](val o: Option[A]) extends AnyVal

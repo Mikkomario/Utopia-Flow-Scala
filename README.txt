@@ -92,6 +92,9 @@ v1.6.1 (beta)  -----------------------------------
 
         toTry method added to Option through collectionExtensions
 
+        CollectionExtensions now allows one to sort a seqLike with multiple hierarchical orderings (sortedWith(...)).
+        Seqs also now have mapFirstWhere(...)(...) method that maps the first item that matches a provided predicate.
+
         raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
         from two futures.
 
