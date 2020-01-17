@@ -118,6 +118,9 @@ v1.6.1 (beta)  -----------------------------------
         Changing instances now have futureWhere(...) method that allows one to get a conditional future. Volatile now
         extends Changing and will support change events.
 
+        Model now contains .hasOnlyEmptyValues and .hasNonEmptyValues methods in addition to .isEmpty and .nonEmpty,
+        which included empty attributes.
+
 
 v1.6  -------------------------------------
 
