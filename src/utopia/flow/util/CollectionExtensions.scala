@@ -191,6 +191,24 @@ object CollectionExtensions
                 case None => seq.repr
             }
         }
+    
+        /**
+         * @param index Targeted index
+         * @param cbf A can build from (implicit)
+         * @return A copy of this sequence without specified index
+         */
+        def withoutIndex(index: Int)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            if (index < 0 || index >= seq.size)
+                seq.repr
+            else
+            {
+                val builder = cbf()
+                builder ++= seq.take(index)
+                builder ++= seq.drop(index + 1)
+                builder.result()
+            }
+        }
     }
     
     implicit class RichOption[A](val o: Option[A]) extends AnyVal
