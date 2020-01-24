@@ -167,6 +167,16 @@ object CollectionExtensions
          */
         def sortedWith(firstOrdering: Ordering[A], secondOrdering: Ordering[A], moreOrderings: Ordering[A]*) =
             seq.sorted(new CombinedOrdering[A](Vector(firstOrdering, secondOrdering) ++ moreOrderings))
+    
+        /**
+         * Performs a map operation until a non-empty value is returned. Returns both the mapped value and the mapped index.
+         * @param f A mapping function
+         * @tparam B Type of map result
+         * @return The first non-empty map result, along with the index of the mapped item. None if all items were
+         *         mapped to None.
+         */
+        def findMapAndIndex[B](f: A => Option[B]) = seq.indices.view.flatMap { i => f(seq(i))
+            .map { _ -> i }  }.headOption
     }
     
     implicit class RichSeqLike2[A, Repr <: SeqLike[A, _]](val seq: SeqLike[A, Repr]) extends AnyVal
@@ -205,6 +215,27 @@ object CollectionExtensions
             {
                 val builder = cbf()
                 builder ++= seq.take(index)
+                builder ++= seq.drop(index + 1)
+                builder.result()
+            }
+        }
+    
+        /**
+         * Maps a single item in this sequence
+         * @param index The index that should be mapped
+         * @param f A mapping function
+         * @param cbf A can build from (implicit)
+         * @return A copy of this sequence with the specified index mapped
+         */
+        def mapIndex(index: Int)(f: A => A)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            if (index < 0 || index > seq.size)
+                seq.repr
+            else
+            {
+                val builder = cbf()
+                builder ++= seq.take(index)
+                builder += f(seq(index))
                 builder ++= seq.drop(index + 1)
                 builder.result()
             }
