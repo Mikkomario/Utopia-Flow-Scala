@@ -2,6 +2,7 @@ package utopia.flow.util
 
 import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
+import scala.collection.immutable.HashSet
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -177,6 +178,14 @@ object CollectionExtensions
          */
         def findMapAndIndex[B](f: A => Option[B]) = seq.indices.view.flatMap { i => f(seq(i))
             .map { _ -> i }  }.headOption
+    
+        /**
+         * Maps each item + index in this sequence
+         * @param f A mapping function that takes both the item and the index of that item
+         * @tparam B Type of map result
+         * @return Mapped data in a sequence (same order as in this sequence)
+         */
+        def mapWithIndex[B](f: (A, Int) => B) = seq.indices.map { i => f(seq(i), i) }
     }
     
     implicit class RichSeqLike2[A, Repr <: SeqLike[A, _]](val seq: SeqLike[A, Repr]) extends AnyVal
@@ -307,10 +316,48 @@ object CollectionExtensions
             case Right(r) => Right(f(r))
             case Left(l) => Left(l)
         }
+    
+        /**
+         * Maps the value of this either to a single value, whichever side this is
+         * @param leftMap Mapping function used when left value is present
+         * @param rightMap Mapping function used when right value is present
+         * @tparam B Resulting item type
+         * @return Mapped left or mapped right
+         */
+        def mapToSingle[B](leftMap: L => B)(rightMap: R => B) = e match
+        {
+            case Right(r) => rightMap(r)
+            case Left(l) => leftMap(l)
+        }
+    
+        /**
+         * Maps this either, no matter which side it is
+         * @param leftMap Mapping function used when this either is left
+         * @param rightMap Mapping function used when this either is right
+         * @tparam L2 New left type
+         * @tparam R2 New right type
+         * @return A mapped version of this either (will have same side)
+         */
+        def mapBoth[L2, R2](leftMap: L => L2)(rightMap: R => R2) = e match
+        {
+            case Right(r) => Right(rightMap(r))
+            case Left(l) => Left(leftMap(l))
+        }
     }
     
     implicit class RichTraversable[A](val t: Traversable[A]) extends AnyVal
     {
+        /**
+         * @return Duplicate items within this traversable
+         */
+        def duplicates: Set[A] =
+        {
+            var foundResults = HashSet[A]()
+            var checked = HashSet[A]()
+            t.foreach { item => if (checked.contains(item)) foundResults += item else checked += item }
+            foundResults
+        }
+        
         /**
           * Maps items until a concrete result is found, then returns that result
           * @param map A mapping function that maps to either Some or None
