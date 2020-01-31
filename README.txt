@@ -82,6 +82,9 @@ v1.6.1 (beta)  -----------------------------------
 
         Instant + and - now also support scala duration
 
+        Instant can now be converted to string using more wide range of DateTimeFormatters by calling method
+        toStringWith(...)
+
         Added some new String extensions, which are available by importing utopia.flow.util.StringExtensions._
 
         StringFrom and LinesFrom objects for easier file- and stream reading
@@ -120,6 +123,13 @@ v1.6.1 (beta)  -----------------------------------
 
         Model now contains .hasOnlyEmptyValues and .hasNonEmptyValues methods in addition to .isEmpty and .nonEmpty,
         which included empty attributes.
+
+    Updates & Changes
+    -----------------
+
+        Instant + and - won't throw anymore when adding a time period (Eg. 3.months) but will try to work around
+        the problematic units by converting to local date time first. This may cause some invalid times to pass
+        through but most of the time works more intuitively than the original.
 
 
 v1.6  -------------------------------------

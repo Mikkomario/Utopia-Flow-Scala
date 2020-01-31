@@ -1,6 +1,7 @@
 package utopia.flow.test
 
-import java.time.{Month, Year}
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, Month, Year}
 import java.util.concurrent.TimeUnit
 
 import utopia.flow.util.TimeExtensions._
@@ -28,6 +29,10 @@ object TimeNumberTest extends App
 	println(13.5231.seconds.description)
 	println(13.5231.minutes.description)
 	println(13.5231.hours.description)
+	
+	// Makes sure extended instant support works (natural instant would throw on both)
+	println(Instant.now() + 3.months)
+	println(Instant.now().toStringWith(DateTimeFormatter.ISO_DATE_TIME))
 	
 	// Also tests some other time extensions
 	val weeksAtAug2019 = (Year.of(2019) + Month.AUGUST).weeks()
