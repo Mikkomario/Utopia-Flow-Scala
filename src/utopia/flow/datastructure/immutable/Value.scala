@@ -67,6 +67,11 @@ case class Value(content: Option[Any], dataType: DataType) extends Node[Option[A
      */
     def isEmpty = content.isEmpty
     
+    /**
+      * @return None if this value is empty. This value otherwise.
+      */
+    def notEmpty = if (isEmpty) None else Some(this)
+    
     
     // IMPLEMENTED METHODS    ---
     
