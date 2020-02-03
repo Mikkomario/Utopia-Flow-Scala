@@ -1,7 +1,7 @@
 package utopia.flow.test
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, Month, Year}
+import java.time.{Instant, LocalDate, LocalDateTime, Month, Year}
 import java.util.concurrent.TimeUnit
 
 import utopia.flow.util.TimeExtensions._
@@ -9,7 +9,7 @@ import utopia.flow.util.TimeExtensions._
 import scala.concurrent.duration.FiniteDuration
 
 /**
-  * This test checks time number eguality
+  * This test checks time number equality
   * @author Mikko Hilpinen
   * @since 5.6.2019, v1+
   */
@@ -39,6 +39,9 @@ object TimeNumberTest extends App
 	assert(weeksAtAug2019.head.size == 4)
 	assert(weeksAtAug2019.last.size == 6)
 	// println(LocalDate.now.yearMonth.weeks().map { _.map { d => s"${d.getDayOfMonth} ${d.weekDay}" }.mkString(", ") }.mkString("\n"))
+	
+	assert((LocalDate.of(2020, 1, 1) + 2.weeks).isEqual(LocalDate.of(2020, 1, 15)))
+	assert((LocalDate.of(2020, 1, 1) + 26.hours).isEqual(LocalDateTime.of(2020, 1, 2, 2, 0)))
 	
 	println("Success!")
 }

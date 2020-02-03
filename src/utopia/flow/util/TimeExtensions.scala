@@ -1,5 +1,6 @@
 package utopia.flow.util
 
+import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
 import scala.language.implicitConversions
@@ -184,6 +185,8 @@ object TimeExtensions
 	
 	implicit class ExtendedLocalDate(val d: LocalDate) extends AnyVal
 	{
+		// COMPUTED	-------------------------
+		
 		/**
 		  * @return Year of this date
 		  */
@@ -206,6 +209,75 @@ object TimeExtensions
 		 *         to be in system default zone
 		 */
 		def toInstantInDefaultZone = d.atStartOfDay(ZoneId.systemDefault()).toInstant
+		
+		
+		// OTHER	------------------------
+		
+		/**
+		 * Adds a number of days to this date
+		 * @param timePeriod A time period to add
+		 * @return A modified copy of this date
+		 */
+		def +(timePeriod: Period) = d.plus(timePeriod)
+		
+		/**
+		 * Adds a time duration to this date
+		 * @param duration A time duration
+		 * @return a datetime based on this date and added time duration
+		 */
+		def +(duration: Duration) = d.atStartOfDay().plus(duration)
+		
+		/**
+		 * Subtracts a number of days to this date. Eg. 2.1.2001 + 3 hours would be 2.1.2001 03:00.
+		 * @param timePeriod A time period to subtract
+		 * @return A modified copy of this date
+		 */
+		def -(timePeriod: Period) = d.minus(timePeriod)
+		
+		/**
+		 * Subtracts a time duration to this date. Eg. 2.1.2001 - 3 hours would be 1.1.2001 21:00.
+		 * @param duration A time duration
+		 * @return a datetime based on this date and subtracted time duration
+		 */
+		def -(duration: Duration) = d.atStartOfDay().minus(duration)
+		
+		/**
+		 * Adds a time duration to this date
+		 * @param duration A time duration
+		 * @return a datetime based on this date and added time duration
+		 */
+		def +(duration: FiniteDuration): LocalDateTime = this + (duration: Duration)
+		
+		/**
+		 * Subtracts a time duration to this date. Eg. 2.1.2001 - 3 hours would be 1.1.2001 21:00.
+		 * @param duration A time duration
+		 * @return a datetime based on this date and subtracted time duration
+		 */
+		def -(duration: FiniteDuration): LocalDateTime = this - (duration: Duration)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes before specified date
+		 */
+		def <(other: ChronoLocalDate) = d.isBefore(other)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes after specified date
+		 */
+		def >(other: ChronoLocalDate) = d.isAfter(other)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes before or is equal to specified date
+		 */
+		def <=(other: ChronoLocalDate) = !d.isAfter(other)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes after or is equal to specified date
+		 */
+		def >=(other: ChronoLocalDate) = !d.isBefore(other)
 	}
 	
 	implicit class ExtendedYear(val y: Year) extends AnyVal

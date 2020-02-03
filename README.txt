@@ -89,7 +89,7 @@ v1.6.1 (beta)  -----------------------------------
 
         StringFrom and LinesFrom objects for easier file- and stream reading
 
-        TimeExtensions now also allow easier creation of Period instances
+        TimeExtensions now also allow easier creation of Period instances. Other time extensions added as well.
 
         maxByOption, minByOption, tryMap, dropRightWhile and compareWith added to CollectionExtensions
 
