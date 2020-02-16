@@ -1,7 +1,7 @@
 package utopia.flow.util
 
-import java.io.{FileNotFoundException, IOException}
-import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths}
+import java.io.{BufferedOutputStream, FileInputStream, FileNotFoundException, FileOutputStream, IOException}
+import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths, StandardOpenOption}
 
 import utopia.flow.parse.JSONConvertible
 
@@ -466,10 +466,43 @@ object FileExtensions
 		def write(text: String)(implicit codec: Codec) = Try { Files.write(p, text.getBytes(codec.charSet)) }
 		
 		/**
+		 * Appends specified text to this file
+		 * @param text Text to append to this file
+		 * @param codec Charset / codec used (implicit)
+		 * @return This path. Failure if writing failed.
+		 */
+		def append(text: String)(implicit codec: Codec) = Try { Files.write(p, text.getBytes(codec.charSet),
+			StandardOpenOption.APPEND) }
+		
+		/**
 		 * Writes a json-convertible instance to this file
 		 * @param json A json-convertible instance that will produce contents of this file
 		 * @return This path. Failure if writing failed.
 		 */
 		def writeJSON(json: JSONConvertible) = write(json.toJSON)(Codec.UTF8)
+		
+		/**
+		 * Writes into this file with a function. An output stream is opened for the duration of the function.
+		 * @param writer A writer function that uses an output stream (may throw)
+		 * @return This path. Failure if writing function threw or stream couldn't be opened (Eg. trying to write to a file).
+		 */
+		def writeWith(writer: BufferedOutputStream => Unit) =
+			Try { new FileOutputStream(p.toFile).consume { new BufferedOutputStream(_).consume(writer) } }.map { _ => p }
+		
+		/**
+		 * Reads data from this file
+		 * @param reader A function that reads this file's data stream (may throw)
+		 * @tparam A Return type of the function
+		 * @return Returned value or failure if stream couldn't be opened / read or the reader function threw.
+		 */
+		def readWith[A](reader: FileInputStream => A) = Try { new FileInputStream(p.toFile).consume(reader) }
+		
+		/**
+		 * Reads data from this file
+		 * @param reader A function that reads this file's data stream and returns a Try
+		 * @tparam A Return type of the function
+		 * @return Returned value or failure if stream couldn't be opened or a failure was returned.
+		 */
+		def tryReadWith[A](reader: FileInputStream => Try[A]) = readWith(reader).flatten
 	}
 }
