@@ -478,6 +478,35 @@ object CollectionExtensions
                 case None => Success(buffer.result())
             }
         }
+    
+        /**
+          * Compares this set of items with another set. Lists items that have been added and removed, plus the changes
+          * between items that have stayed
+          * @param another Another traversable
+          * @param connectBy A function for providing the unique key based on which items are connected
+          *                  (should be unique within each collection). Items sharing this key are connected.
+          * @param merge A function for merging two connected items. Takes connection key, item in this collection and
+          *              item in the other collection
+          * @tparam B Type of items in the other collection
+          * @tparam K Type of match key used
+          * @tparam Merge Merge function for merging connected items
+          * @return 1) Items only present in this collection, 2) Merged items shared between these two collections,
+          *         3) Items only present in the other collection
+          */
+        def listChanges[B >: A, K, Merge](another: Traversable[B])(connectBy: B => K)(merge: (K, A, B) => Merge) =
+        {
+            val meByKey = t.map { a => connectBy(a) -> a }.toMap
+            val theyByKey = another.map { a => connectBy(a) -> a }.toMap
+            
+            val myKeys = meByKey.keySet
+            val theirKeys = theyByKey.keySet
+            
+            val onlyInMe = (myKeys -- theirKeys).toVector.map { meByKey(_) }
+            val onlyInThem = (theirKeys -- myKeys).toVector.map { theyByKey(_) }
+            val merged = (myKeys & theirKeys).toVector.map { key => merge(key, meByKey(key), theyByKey(key)) }
+            
+            (onlyInMe, merged, onlyInThem)
+        }
     }
     
     implicit class RichTraversableLike[A, Repr](val t: TraversableLike[A, Repr]) extends AnyVal
