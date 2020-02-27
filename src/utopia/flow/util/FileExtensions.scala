@@ -1,5 +1,6 @@
 package utopia.flow.util
 
+import java.awt.Desktop
 import java.io.{BufferedOutputStream, FileInputStream, FileNotFoundException, FileOutputStream, IOException}
 import java.nio.file.{DirectoryNotEmptyException, Files, Path, Paths, StandardOpenOption}
 
@@ -455,7 +456,25 @@ object FileExtensions
 		 * @param another Another file
 		 * @return Whether these two files have same last modified time
 		 */
-		def hasSameLastModifiedAs(another: Path) = lastModified.success.exists { another.lastModified.success.contains }
+		def hasSameLastModifiedAs(another: Path): Boolean =
+		{
+			// Directories need to be handled a bit differently (files inside the directory may have changed)
+			val directLastModifiedComparison = lastModified.success.exists { another.lastModified.success.contains }
+			if (isDirectory && another.isDirectory)
+			{
+				if (directLastModifiedComparison)
+				{
+					children.getOrElse(Vector()).sortBy { _.fileName }
+						.compareWith(another.children.getOrElse(Vector()).sortBy { _.fileName }) { (a, b) =>
+							a.hasSameLastModifiedAs(b)
+						}
+				}
+				else
+					false
+			}
+			else
+				directLastModifiedComparison
+		}
 		
 		/**
 		 * Writes specified text to this file (creates or empties file if necessary)
@@ -504,5 +523,44 @@ object FileExtensions
 		 * @return Returned value or failure if stream couldn't be opened or a failure was returned.
 		 */
 		def tryReadWith[A](reader: FileInputStream => Try[A]) = readWith(reader).flatten
+		
+		/**
+		 * Opens this file in the default desktop application. If this is a directory, opens it in resource manager
+		 * @return Success of failure
+		 */
+		def openInDesktop() = performDesktopOperation { _.open(p.toFile) }
+		
+		/**
+		 * Opens this file for editing in the default desktop application. If this is a directory, opens it in resource manager
+		 * @return Success or failure
+		 */
+		def editInDesktop() = performDesktopOperation { d => if (isDirectory) d.open(p.toFile) else d.edit(p.toFile) }
+		
+		/**
+		 * Prints this file using the default desktop application
+		 * @return Success or failure
+		 */
+		def print() = performDesktopOperation { _.print(p.toFile) }
+		
+		/**
+		 * Opens resource manager for this directory, or the directory containing this file
+		 * @return Success or failure
+		 */
+		def openDirectory() = performDesktopOperation { d =>
+			if (isDirectory) d.open(p.toFile) else d.open(parent.toFile) }
+		
+		/**
+		 * Opens resource manager for this file's / directory's parent directory
+		 * @return Success or failure
+		 */
+		def openFileLocation() = performDesktopOperation { _.open(parent.toFile) }
+		
+		private def performDesktopOperation(f: Desktop => Unit) =
+		{
+			if (Desktop.isDesktopSupported)
+				Try { f(Desktop.getDesktop) }
+			else
+				Failure(new UnsupportedOperationException("Desktop is not supported on this platform"))
+		}
 	}
 }
