@@ -2,7 +2,6 @@ package utopia.flow.parse
 
 import java.io.{File, InputStream}
 
-import utopia.flow.util.AutoClose._
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.datastructure.immutable.{Constant, Model, Value}
 import utopia.flow.generic.{DoubleType, IntType, LongType}
@@ -10,7 +9,7 @@ import utopia.flow.util.CollectionExtensions._
 import utopia.flow.util.StringFrom
 
 import scala.collection.immutable.VectorBuilder
-import scala.io.Source
+import scala.io.Codec
 import scala.util.Try
 
 /**
@@ -20,13 +19,30 @@ import scala.util.Try
   */
 object JSONReader
 {
+	private val defaultEncoding = Codec.UTF8
+	
 	/**
 	  * Parses the contents of a stream
 	  * @param inputStream Stream from which data is read
 	  * @param encoding Encoding used in stream (default = UTF-8)
 	  * @return Value parsed from stream data
 	  */
-	def apply(inputStream: InputStream, encoding: String = "UTF-8"): Try[Value] = StringFrom.stream(inputStream).flatMap(apply)
+	def apply(inputStream: InputStream, encoding: String): Try[Value] = StringFrom.stream(inputStream, encoding).flatMap(apply)
+	
+	/**
+	 * Parses the contents of a stream
+	 * @param inputStream Stream from which data is read
+	 * @param encoding Encoding used in stream (default = UTF-8)
+	 * @return Value parsed from stream data
+	 */
+	def apply(inputStream: InputStream, encoding: Codec): Try[Value] = StringFrom.stream(inputStream)(encoding).flatMap(apply)
+	
+	/**
+	 * Parses the contents of a stream using UTF-8 encoding
+	 * @param inputStream Stream from which data is read
+	 * @return Value parsed from stream data
+	 */
+	def apply(inputStream: InputStream): Try[Value] = apply(inputStream, defaultEncoding)
 	
 	/**
 	  * Parses the contents of a file. Expects file to be json-formatted.

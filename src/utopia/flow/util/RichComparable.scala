@@ -57,10 +57,10 @@ trait RichComparable[-T] extends Comparable[T @uncheckedVariance]
 	/**
 	 * Compares this item with another, but if they are equal, provides a backup result
 	 * @param other another instance
-	 * @param backUp a function for providing a backup result in case the first one doesn't 
+	 * @param backUp a function for providing a backup result in case the first one doesn't
 	 * separate the values
 	 */
-	def compareOr(other: T)(backUp: => Int) = 
+	def compareOr(other: T)(backUp: => Int) =
 	{
 	    val primary = compareTo(other)
 	    if (primary == 0)
