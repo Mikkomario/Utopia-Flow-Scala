@@ -1,11 +1,14 @@
 package utopia.flow.caching.multi
 
-import utopia.flow.caching.single.SingleCacheLike
+import utopia.flow.caching.single.{ClearableSingleCacheLike, ExpiringSingleCache, SingleCacheLike}
 
 import scala.collection.mutable
+import scala.concurrent.duration.FiniteDuration
 
 object MultiCache
 {
+	// OTHER	--------------------------
+	
 	/**
 	  * Creates a new multi cache
 	  * @param makeCache A function for producing new caches
@@ -16,6 +19,25 @@ object MultiCache
 	  */
 	def apply[Key , Value, Part <: SingleCacheLike[Value]](makeCache: Key => Part) =
 		new MultiCache[Key, Value, Part](makeCache)
+	
+	
+	// EXTENSIONS	----------------------
+	
+	implicit class ClearableMultiCache[K, V, Part <: ClearableSingleCacheLike[V]](val cache: MultiCache[K, V, Part]) extends AnyVal
+	{
+		/**
+		 * Clears all cached items
+		 */
+		def clear() = cache.caches.values.foreach { _.clear() }
+		
+		/**
+		 * Creates a copy of this cache that uses content expiring
+		 * @param cacheDuration Content cache time
+		 * @return A new cache with expiring content
+		 */
+		def expiring(cacheDuration: FiniteDuration) = new MultiCache[K, V, ExpiringSingleCache[V]](k =>
+			cache.makeCache(k).expiring(cacheDuration))
+	}
 }
 
 /**
@@ -29,6 +51,14 @@ class MultiCache[Key, +Value, Part <: SingleCacheLike[Value]](private val makeCa
 	// ATTRIBUTES	-------------------
 	
 	private val caches: mutable.Map[Key, Part] = mutable.HashMap()
+	
+	
+	// COMPUTED	-----------------------
+	
+	/**
+	 * @return A list of currently cached values in this cache
+	 */
+	def cachedItems = caches.values.flatMap { _.cached }
 	
 	
 	// IMPLEMENTED	-------------------
