@@ -5,7 +5,7 @@ package utopia.flow.async
 * @author Mikko Hilpinen
 * @since 28.3.2019
 **/
-class VolatileFlag extends Volatile[Boolean](false)
+class VolatileFlag(initialState: Boolean = false) extends Volatile[Boolean](initialState)
 {
     // COMPUTED    ---------------
     
