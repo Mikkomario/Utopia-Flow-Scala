@@ -30,8 +30,19 @@ trait Changing[A]
 	/**
 	  * Adds a new listener to this mutable
 	  * @param changeListener A change listener that will be informed when the value of this mutable changes
+	  * @param generateChangeEventFromOldValue None if no change event should be generated for the new listener.
+	  *                                        Some with "old" value if a change event should be triggered
+	  *                                        <b>for this new listener</b>. Default = None
 	  */
-	def addListener(changeListener: ChangeListener[A]) = listeners :+= changeListener
+	def addListener(changeListener: ChangeListener[A], generateChangeEventFromOldValue: Option[A] = None) =
+	{
+		listeners :+= changeListener
+		generateChangeEventFromOldValue.foreach { old =>
+			val newValue = value
+			if (old != newValue)
+				changeListener.onChangeEvent(ChangeEvent(old, newValue))
+		}
+	}
 	
 	/**
 	  * Removes a listener from the informed change listeners
