@@ -15,6 +15,6 @@ object NullSafe
          * Performs a null check and returns an optional non-null value. None is returned for 
          * null values.
          */
-        def toOption = if (obj == null) None else Some(obj)
+        def toOption = Option(obj)
     }
 }
