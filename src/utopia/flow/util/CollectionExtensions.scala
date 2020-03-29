@@ -2,7 +2,8 @@ package utopia.flow.util
 
 import collection.{GenIterable, IterableLike, SeqLike, TraversableLike, mutable}
 import scala.collection.generic.CanBuildFrom
-import scala.util.{Success, Try}
+import scala.collection.immutable.HashSet
+import scala.util.{Failure, Success, Try}
 
 /**
 * This object contains some extensions for the more traditional collections / data structures
@@ -43,6 +44,17 @@ object CollectionExtensions
                 None
             else
                 Some(result)
+        }
+    
+        /**
+         * Finds the index of the last item that matches the predicate
+         * @param find a function for finding the correct item
+         * @return The index of the item in this seq or None if no such item was found
+         */
+        def lastIndexWhereOption(find: A => Boolean) =
+        {
+            val result = seq.lastIndexWhere(find)
+            if (result < 0) None else Some(result)
         }
     
         /**
@@ -125,6 +137,132 @@ object CollectionExtensions
             
             builder.result()
         }
+    
+        /**
+         * Drops items from the right as long as the specified condition returns true
+         * @param f A function that tests whether items should be dropped
+         * @return A copy of this collection with rightmost items (that satisfy provided predicate) removed
+         */
+        def dropRightWhile(f: A => Boolean) = lastIndexWhereOption { !f(_) } match
+        {
+            case Some(index) => seq.take(index + 1)
+            case None => seq.take(0)
+        }
+    
+        /**
+          * @param another Another sequence
+          * @param equals Equality function
+          * @tparam B Type of another sequence's content
+          * @return Whether these two sequences are equal when using specified equality function
+          */
+        def compareWith[B](another: SeqLike[B, _])(equals: (A, B) => Boolean) = seq.size == another.size &&
+            seq.indices.forall { i => equals(seq(i), another(i)) }
+    
+        /**
+         * Sorts this collection based on multiple orderings (second ordering is only used if first one fails to
+         * differentiate the items, then third and so on)
+         * @param firstOrdering The first ordering to use
+         * @param secondOrdering The second ordering to use
+         * @param moreOrderings More orderings to use
+         * @return A sorted copy of this collection
+         */
+        def sortedWith(firstOrdering: Ordering[A], secondOrdering: Ordering[A], moreOrderings: Ordering[A]*) =
+            seq.sorted(new CombinedOrdering[A](Vector(firstOrdering, secondOrdering) ++ moreOrderings))
+    
+        /**
+         * Performs a map operation until a non-empty value is returned. Returns both the mapped value and the mapped index.
+         * @param f A mapping function
+         * @tparam B Type of map result
+         * @return The first non-empty map result, along with the index of the mapped item. None if all items were
+         *         mapped to None.
+         */
+        def findMapAndIndex[B](f: A => Option[B]) = seq.indices.view.flatMap { i => f(seq(i))
+            .map { _ -> i }  }.headOption
+    
+        /**
+         * Maps each item + index in this sequence
+         * @param f A mapping function that takes both the item and the index of that item
+         * @tparam B Type of map result
+         * @return Mapped data in a sequence (same order as in this sequence)
+         */
+        def mapWithIndex[B](f: (A, Int) => B) = seq.indices.map { i => f(seq(i), i) }
+    }
+    
+    implicit class RichSeqLike2[A, Repr <: SeqLike[A, _]](val seq: SeqLike[A, Repr]) extends AnyVal
+    {
+        /**
+         * Maps the first item that matches provided condition, leaves the other items as they were
+         * @param find A function for finding the mapped item
+         * @param map A mapping function for that item
+         * @param cbf A can build from for resulting collection (implicit)
+         * @return A copy of this sequence with specified item mapped. Returns this if no such item was found.
+         */
+        def mapFirstWhere(find: A => Boolean)(map: A => A)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            seq.indexWhereOption(find) match
+            {
+                case Some(mapIndex) =>
+                    val builder = cbf()
+                    builder ++= seq.take(mapIndex)
+                    builder += map(seq(mapIndex))
+                    builder ++= seq.drop(mapIndex + 1)
+                    builder.result()
+                case None => seq.repr
+            }
+        }
+    
+        /**
+         * @param index Targeted index
+         * @param cbf A can build from (implicit)
+         * @return A copy of this sequence without specified index
+         */
+        def withoutIndex(index: Int)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            if (index < 0 || index >= seq.size)
+                seq.repr
+            else
+            {
+                val builder = cbf()
+                builder ++= seq.take(index)
+                builder ++= seq.drop(index + 1)
+                builder.result()
+            }
+        }
+    
+        /**
+         * Maps a single item in this sequence
+         * @param index The index that should be mapped
+         * @param f A mapping function
+         * @param cbf A can build from (implicit)
+         * @return A copy of this sequence with the specified index mapped
+         */
+        def mapIndex(index: Int)(f: A => A)(implicit cbf: CanBuildFrom[_, A, Repr]) =
+        {
+            if (index < 0 || index > seq.size)
+                seq.repr
+            else
+            {
+                val builder = cbf()
+                builder ++= seq.take(index)
+                builder += f(seq(index))
+                builder ++= seq.drop(index + 1)
+                builder.result()
+            }
+        }
+    }
+    
+    implicit class RichOption[A](val o: Option[A]) extends AnyVal
+    {
+        /**
+         * Converts this option to a try
+         * @param generateFailure A function for generating a throwable for a failure if one is needed
+         * @return Success with this option's value or failure if this option was empty
+         */
+        def toTry(generateFailure: => Throwable) = o match
+        {
+            case Some(v) => Success(v)
+            case None => Failure(generateFailure)
+        }
     }
     
     implicit class RichTry[T](val t: Try[T]) extends AnyVal
@@ -178,10 +316,48 @@ object CollectionExtensions
             case Right(r) => Right(f(r))
             case Left(l) => Left(l)
         }
+    
+        /**
+         * Maps the value of this either to a single value, whichever side this is
+         * @param leftMap Mapping function used when left value is present
+         * @param rightMap Mapping function used when right value is present
+         * @tparam B Resulting item type
+         * @return Mapped left or mapped right
+         */
+        def mapToSingle[B](leftMap: L => B)(rightMap: R => B) = e match
+        {
+            case Right(r) => rightMap(r)
+            case Left(l) => leftMap(l)
+        }
+    
+        /**
+         * Maps this either, no matter which side it is
+         * @param leftMap Mapping function used when this either is left
+         * @param rightMap Mapping function used when this either is right
+         * @tparam L2 New left type
+         * @tparam R2 New right type
+         * @return A mapped version of this either (will have same side)
+         */
+        def mapBoth[L2, R2](leftMap: L => L2)(rightMap: R => R2) = e match
+        {
+            case Right(r) => Right(rightMap(r))
+            case Left(l) => Left(leftMap(l))
+        }
     }
     
     implicit class RichTraversable[A](val t: Traversable[A]) extends AnyVal
     {
+        /**
+         * @return Duplicate items within this traversable
+         */
+        def duplicates: Set[A] =
+        {
+            var foundResults = HashSet[A]()
+            var checked = HashSet[A]()
+            t.foreach { item => if (checked.contains(item)) foundResults += item else checked += item }
+            foundResults
+        }
+        
         /**
           * Maps items until a concrete result is found, then returns that result
           * @param map A mapping function that maps to either Some or None
@@ -219,6 +395,36 @@ object CollectionExtensions
         }
     
         /**
+         * Finds the maximum value based on map result
+         * @param map A mapping function
+         * @param cmp Implicit ordering
+         * @tparam B Type of map result
+         * @return Maximum item based on map result. None if this traversable was empty
+         */
+        def maxByOption[B](map: A => B)(implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.maxBy(map))
+        }
+    
+        /**
+         * Finds the minimum value based on map result
+         * @param map A mapping function
+         * @param cmp Implicit ordering
+         * @tparam B Type of map result
+         * @return Minimum item based on map result. None if this traversable was empty
+         */
+        def minByOption[B](map: A => B)(implicit cmp: Ordering[B]): Option[A] =
+        {
+            if (t.isEmpty)
+                None
+            else
+                Some(t.minBy(map))
+        }
+    
+        /**
           * Finds the item(s) that best match the specified conditions
           * @param matchers Search conditions used. The conditions that are introduced first are considered more
           *                 important than those which are introduced the last.
@@ -247,6 +453,59 @@ object CollectionExtensions
                 else
                     bestMatch(matchers.drop(1))
             }
+        }
+    
+        /**
+         * Maps the contents of this traversable. Mapping may fail, interrupting all remaining mappings
+         * @param f A mapping function. May fail.
+         * @param cbf Implicit can build from for final collection
+         * @tparam B Type of map result
+         * @tparam To Type of final collection
+         * @return Mapped collection if all mappings succeeded. Failure otherwise.
+         */
+        def tryMap[B, To](f: A => Try[B])(implicit cbf: CanBuildFrom[_, B, To]): Try[To] =
+        {
+            val buffer = cbf()
+            // Maps items until the mapping function fails
+            t.view.map { a =>
+                val result = f(a)
+                result.toOption.foreach { buffer += _ }
+                result
+            }.find { _.isFailure } match
+            {
+                case Some(failure) => Failure(failure.failure.get)
+                // On success (no failure found), returns all mapped items
+                case None => Success(buffer.result())
+            }
+        }
+    
+        /**
+          * Compares this set of items with another set. Lists items that have been added and removed, plus the changes
+          * between items that have stayed
+          * @param another Another traversable
+          * @param connectBy A function for providing the unique key based on which items are connected
+          *                  (should be unique within each collection). Items sharing this key are connected.
+          * @param merge A function for merging two connected items. Takes connection key, item in this collection and
+          *              item in the other collection
+          * @tparam B Type of items in the other collection
+          * @tparam K Type of match key used
+          * @tparam Merge Merge function for merging connected items
+          * @return 1) Items only present in this collection, 2) Merged items shared between these two collections,
+          *         3) Items only present in the other collection
+          */
+        def listChanges[B >: A, K, Merge](another: Traversable[B])(connectBy: B => K)(merge: (K, A, B) => Merge) =
+        {
+            val meByKey = t.map { a => connectBy(a) -> a }.toMap
+            val theyByKey = another.map { a => connectBy(a) -> a }.toMap
+            
+            val myKeys = meByKey.keySet
+            val theirKeys = theyByKey.keySet
+            
+            val onlyInMe = (myKeys -- theirKeys).toVector.map { meByKey(_) }
+            val onlyInThem = (theirKeys -- myKeys).toVector.map { theyByKey(_) }
+            val merged = (myKeys & theirKeys).toVector.map { key => merge(key, meByKey(key), theyByKey(key)) }
+            
+            (onlyInMe, merged, onlyInThem)
         }
     }
     
@@ -280,6 +539,13 @@ object CollectionExtensions
                                       (implicit bf: CanBuildFrom[Repr, (A, B), Traversable[(A, B)]]) =
             t.zip(another).foreach { p => f(p._1, p._2) }
     
+        /**
+         * Performs an operation for each item in this collection. Stops if an operation fails.
+         * @param f A function that takes an item and performs an operation that may fail
+         * @return Failure if any of the operations failed, success otherwise.
+         */
+        def tryForEach(f: A => Try[Any]): Try[Any] = t.view.map(f).find { _.isFailure }.getOrElse(Success(Unit))
+        
         /**
           * @return An iterator that keeps repeating over and over (iterator continues infinitely or until this
           *         collection is empty)

@@ -7,12 +7,15 @@ package utopia.flow.test
   */
 object AllTests extends App
 {
+	val s = ""
+	
 	def run(test: App) =
 	{
 		println(s"\nRunning ${test.getClass.getName}	------------------------------")
 		test.main(Array())
 	}
 	
+	run(StringUtilsTest)
 	run(TimeNumberTest)
 	run(DataTypeTest)
 	run(CollectionTest)
@@ -29,6 +32,7 @@ object AllTests extends App
 	run(VolatileTest)
 	run(WeakListTest)
 	run(AsyncTest)
+	run(FutureRaceTest)
 	run(LoopTest)
 	
 	println("All test completed")

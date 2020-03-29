@@ -42,7 +42,7 @@ class SingleWait(val target: WaitTarget) extends Runnable with Breakable
     // IMPLEMENTED    -------------------
     
     /**
-     * Performs this wait. This method should be called once only.
+     * Performs this wait (blocks). This method should be called once only.
      */
 	def run() = 
 	{

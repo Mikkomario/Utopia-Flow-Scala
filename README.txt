@@ -18,11 +18,15 @@ Main Features
     JSON and XML support & Integration with models and typeless values
         - Flow offers full support for JSON and XML parsing + writing that fully utilizes the power of the typeless values
         - Conversion between JSON and Model / Value is seamless and converts between supported types under the hood
+        - Please note that the current implementation of JSON parser prioritizes accessibility over performance and is not
+        most efficient at this time. You may wish to use another parser for very large json files where performance
+        becomes an issue.
 
     Various data structures
         - Tree and Graph supports
         - Support for weakly referenced lists and pointer-like data structures
-        - Mutable concurrent collections (Volatile, VolatileFlag, VolatileList and VolatileOption)
+        - Mutable concurrent collections (Volatile, VolatileFlag, VolatileList and VolatileOption) may be used in
+        multi-threaded environments where some data is shared between multiple threads.
 
     Tools for asynchronous programs
         - ThreadPool implementation for generating a scaling ExecutionContext
@@ -31,7 +35,7 @@ Main Features
         - WaitFor -simplification of Future waiting available through extension
 
     Data Caching
-        - utopia.flow.caching package contains various tools for caching a single or multiple pieces of data either
+        - utopia.flow.caching package contains various tools for caching individual single or multiple pieces of data either
         temporarily or permanently, asynchronously or synchronously
 
 
@@ -46,7 +50,8 @@ Available Extensions
 --------------------
 
     utopia.flow.util.CollectionExtensions
-        - Collection utility updates, like support for multimaps and optional return values instead of indexOutOfBounds
+        - Collection utility updates, like support for multimaps and optional return values instead of throwing
+        indexOutOfBounds
 
     utopia.flow.util.TimeExtensions
         - Functional additions to java.time classes
@@ -58,6 +63,73 @@ Available Extensions
 
     utopia.flow.generic.ValueConversions
         - Implicit conversions from value supported classes (Int, Double, String, Vector[Value], etc.) to Value
+
+    utopia.flow.util.AutoClose
+        - Provides consume and tryConsume methods for autocloseable instances (like streams, etc.).
+        This does java's try-with style resource handling functionally.
+
+    utopia.flow.util.StringExtensions
+        - Utility methods for String
+
+    utopia.flow.util.FileExtensions
+        - A number of new scala-friendly methods for java.nio.file.Path
+
+
+v1.6.1  -----------------------------------
+
+    New Features
+    ------------
+
+        Instant + and - now also support scala duration
+
+        Instant can now be converted to string using more wide range of DateTimeFormatters by calling method
+        toStringWith(...)
+
+        Added some new String extensions, which are available by importing utopia.flow.util.StringExtensions._
+
+        StringFrom and LinesFrom objects for easier file- and stream reading
+
+        TimeExtensions now also allow easier creation of Period instances. Other time extensions added as well.
+
+        maxByOption, minByOption, tryMap, dropRightWhile and compareWith added to CollectionExtensions
+
+        toTry method added to Option through collectionExtensions
+
+        CollectionExtensions now allows one to sort a seqLike with multiple hierarchical orderings (sortedWith(...)).
+        Seqs also now have mapFirstWhere(...)(...) method that maps the first item that matches a provided predicate.
+
+        raceWith method added to Future through AsyncExtensions. This allows one to retrieve the first completed value
+        from two futures.
+
+        Added FileExtensions that add a number of new methods to java.nio.file.Path. Available by importing
+        utopia.flow.util.FileExtensions._
+
+        Added a VectorCollector class for collecting java streams to scala vectors
+
+        WaitUtils now contains delayed -method which performs an operation after a delay
+
+        Future now contains isEmpty method (which is an inverted isCompleted method) through AsyncExtensions
+
+        AsyncExtensions now also provides futureCompletion -method for a combination of futures that works exactly
+        like .future but simply returns Future[Unit]
+
+        NewThreadExecutionContext added for cases where only one or two threads are required. It is still recommended
+        to use a ThreadPool instead.
+            - This feature was added for ConnectionPool closing in Vault where thread pool is not readily available
+            and a single thread needs to be created at the very end of program lifespan
+
+        Changing instances now have futureWhere(...) method that allows one to get a conditional future. Volatile now
+        extends Changing and will support change events.
+
+        Model now contains .hasOnlyEmptyValues and .hasNonEmptyValues methods in addition to .isEmpty and .nonEmpty,
+        which included empty attributes.
+
+    Updates & Changes
+    -----------------
+
+        Instant + and - won't throw anymore when adding a time period (Eg. 3.months) but will try to work around
+        the problematic units by converting to local date time first. This may cause some invalid times to pass
+        through but most of the time works more intuitively than the original.
 
 
 v1.6  -------------------------------------
@@ -85,6 +157,8 @@ v1.6  -------------------------------------
         FromModelFactoryWithSchema handles model parsing more easily using a schema to validate the model before using it.
 
         New extensions added for java.time.Year, java.time.LocalDate and java.time.YearMonth
+
+        SingleTryCache object now has expiring(...) method
 
 
     Updates & Changes

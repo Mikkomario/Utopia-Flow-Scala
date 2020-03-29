@@ -1,12 +1,14 @@
 package utopia.flow.util
 
 import utopia.flow.util.TimeExtensions._
-
 import java.time.Instant
-import java.time.Duration
+
 import utopia.flow.util.WaitTarget.WaitDuration
 import utopia.flow.util.WaitTarget.UntilNotified
 import utopia.flow.util.WaitTarget.Until
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
 
 /**
  * WaitUtils contains a number of utility tools for waiting on a thread. This utility object handles 
@@ -29,7 +31,7 @@ object WaitUtils
     /**
      * Waits for a certain amount of time (blocking), then releases the lock
      */
-    def wait(duration: scala.concurrent.duration.Duration, lock: AnyRef): Unit = wait(WaitDuration(duration), lock)
+    def wait(duration: java.time.Duration, lock: AnyRef): Unit = wait(WaitDuration(duration), lock)
     
     /**
      * Waits until the lock is notified
@@ -47,4 +49,18 @@ object WaitUtils
      * Waits until the specified time has been reached
      */
     def waitUntil(targetTime: Instant, lock: AnyRef) { wait(Until(targetTime), lock) }
+    
+    /**
+     * Performs an operation asynchronously after a delay
+     * @param waitDuration Duration to wait before performing specified operation
+     * @param lock Lock used for waiting (default = new object)
+     * @param operation Operation performed after wait
+     * @param exc Implicit execution context
+     * @tparam A Type of operation result
+     * @return Future of the completion of the operation
+     */
+    def delayed[A](waitDuration: Duration, lock: AnyRef = new AnyRef)(operation: => A)(implicit exc: ExecutionContext) = Future {
+        wait(waitDuration, lock)
+        operation
+    }
 }

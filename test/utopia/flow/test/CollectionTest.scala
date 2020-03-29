@@ -33,5 +33,7 @@ object CollectionTest extends App
 	assert(result2 == Vector("Car"))
 	assert(result3 == words)
 	
+	assert(words.mapFirstWhere { _.startsWith("C") } { _.toUpperCase } == Vector("Apina", "Banaani", "CAR", "David"))
+	
 	println("Success!")
 }

@@ -1,9 +1,10 @@
 package utopia.flow.util
 
 import java.time.chrono.ChronoLocalDate
+import java.time.format.DateTimeFormatter
 
 import scala.language.implicitConversions
-import java.time.{DayOfWeek, Duration, Instant, LocalDate, Month, Year, YearMonth, ZoneId}
+import java.time.{DayOfWeek, Duration, Instant, LocalDate, LocalDateTime, Month, Period, Year, YearMonth, ZoneId}
 import java.time.temporal.TemporalAmount
 
 import scala.concurrent.duration
@@ -11,6 +12,7 @@ import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
 
 import scala.collection.immutable.VectorBuilder
+import scala.util.Try
 
 /**
 * This object contains some extensions for java's time classes
@@ -21,6 +23,14 @@ object TimeExtensions
 {
 	implicit class ExtendedInstant(val i: Instant) extends AnyVal
 	{
+		/**
+		 * Converts this instant to a string using specified formatter. If the formatter doesn't support instant
+		 * naturally, converts this instant to local date time before converting to string
+		 * @param formatter A date time formatter
+		 * @return Formatted string representation of this instant
+		 */
+		def toStringWith(formatter: DateTimeFormatter) = Try { formatter.format(i) }.getOrElse { formatter.format(toLocalDateTime) }
+		
 	    /**
 	     * The date time value of this instant in the local time zone
 	     */
@@ -34,13 +44,54 @@ object TimeExtensions
 	    /**
 	     * An instant after the specified duration has passed from this instant
 	     */
-	    def +(amount: TemporalAmount) = i.plus(amount)
+	    def +(amount: TemporalAmount) =
+		{
+			amount match
+			{
+				case period: Period =>
+					// Long time periods are a bit tricky because the actual length of traversed time depends
+					// from the context (date + time zone + calendars etc.)
+					// However, when the user asks Instant.now() + 3 months, we can estimate that he probably means
+					// 3 months in the local time context
+					if (period.getMonths != 0 || period.getYears != 0)
+						toLocalDateTime.plus(period).toInstantInDefaultZone
+					else
+						i.plus(period)
+					
+				case _ => i.plus(amount)
+			}
+		}
+		
+		/**
+		  * @param amount Amount of duration to move this instant
+		  * @return An instant after specified duration has passed from this instant
+		  */
+		def +(amount: duration.Duration) = i.plusNanos(amount.toNanos)
 	    
 	    /**
 	     * An instant before the specified duration
 	     */
-	    def -(amount: TemporalAmount) = i.minus(amount)
-	    
+	    def -(amount: TemporalAmount) =
+		{
+			amount match
+			{
+				case period: Period =>
+					// See + for explanation
+					if (period.getMonths != 0 || period.getYears != 0)
+						toLocalDateTime.minus(period).toInstantInDefaultZone
+					else
+						i.minus(period)
+				
+				case _ => i.minus(amount)
+			}
+		}
+		
+		/**
+		  * @param amount Amount of time to subtract
+		  * @return The instant before this instant by specified duration
+		  */
+		def -(amount: duration.Duration) = i.minusNanos(amount.toNanos)
+		
 	    /**
 	     * Finds the difference (duration) between the two time instances
 	     */
@@ -55,6 +106,14 @@ object TimeExtensions
 	     * Checks whether this instant comes after the specified instant
 	     */
 	    def >(other: Instant) = i.isAfter(other)
+	}
+	
+	implicit class ExtendedLocalDateTime(val d: LocalDateTime) extends AnyVal
+	{
+		/**
+		 * @return Converts this date time to an instant. Expects this date time to be in system default zone
+		 */
+		def toInstantInDefaultZone = d.toInstant(ZoneId.systemDefault().getRules.getOffset(d))
 	}
 	
 	implicit class ExtendedDuration(val d: Duration) extends AnyVal
@@ -126,6 +185,8 @@ object TimeExtensions
 	
 	implicit class ExtendedLocalDate(val d: LocalDate) extends AnyVal
 	{
+		// COMPUTED	-------------------------
+		
 		/**
 		  * @return Year of this date
 		  */
@@ -142,6 +203,81 @@ object TimeExtensions
 		  * @return Year + month of this date
 		  */
 		def yearMonth = d.year + d.month
+		
+		/**
+		 * @return Converts this date to an instant. The time is expected to be 00:00. Expects this date time
+		 *         to be in system default zone
+		 */
+		def toInstantInDefaultZone = d.atStartOfDay(ZoneId.systemDefault()).toInstant
+		
+		
+		// OTHER	------------------------
+		
+		/**
+		 * Adds a number of days to this date
+		 * @param timePeriod A time period to add
+		 * @return A modified copy of this date
+		 */
+		def +(timePeriod: Period) = d.plus(timePeriod)
+		
+		/**
+		 * Adds a time duration to this date
+		 * @param duration A time duration
+		 * @return a datetime based on this date and added time duration
+		 */
+		def +(duration: Duration) = d.atStartOfDay().plus(duration)
+		
+		/**
+		 * Subtracts a number of days to this date. Eg. 2.1.2001 + 3 hours would be 2.1.2001 03:00.
+		 * @param timePeriod A time period to subtract
+		 * @return A modified copy of this date
+		 */
+		def -(timePeriod: Period) = d.minus(timePeriod)
+		
+		/**
+		 * Subtracts a time duration to this date. Eg. 2.1.2001 - 3 hours would be 1.1.2001 21:00.
+		 * @param duration A time duration
+		 * @return a datetime based on this date and subtracted time duration
+		 */
+		def -(duration: Duration) = d.atStartOfDay().minus(duration)
+		
+		/**
+		 * Adds a time duration to this date
+		 * @param duration A time duration
+		 * @return a datetime based on this date and added time duration
+		 */
+		def +(duration: FiniteDuration): LocalDateTime = this + (duration: Duration)
+		
+		/**
+		 * Subtracts a time duration to this date. Eg. 2.1.2001 - 3 hours would be 1.1.2001 21:00.
+		 * @param duration A time duration
+		 * @return a datetime based on this date and subtracted time duration
+		 */
+		def -(duration: FiniteDuration): LocalDateTime = this - (duration: Duration)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes before specified date
+		 */
+		def <(other: ChronoLocalDate) = d.isBefore(other)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes after specified date
+		 */
+		def >(other: ChronoLocalDate) = d.isAfter(other)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes before or is equal to specified date
+		 */
+		def <=(other: ChronoLocalDate) = !d.isAfter(other)
+		
+		/**
+		 * @param other Another date
+		 * @return Whether this date comes after or is equal to specified date
+		 */
+		def >=(other: ChronoLocalDate) = !d.isBefore(other)
 	}
 	
 	implicit class ExtendedYear(val y: Year) extends AnyVal
@@ -246,17 +382,40 @@ object TimeExtensions
 		  * @param n implicit numeric
 		  * @return This number amount of seconds (provides nano precision with doubles)
 		  */
-		def seconds(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000)
+		def seconds(implicit n: Numeric[T]) = nanoPrecision(1000000L * 1000)
 		/**
 		  * @param n implicit numeric
 		  * @return This number amount of minutes (provides nano precision with doubles)
 		  */
-		def minutes(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000 * 60)
+		def minutes(implicit n: Numeric[T]) = nanoPrecision(1000000L * 1000 * 60)
 		/**
 		  * @param n implicit numeric
 		  * @return This number amount of hours (provides nano precision with doubles)
 		  */
-		def hours(implicit n: Numeric[T]) = nanoPrecision(1000000l * 1000 * 60 * 60)
+		def hours(implicit n: Numeric[T]) = nanoPrecision(1000000L * 1000 * 60 * 60)
+	}
+	
+	implicit class DayCount(val i: Int) extends AnyVal
+	{
+		/**
+		 * @return Period of this many days
+		 */
+		def days = Period.ofDays(i)
+		
+		/**
+		 * @return Period of this many weeks
+		 */
+		def weeks = Period.ofWeeks(i)
+		
+		/**
+		 * @return Period of this many months
+		 */
+		def months = Period.ofMonths(i)
+		
+		/**
+		 * @return Period of this many years
+		 */
+		def years = Period.ofYears(i)
 	}
 	
 	/**

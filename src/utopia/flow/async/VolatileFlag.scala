@@ -5,7 +5,7 @@ package utopia.flow.async
 * @author Mikko Hilpinen
 * @since 28.3.2019
 **/
-class VolatileFlag extends Volatile[Boolean](false)
+class VolatileFlag(initialState: Boolean = false) extends Volatile[Boolean](initialState)
 {
     // COMPUTED    ---------------
     
@@ -13,6 +13,11 @@ class VolatileFlag extends Volatile[Boolean](false)
      * Whether this flag is currently set
      */
     def isSet = get
+    
+    /**
+      * @return Whether this flag isn't currently set
+      */
+    def notSet = !isSet
     
     
 	// OTHER    ------------------
@@ -47,5 +52,18 @@ class VolatileFlag extends Volatile[Boolean](false)
             if (!status)
                 action
             true
+    }
+    
+    /**
+      * Sets this flag and performs the provided function, but only if this flag is not yet set
+      * @param f A function for producing a result
+      * @tparam B Result type
+      * @return Result if this flag was not set. None otherwise.
+      */
+    def mapAndSet[B](f: => B) = pop { status =>
+        if (status)
+            None -> status
+        else
+            Some(f) -> true
     }
 }

@@ -9,3 +9,6 @@ package utopia.flow.event
   * @param newValue The new value
   */
 case class ChangeEvent[+A](oldValue: A, newValue: A)
+{
+	override def toString = s"Change from $oldValue to $newValue"
+}

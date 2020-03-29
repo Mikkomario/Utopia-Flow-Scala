@@ -61,13 +61,26 @@ trait Model[+Attribute <: Property] extends JSONConvertible
     /**
      * A model is empty when no attributes have been assigned to it. It doesn't matter whether the
      * defined attributes actually contain a value or not.
+     * @see hasOnlyEmptyValues
      */
     def isEmpty = attributeMap.isEmpty
     
     /**
-      * @return Whether this model contains attributes
+      * @return Whether this model contains attributes. Notice that it doesn't matter whether the attributes
+     *         have a value or not.
+     * @see hasNonEmptyValues
       */
     def nonEmpty = !isEmpty
+    
+    /**
+     * @return Whether this model specifies any non-empty values
+     */
+    def hasNonEmptyValues = attributeMap.values.exists { _.value.isDefined }
+    
+    /**
+     * @return Whether all values in this model are empty
+     */
+    def hasOnlyEmptyValues = !hasNonEmptyValues
     
     
     // OPERATORS    ---------------

@@ -21,6 +21,14 @@ object ValueConversions
     
     implicit def unwrapConvertible[C1](c: C1)(implicit f: C1 => ValueConvertible): Value = c.toValue
     
+    /*
+    implicit def automapCollection[V, C <: TraversableOnce[V], To](c: C)(implicit f: V => ValueConvertible, cbf: CanBuildFrom[_, Value, To]): To =
+    {
+        val builder = cbf()
+        c.foreach { builder += f(_) }
+        builder.result()
+    }*/
+    
     implicit class ValueOfString(val s: String) extends ValueConvertible
     {
         def toValue = new Value(Some(s), StringType)
@@ -85,9 +93,6 @@ object ValueConversions
             new Value(Some(valueVector), VectorType)
         }
     }*/
-    
-    // TODO: Modify vector to allow implicit conversion in vector type, then test properly
-    // Release with nullSafe -feature
     
     /*
     implicit class ValueOfOption[C1](val option: Option[C1])(implicit f: C1 => ValueConvertible) extends ValueConvertible
