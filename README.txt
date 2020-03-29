@@ -75,7 +75,7 @@ Available Extensions
         - A number of new scala-friendly methods for java.nio.file.Path
 
 
-v1.6.1 (beta)  -----------------------------------
+v1.6.1  -----------------------------------
 
     New Features
     ------------
